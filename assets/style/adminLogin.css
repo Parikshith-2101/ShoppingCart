@@ -63,6 +63,55 @@ input:focus {
 .fs-small{
     font-size: 12px;
 }
-#addCategoryBtn{
+#addCategoryBtn,#addSubCategoryBtn{
     cursor: pointer;
+}
+.categoryName{
+    padding: 8px;
+}
+
+
+.card {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 20px;
+    padding-inline: 12px;
+    margin-block: 2px;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+} 
+.card button {
+    font-size: 14px;
+    border-radius: 5px;
+    text-transform: capitalize;
+}
+.card button:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.addPageBtn {
+    transition: transform 0.5s, box-shadow 0.2s;
+    background-color: aqua;
+}
+
+.addPageBtn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+select:focus {
+    border-color: rgb(51, 122, 183);
+    outline: none;
+    box-shadow: 0 0 5px rgba(51, 122, 183, 0.5);
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
 }

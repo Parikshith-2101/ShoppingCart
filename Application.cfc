@@ -2,6 +2,7 @@
     <cfset this.name = "ShoppingCartApplication">
     <cfset this.sessionManagement = true>
     <cfset this.datasource = "shoppingCart">
+    <cfset application.shoppingCart = createObject("component", "components.shoppingCart")>
 
     <cffunction name = "onRequest" returnType = "void">
         <cfargument name = "requestPage">
