@@ -15,6 +15,7 @@
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
+                    <img src="../assets/images/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">Shopping Cart</span>
                 </div>
             </a>
