@@ -14,11 +14,12 @@
 
 <body>
     <cfoutput>
-        <cfset subCategoryData =  application.shoppingCart.qrySubCategoryData(url.categoryId)>
-        
+        <cfset subCategoryData =  application.shoppingCart.qrySubCategoryData(categoryId = url.categoryId)>
+        <cfset qryCategoriesData =  application.shoppingCart.qryCategoryData()>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
+                    <img src="../assets/images/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
@@ -36,7 +37,7 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">SubCategories</div>
+                            <div class="text-uppercase login-title fs-4 px-2">#url.categoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
 
@@ -46,18 +47,16 @@
                                 <div class="modal-content">
                                     <form method="post" enctype="multipart/form-data" name="subCategoryForm">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <h5 class="modal-title" id="exampleModalLabel">SubCategory</h5>
+                                            <button type="button" class="close btn btn-outline-danger px-2 py-0" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
-                                                <select id="categoryDropdown" name="categoryDropdown">
-                                                    <!--- <cfif>
-                                                        <option value="" selected>Select a category</option>
-                                                    </cfif> --->
+                                                <select id="categoryDropdown" name="categoryDropdown">  
+                                                    <option value="" selected>Select a category</option>                                                   
                                                     <option value="" disabled selected>Select a category</option>
                                                     <cfloop query="qryCategoriesData">
                                                         <option value="#qryCategoriesData.fldCategory_Id#">#qryCategoriesData.fldCategoryName#</option>
@@ -91,15 +90,15 @@
                                             #subCategoryData.fldSubCategoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button  class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <button  class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#subCategoryData.fldSubCategory_Id#&subCategoryName=#subCategoryData.fldSubCategoryName#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
