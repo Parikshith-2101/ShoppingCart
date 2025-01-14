@@ -15,8 +15,9 @@
 <body>
 
     <nav class="navbar fixed-top p-0">
-        <a href="" class="nav-link">
+        <a href="##" class="nav-link">
             <div class="d-flex nav-brand">
+                <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                 <span class="fs-4">ShoppingCart</span>
             </div>
         </a>
@@ -45,8 +46,8 @@
                                 <div class="modal-content">
                                     <form method="post" enctype="multipart/form-data" name="addCategoryForm">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <h5 class="modal-title" id="exampleModalLabel">Category</h5>
+                                            <button type="button" class="close btn btn-outline-danger px-2 py-0" data-bs-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
@@ -66,7 +67,7 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfset qryCategoriesData =  application.shoppingCart.qryCategoryData()>
+                            <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
                             <cfloop query = "qryCategoriesData">
 
                                 <div class="card shadow-lg" id = "#qryCategoriesData.fldCategory_Id#">
@@ -81,7 +82,7 @@
                                             <button onclick="deleteCategory(#qryCategoriesData.fldCategory_Id#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="subCategories.cfm?categoryId=#qryCategoriesData.fldCategory_Id#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="subCategories.cfm?categoryId=#qryCategoriesData.fldCategory_Id#&categoryName=#qryCategoriesData.fldCategoryName#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>
