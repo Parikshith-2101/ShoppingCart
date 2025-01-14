@@ -17,7 +17,7 @@
     <nav class="navbar fixed-top p-0">
         <a href="##" class="nav-link">
             <div class="d-flex nav-brand">
-                <img src="../assets/images/cartIcon.png" alt="cartIcon" width="40" class="me-1">
+                <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                 <span class="fs-4">ShoppingCart</span>
             </div>
         </a>
@@ -67,7 +67,7 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfset qryCategoriesData =  application.shoppingCart.qryCategoryData()>
+                            <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
                             <cfloop query = "qryCategoriesData">
 
                                 <div class="card shadow-lg" id = "#qryCategoriesData.fldCategory_Id#">

@@ -14,12 +14,12 @@
 
 <body>
     <cfoutput>
-        <cfset subCategoryData =  application.shoppingCart.qrySubCategoryData(categoryId = url.categoryId)>
-        <cfset qryCategoriesData =  application.shoppingCart.qryCategoryData()>
+        <cfset subCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
+        <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
-                    <img src="../assets/images/cartIcon.png" alt="cartIcon" width="40" class="me-1">
+                    <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
@@ -55,8 +55,7 @@
                                         <div class="modal-body">
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
-                                                <select id="categoryDropdown" name="categoryDropdown">  
-                                                    <option value="" selected>Select a category</option>                                                   
+                                                <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
                                                     <cfloop query="qryCategoriesData">
                                                         <option value="#qryCategoriesData.fldCategory_Id#">#qryCategoriesData.fldCategoryName#</option>

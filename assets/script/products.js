@@ -26,82 +26,126 @@ $(document).ready(function () {
         $('#categoryDropdown').val(categoryId);
         $('#subCategoryDropdown').val(subCategoryId);
         $('#productName').val('');
-        $('#productName-error').val('');
+        $('#productName-error').text('');
         $('#productBrand').val('');
-        $('#productBrand-error').val('');
+        $('#productBrand-error').text('');
         $('#productDesc').val('');
-        $('#productDesc-error').val('');
+        $('#productDesc-error').text('');
         $('#productPrice').val('');
-        $('#productPrice-error').val('');
+        $('#productPrice-error').text('');
+        $('#productTax').val('');
+        $('#productTax-error').text('');
         $('#productImage').val('');
-        $('#productImage-error').val('');
+        $('#productImage-error').text('');
         $('#saveProduct').val('');
+        $('#productIdHolder').val('');
         $('#productModal').modal('show');
     });
 
-    //saveProduct
-    $('#saveProduct').on('click',function(){
-        const categoryId = $('#categoryDropdown').val();
-        const subCategoryId = $('#subCategoryDropdown').val();
-        const productName = $('#productName').val();
-        const productBrand = $('#productBrand').val();
-        const productDesc = $('#productDesc').val();
-        const productPrice = $('#productPrice').val();
+});
 
-        const fileInput = document.getElementById('productImage');
-        const uploadedFiles = fileInput.files;
-        const productImage = new FormData();
-        for (let i = 0; i < uploadedFiles.length; i++) {
-            productImage.append(`file${i + 1}`, uploadedFiles[i]);
+//view productmodal
+function editProduct(productId,subCategoryId,categoryId){
+    $('#productName-error').text('');
+    $('#productBrand-error').text('');
+    $('#productDesc-error').text('');
+    $('#productPrice-error').text('');
+    $('#productTax-error').text('');
+    $('#productImage-error').text('');
+    $.ajax({
+        url: "../components/productManagement.cfc?method=viewProduct",
+        method: "POST",
+        data:{
+            subCategoryId : subCategoryId,
+            productId : productId
+        },
+        success: function(viewSubCategoryData){
+            const data = JSON.parse(viewSubCategoryData);
+            console.log(data);
+            $('#categoryDropdown').val(categoryId);
+            $('#subCategoryDropdown').val(subCategoryId);
+            $('#productName').val(data.productName);
+            $('#productBrand').val(data.brandId);
+            $('#productDesc').val(data.productDesc);
+            $('#productPrice').val(data.unitPrice);
+            $('#productTax').val(data.unitTax);
+            $('#productIdHolder').val(data.productId);
+            $('#productModal').modal('show');
         }
+    });
+}
 
-        const productId = $('#saveProduct').val();
-        $('#productName-error').addClass('text-danger').removeClass('text-success');
-        $('#productBrand-error').addClass('text-danger').removeClass('text-success');
-        $('#productDesc-error').addClass('text-danger').removeClass('text-success');
-        $('#productPrice-error').addClass('text-danger').removeClass('text-success');
-        $('#productImage-error').addClass('text-danger').removeClass('text-success');
-        $('#productName-error').text('');
-        $('#productBrand-error').text('');
-        $('#productDesc-error').text('');
-        $('#productPrice-error').text('');
-        $('#productImage-error').text('');
-        if(!productName){
-            $('#productName-error').text('Enter Product Name');
-        }
-        if(!productBrand){
-            $('#productBrand-error').text('Enter Product Brand');
-        }     
-        if(!productDesc){
-            $('#productDesc-error').text('Enter Product Desc');
-        }     
-        if(!productPrice){
-            $('#productPrice-error').text('Enter Product Price');
-        }     
+//delete Product
+function deleteProduct(productId,subCategoryId){
+    if(confirm("Delete! Are you sure?")){
+        $.ajax({
+            url: "../components/productManagement.cfc?method=deleteProduct",
+            method: "POST",
+            data: {
+                subCategoryId : subCategoryId,
+                productId : productId
+            },
+            success: function() {
+                $('#' + productId).remove();
+            }
+        });
+    }     
+}
+
+$(document).on("click", function(){
+    $(".errorServerSide").hide();
+});
+
+function productValidation(event){
+    const categoryId = $('#categoryDropdown').val();
+    const subCategoryId = $('#subCategoryDropdown').val();
+    const productName = $('#productName').val();
+    const productBrand = $('#productBrand').val();
+    const productDesc = $('#productDesc').val();
+    const productPrice = $('#productPrice').val();
+    const productTax = $('#productTax').val();
+    const productImage = $('#productImage').val();
+    const productId = $('#productIdHolder').val();
+    $('#productName-error').text('');
+    $('#productBrand-error').text('');
+    $('#productDesc-error').text('');
+    $('#productPrice-error').text('');
+    $('#productTax-error').text('');
+    $('#productImage-error').text('');
+    
+    let isValid = true;
+    if(!productName){
+        $('#productName-error').text('Enter Product Name');
+        isValid = false;
+    }
+    if(!productBrand){
+        $('#productBrand-error').text('Enter Product Brand');
+        isValid = false;
+    }     
+    if(!productDesc){
+        $('#productDesc-error').text('Enter Product Desc');
+        isValid = false;
+    }     
+    if(!productPrice){
+        $('#productPrice-error').text('Enter Product Price');
+        isValid = false;
+    }     
+    if(!productTax){
+        $('#productTax-error').text('Enter Product Tax');
+        isValid = false;
+    }
+    if(!productId){
         if(!productImage){
             $('#productImage-error').text('Choose Image File');
-        } 
-        /* if(!productId){
-            alert("create")
-            $.ajax({
-                url: '../components/shoppingCart.cfc?method=addProduct',
-                type: 'POST',
-                data: {
-                    categoryId: categoryId,
-                    subCategoryId: subCategoryId,
-                    productName : productName,
-                    productBrand : productBrand,
-                    productDesc : productDesc,
-                    productPrice : productPrice,
-                    productImage : productImage
-                },
-                success: function (serverResponse) {
+            isValid = false;
+        }
+    }      
+    
+    return isValid;
+}
 
-                }
-            });      
-        } 
-        else{
-            alert("edit")
-        }    */
-    });
-});
+//productImageModal
+function editImage(){
+    
+    $('#productImageModal').modal('show');
+}

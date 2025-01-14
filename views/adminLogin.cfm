@@ -15,7 +15,7 @@
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
-                    <img src="../assets/images/cartIcon.png" alt="cartIcon" width="40" class="me-1">
+                    <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">Shopping Cart</span>
                 </div>
             </a>
@@ -52,6 +52,6 @@
     
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/script.js"></script>
+    <script src="../assets/script/userLogin.js"></script>
 </body>
 </html>

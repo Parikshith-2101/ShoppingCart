@@ -4,59 +4,11 @@ function handleAjaxError(xhr, status, error) {
 }
 
 $(document).ready(function () {
-
-    // Login 
-    $('#loginBtn').on('click', function () {
-        const userName = $('#userName').val();
-        const password = $('#password').val();
-
-        $('#userName-error').text('');
-        $('#password-error').text('');
-
-        if (!userName) {
-            displayMessage('#userName-error', 'Username is required.', false);
-            return;
-        }
-        if (!password) {
-            displayMessage('#password-error', 'Password is required.', false);
-            return;
-        }
-
-        $.ajax({
-            url: '../components/shoppingCart.cfc?method=adminLogin',
-            type: 'POST',
-            data: {
-                userName: userName,
-                password: password
-            },
-            success: function (loginServerResponse) {
-                const data = JSON.parse(loginServerResponse);
-                if (data.errorStatus === "true") {
-                    $('#resultMsg').text(data.resultMsg);
-                    $('#resultMsg').css({
-                        color: "green",
-                        "margin-bottom": "20px"
-                    });
-                    setTimeout(function() {
-                        window.location.href = "categories.cfm";
-                    }, 600);
-                } else {
-                    $('#resultMsg').text(data.resultMsg);
-                    $('#resultMsg').css({
-                        color: "red",
-                        "margin-bottom": "20px"
-                    });
-                }
-            },
-            error: handleAjaxError
-        });
-    });
-
     // Logout
     $('#logoutCategory').on('click', function () {
         if (confirm("Logout! Are you sure?")) {
             $.ajax({
-                url: "../components/shoppingCart.cfc?method=logout",
+                url: "../components/userLogin.cfc?method=logout",
                 method: "POST",
                 success: function () {
                     window.location.href = "adminLogin.cfm";
@@ -85,8 +37,9 @@ $(document).ready(function () {
             return;
         }
         if(categoryId.trim()){
+            //edit
             $.ajax({
-                url: "../components/shoppingCart.cfc?method=editCategory",
+                url: "../components/productManagement.cfc?method=editCategory",
                 method: "POST",
                 data: {
                     categoryId : categoryId,
@@ -101,7 +54,11 @@ $(document).ready(function () {
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
-                    } else {
+                    }                     
+                    else if(data.errorStatus === "nill") {
+                        $('#categoryModal').modal('hide');
+                    }
+                    else {
                         $('#category-error').text(data.resultMsg);
                     }
                 },
@@ -109,8 +66,9 @@ $(document).ready(function () {
             });
         }
         else{
+            //create
             $.ajax({
-                url: "../components/shoppingCart.cfc?method=addCategory",
+                url: "../components/productManagement.cfc?method=addCategory",
                 method: "POST",
                 data:{
                     categoryName : categoryName
@@ -123,7 +81,8 @@ $(document).ready(function () {
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
-                    } else {
+                    } 
+                    else{
                         $('#category-error').text(data.resultMsg);
                     }
                 },
@@ -162,8 +121,9 @@ $(document).ready(function () {
             return;
         }
         if(!subCategoryId){
+            //create
             $.ajax({
-                url: "../components/shoppingCart.cfc?method=addSubCategory",
+                url: "../components/productManagement.cfc?method=addSubCategory",
                 method: "POST",
                 data: {
                     subCategoryName : subCategoryName,
@@ -187,8 +147,9 @@ $(document).ready(function () {
             });
         }
         else{
+            //edit
             $.ajax({
-                url: "../components/shoppingCart.cfc?method=editSubCategory",
+                url: "../components/productManagement.cfc?method=editSubCategory",
                 method: "POST",
                 data: {
                     subCategoryId : subCategoryId,
@@ -199,12 +160,15 @@ $(document).ready(function () {
                 success : function(response){
                     const data = JSON.parse(response);
                     console.log(data);
-                    if(data.errorStatus == "true"){
+                    if(data.errorStatus === "true"){
                         $('#subCategory-error').text(data.resultMsg);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
                             window.location.reload();
                         }, 900);
+                    }
+                    else if(data.errorStatus === "nill"){
+                        $('#subCategoryModal').modal('hide');
                     }
                     else{
                         $('#subCategory-error').text(data.resultMsg);                       
@@ -220,7 +184,7 @@ $(document).ready(function () {
 function editCategory(categoryId){
     $('#category-error').text('');
     $.ajax({
-        url: "../components/shoppingCart.cfc?method=viewCategory",
+        url: "../components/productManagement.cfc?method=viewCategory",
         method: "POST",
         data:{
             categoryId : categoryId
@@ -240,7 +204,7 @@ function deleteCategory(categoryId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
-            url: "../components/shoppingCart.cfc?method=deleteCategory",
+            url: "../components/productManagement.cfc?method=deleteCategory",
             data: {
                 categoryId : categoryId
             },
@@ -255,7 +219,7 @@ function deleteCategory(categoryId){
 function editSubCategory(subCategoryId,categoryId){
     $('#subCategory-error').text('');
     $.ajax({
-        url: "../components/shoppingCart.cfc?method=viewSubCategory",
+        url: "../components/productManagement.cfc?method=viewSubCategory",
         method: "POST",
         data:{
             subCategoryId : subCategoryId,
@@ -278,7 +242,7 @@ function deleteSubCategory(subCategoryId,categoryId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
-            url: "../components/shoppingCart.cfc?method=deleteSubCategory",
+            url: "../components/productManagement.cfc?method=deleteSubCategory",
             data: {
                 subCategoryId : subCategoryId,
                 categoryId : categoryId

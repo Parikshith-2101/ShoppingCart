@@ -20,11 +20,12 @@ body {
 }
 .container{
     top : 40px;
-    max-width: 400px;
+    max-width: 600px;
     background: white;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 12px;
 }
+
 .shadow-heavy{
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
@@ -91,4 +92,19 @@ select:focus {
 
 .nav-link{
     cursor: pointer;
+}
+.fldName{
+    display: inline-block;
+    width: 95px;
+    font-weight: 600;
+}
+.card-text{
+    font-size: 13px;
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.cursor-pointer:hover{
+    transform: scale(1.05);
+    transition: transform 0.2s;
 }
