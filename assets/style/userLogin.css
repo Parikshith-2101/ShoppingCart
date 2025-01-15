@@ -8,6 +8,22 @@ body {
     color: rgb(51, 122, 183);
     font-weight: bold;
 } 
+.login-btn {
+    background: rgb(51, 122, 183);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.login-btn:hover {
+    background: rgb(33, 95, 165);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(51, 122, 183, 0.3);
+}
 .navbar {
     background: linear-gradient(90deg, rgb(51, 122, 183), rgb(33, 95, 165));
 }
@@ -20,31 +36,30 @@ body {
 }
 .container{
     top : 40px;
-    max-width: 600px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 12px;
 }
-
 .shadow-heavy{
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
-input ,select{
+input {
     width: 100%;
     padding: 10px;
-    margin: 0px 0px 10px;
+    margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 5px;
     transition: all 0.3s ease;
 }
-
 
 input:focus {
     border-color: rgb(51, 122, 183);
     outline: none;
     box-shadow: 0 0 5px rgba(51, 122, 183, 0.5);
 }
-
+.container {
+    max-width: 500px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 12px;
+}
 .fs-small{
     font-size: 12px;
 }
@@ -52,6 +67,7 @@ input:focus {
 .categoryName{
     padding: 8px;
 }
+
 
 .card {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -90,37 +106,14 @@ select:focus {
     box-shadow: 0 0 5px rgba(51, 122, 183, 0.5);
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
 .nav-link{
     cursor: pointer;
-}
-.fldName{
-    display: inline-block;
-    width: 95px;
-    font-weight: 600;
-}
-.card-text{
-    font-size: 13px;
-}
-.cursor-pointer{
-    cursor: pointer;
-}
-.cursor-pointer:hover{
-    transform: scale(1.05);
-    transition: transform 0.2s;
-}
-.carousel-image{
-    height: 15vh;
-}
-.carousel-imageDiv{
-    /* height: 50vh; */
-    width: 9vw;
-    margin-bottom: 15px;
-    margin-inline: 12px;
-}
-#displayProductImage{
-    width: 46vw;
-    flex-wrap: wrap;
-}
-.fs-12px{
-    font-size: 12px;
 }

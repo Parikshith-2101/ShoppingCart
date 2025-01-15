@@ -121,39 +121,19 @@
                         <!---imageModal--->
 
                         <div class="modal fade" id="productImageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
+                            <div class="modal-dialog modal-lg w-50">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="imageModalLabel">Image Carousel</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">                                      
-                                        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-                                            <div class="carousel-inner">
-                                                <div class="carousel-item active">
-                                                    <img src="../assets/images/productImages/jackie.webp" class="d-block w-100" alt="as">
-                                                </div>
-                                                <div class="carousel-item">
-                                                    <img src="../assets/images/productImages/modi.jpg" class="d-block w-100" alt="as">
-                                                </div>
-                                                <div class="carousel-item">
-                                                    <img src="../assets/images/productImages/photofemale1.jpg" class="d-block w-100" alt="as">
-                                                </div>
-                                            </div>
-                                            <!-- Carousel Controls -->
-                                            <button class="carousel-control-prev" type="button" data-bs-target="##carouselExample"
-                                                data-bs-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Previous</span>
-                                            </button>
-                                            <button class="carousel-control-next" type="button" data-bs-target="##carouselExample"
-                                                data-bs-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="visually-hidden">Next</span>
-                                            </button>
+                                        <div id="displayProductImage" class="d-flex justify-content-evenly">
+
                                         </div>
                                     </div>
                                     <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" onclick="location.reload()">Save Changes</button>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
@@ -185,15 +165,15 @@
                             <cfloop query="qryProductData">
                                 <div class="card shadow-lg mb-3" id="#qryProductData.fldProduct_Id#">
                                     <div class="d-flex align-items-center p-3">
-                                        <div class="me-4 d-flex flex-column align-items-center cursor-pointer" onclick="editImage()">
+                                        <div class="me-4 d-flex flex-column align-items-center cursor-pointer" onclick="editImage(#qryProductData.fldProduct_Id#)">
                                             <img src="../assets/images/productImages/#qryProductData.fldImageFilePath#" width="80" class="rounded">
                                         </div>
                                         <div class="flex-grow-1">
                                             <h3 class="card-title mb-1">#qryProductData.fldProductName#</h3>
-                                            <p class="card-text mb-1"><span class = "fldName">Brand</span>: #qryProductData.fldBrandName#</p>
-                                            <p class="card-text mb-1"><span class = "fldName">Description</span>: #qryProductData.fldDescription#</p>
-                                            <p class="card-text mb-1"><span class = "fldName">Price</span>: Rs.#qryProductData.fldUnitPrice#</p>
-                                            <p class="card-text mb-1"><span class = "fldName">Tax</span>: Rs.#qryProductData.fldUnitTax#</p>
+                                            <p class="card-text mb-1"><span class="fldName">Brand</span>: #qryProductData.fldBrandName#</p>
+                                            <p class="card-text mb-1"><span class="fldName">Description</span>: #qryProductData.fldDescription#</p>
+                                            <p class="card-text mb-1"><span class="fldName">Price</span>: Rs.#qryProductData.fldUnitPrice#</p>
+                                            <p class="card-text mb-1"><span class="fldName">Tax</span>: Rs.#qryProductData.fldUnitTax#</p>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <button onclick="editProduct(#qryProductData.fldProduct_Id#,#url.subCategoryId#,#url.categoryId#)" class="btn btn-outline-info mx-1" title="Edit">
