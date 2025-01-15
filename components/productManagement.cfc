@@ -326,7 +326,6 @@
                     <cfset local.result['resultMsg'] = "ProductName Already Exists">
                 <cfelse>
                     <!---edit--->
-                    <cftry>
                     <cfquery name = "qryEditProduct">  
                         UPDATE 
                             tblproduct
@@ -436,12 +435,12 @@
                     </cfquery>
                     <cfset local.result['errorStatus'] = "true">
                     <cfset local.result['resultMsg'] = "ProductName Added Succesfully">
-                    <cfcatch type="exception">
-                        <cfset local.result['errorStatus'] = "false">
-                        <cfset local.result['resultMsg'] = "Error adding images: #cfcatch.message#">
-                    </cfcatch>
-                </cftry>        
-            </cfif>
+                </cfif>
+                <cfcatch type="exception">
+                    <cfset local.result['errorStatus'] = "false">
+                    <cfset local.result['resultMsg'] = "Error adding images: #cfcatch.message#">
+                </cfcatch>
+            </cftry>        
         </cfif>
         <cfreturn local.result>
     </cffunction>
