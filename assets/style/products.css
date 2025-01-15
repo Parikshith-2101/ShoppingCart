@@ -108,3 +108,9 @@ select:focus {
     transform: scale(1.05);
     transition: transform 0.2s;
 }
+.carousel-image{
+    height: 30vh;
+}
+.carousel-imageDiv{
+    height: 50vh;
+}
