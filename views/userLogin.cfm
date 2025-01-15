@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adminLogin</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/style/adminLogin.css">
+    <link rel="stylesheet" href="../assets/style/userLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
             integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -21,9 +21,9 @@
             </a>
             <ul class = "d-flex list-unstyled my-0">
                 <li class = "nav-item">
-                    <a class = "nav-link" href = "##">
+                    <a class = "nav-link" href = "userSignup.cfm">
                         <i class="fa-solid fa-user-plus"></i>
-                        <span>Admin Panel</span>
+                        <span>SignUp</span>
                     </a>
                 </li>
             </ul>
@@ -42,7 +42,7 @@
                                 <input type="password" id="password" class="border-0 border-bottom w-100" placeholder="Password">
                                 <div id = "password-error" class="text-danger fw-bold"></div>
                             </div>
-                            <button type="button" onclick="adminLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
+                            <button type="button" onclick="userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
                         </form>
                         <div id="resultMsg" class="fw-bold"></div>
                     </div>
@@ -52,6 +52,6 @@
     
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/adminLogin.js"></script>
+    <script src="../assets/script/userLogin.js"></script>
 </body>
 </html>

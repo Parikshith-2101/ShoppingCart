@@ -1,8 +1,8 @@
 <cfcomponent>
     <!---Category--->
     <cffunction name = "qryCategoryData" access = "public" returnType = "query">
-        <cfargument name = "categoryId" required = "no">
-        <cfargument name = "categoryName" required = "no">
+        <cfargument name = "categoryId" required = "no" type = "integer">
+        <cfargument name = "categoryName" required = "no" type = "string">
         <cfquery name = "local.fetchCategoryData">
             SELECT 
                 fldCategory_Id,
@@ -10,7 +10,7 @@
             FROM
                 tblcategory
             WHERE           
-                fldActive = <cfqueryparam value = "1" cfsqltype = "integer">
+                fldActive = 1
                 <cfif structKeyExists(arguments, "categoryId") AND len(trim(arguments.categoryId))>
                     AND fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
                 </cfif>
@@ -22,21 +22,23 @@
     </cffunction>
 
     <cffunction name = "addCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
-        <cfargument name = "categoryName">
+        <cfargument name = "categoryName" required = "yes" type = "string">
         <cftry>                
-            <cfset local.fetchCategoryData = qryCategoryData(categoryName = arguments.categoryName)>
+            <cfset local.fetchCategoryData = qryCategoryData(
+                categoryName = arguments.categoryName
+            )>
             <cfif local.fetchCategoryData.RecordCount>
                 <cfset local.result['resultMsg'] = "Catergory Already Exists">
                 <cfset local.result['errorStatus'] = "false">
             <cfelse>
-                <cfquery name = "local.qryAddCategory" result = "local.categoryId">
+                <cfquery result = "local.categoryId">
                     INSERT INTO tblcategory(
                         fldCategoryName,
                         fldCreatedBy
                     ) 
                     VALUES(
                         <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">,
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "varchar">
+                        <cfqueryparam value = "#session.adminUserId#" cfsqltype = "varchar">
                     );
                 </cfquery>
                 <cfset local.result['resultMsg'] = "Catergory Created">
@@ -51,7 +53,7 @@
     </cffunction>
 
     <cffunction name = "viewCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "categoryId">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
         <cfset local.categoryData = qryCategoryData(arguments.categoryId)>
         <cfset local.category['categoryName'] = local.categoryData.fldCategoryName>
         <cfset local.category['categoryId'] = local.categoryData.fldCategory_Id>
@@ -59,14 +61,16 @@
     </cffunction>
 
     <cffunction name = "editCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "categoryId"> 
-        <cfargument name = "categoryName"> 
+        <cfargument name = "categoryId" required = "yes" type = "integer"> 
+        <cfargument name = "categoryName" required = "yes" type = "string"> 
         <cftry>  
             <cfset local.categoryNameCheck = qryCategoryData(
                 categoryId = arguments.categoryId,
                 categoryName = arguments.categoryName
             )>
-            <cfset local.categoryData = qryCategoryData(categoryName = arguments.categoryName)>
+            <cfset local.categoryData = qryCategoryData(
+                categoryName = arguments.categoryName
+            )>
             <cfif local.categoryNameCheck.RecordCount>
                 <cfset local.output['resultMsg'] = "">
                 <cfset local.output['errorStatus'] = "nill">
@@ -74,15 +78,15 @@
                 <cfset local.output['resultMsg'] = "Category Already Exists">
                 <cfset local.output['errorStatus'] = "false">
             <cfelse>
-                <cfquery name = "local.qryEditCategory">
+                <cfquery>
                     UPDATE 
                         tblcategory
                     SET 
                         fldCategoryName = <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">,
-                        fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                     WHERE
                         fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
-                        AND fldActive = <cfqueryparam value = "1" cfsqltype = "integer">;
+                        AND fldActive = 1;
                 </cfquery>
                 <cfset local.output['resultMsg'] = "Category Edited SuccessFully">
                 <cfset local.output['errorStatus'] = "true">
@@ -96,23 +100,24 @@
     </cffunction>
 
     <cffunction name = "deleteCategory" access = "remote" returnType = "void">
-        <cfargument name = "categoryId">
-        <cfquery name = "local.qryDeleteCategory">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfquery>
             UPDATE 
                 tblcategory
             SET 
-                fldActive = <cfqueryparam value = "0" cfsqltype = "integer">,
-                fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                fldActive = 0,
+                fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
             WHERE
-                fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">;
+                fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
     </cffunction>
 
     <!---SubCategory--->
     <cffunction name = "qrySubCategoryData" access = "remote" returnType = "query" returnFormat = "JSON">
-        <cfargument name = "subCategoryId" required = "no">
-        <cfargument name = "subCategoryName" required = "no">
-        <cfargument name = "categoryId" required = "no">
+        <cfargument name = "subCategoryId" required = "no" type = "integer">
+        <cfargument name = "subCategoryName" required = "no" type = "string">
+        <cfargument name = "categoryId" required = "no" type = "integer">
         <cfquery name = "local.qrySubCategoryData">
             SELECT 
                 fldSubCategory_Id,
@@ -122,7 +127,7 @@
                 tblsubcategory
             WHERE
                 fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
-                AND fldActive = <cfqueryparam value = "1" cfsqltype = "integer">
+                AND fldActive = 1
                 <cfif structKeyExists(arguments, "subCategoryId") AND len(trim(arguments.subCategoryId))>
                     AND fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                 </cfif>
@@ -134,8 +139,8 @@
     </cffunction>
 
     <cffunction name = "addSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
-        <cfargument name = "subCategoryName">
-        <cfargument name = "categoryId">
+        <cfargument name = "subCategoryName" required = "yes" type = "string">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
         <cftry>
             <cfset local.fetchSubCategoryData = qrySubCategoryData(
                 subCategoryId = arguments.subCategoryId,
@@ -145,7 +150,7 @@
                 <cfset local.result['resultMsg'] = "SubCatergory Already Exists">
                 <cfset local.result['errorStatus'] = "false">
             <cfelse>
-                <cfquery name = "local.qryAddSubCategory" result = "local.subCategoryId">
+                <cfquery result = "local.subCategoryId">
                     INSERT INTO tblsubcategory(
                         fldSubCategoryName,
                         fldCategoryId,
@@ -154,7 +159,7 @@
                     VALUES(
                         <cfqueryparam value = "#arguments.SubCategoryName#" cfsqltype = "varchar">,
                         <cfqueryparam value = "#arguments.CategoryId#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                     );
                 </cfquery>
                 <cfset local.result['resultMsg'] = "SubCatergory Created">
@@ -169,8 +174,8 @@
     </cffunction>
 
     <cffunction name = "viewSubCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "subCategoryId">
-        <cfargument name = "categoryId">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
         <cfset local.subCategoryData = qrySubCategoryData(
             subCategoryId = arguments.subCategoryId,
             categoryId = arguments.categoryId
@@ -182,10 +187,10 @@
     </cffunction> 
 
     <cffunction name = "editSubCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "subCategoryId"> 
-        <cfargument name = "subCategoryName">
-        <cfargument name = "categoryId">
-        <cfargument name = "newCategoryId">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer"> 
+        <cfargument name = "subCategoryName" required = "yes" type = "string">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfargument name = "newCategoryId" required = "yes" type = "integer">
         <cftry>
             <cfset local.subCategoryNameCheck = qrySubCategoryData(
                 subCategoryName = arguments.subCategoryName,
@@ -204,17 +209,17 @@
                 <cfset local.output['resultMsg'] = "Category Already Exists">
                 <cfset local.output['errorStatus'] = "false">
             <cfelse>
-                <cfquery name = "local.qryEditSubCategory">
+                <cfquery>
                     UPDATE 
                         tblsubcategory
                     SET 
                         fldSubCategoryName = <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "varchar">,
                         fldCategoryId = <cfqueryparam value = "#arguments.newCategoryId#" cfsqltype = "integer">,
-                        fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                     WHERE
                         fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                         AND fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
-                        AND fldActive = <cfqueryparam value = "1" cfsqltype = "integer">;
+                        AND fldActive = 1;
                 </cfquery>
                 <cfset local.output['resultMsg'] = "Category Edited SuccessFully">
                 <cfset local.output['errorStatus'] = "true">
@@ -228,21 +233,22 @@
     </cffunction>
 
     <cffunction name = "deleteSubCategory" access = "remote" returnType = "void">
-        <cfargument name = "subCategoryId">
-        <cfargument  name = "categoryId">
-        <cfquery name = "local.qryDeleteCategory">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfquery>
             UPDATE 
                 tblsubcategory
             SET 
-                fldActive = <cfqueryparam value = "0" cfsqltype = "integer">,
-                fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                fldActive = 0,
+                fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
             WHERE
                 fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
-                AND fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">;
+                AND fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
     </cffunction>
 
-    <cffunction name = "qryBrandData" returnType = "query">
+    <cffunction name = "qryBrandData" access = "public" returnType = "query">
         <cfquery name = "local.qryBrand">
             SELECT 
                 fldBrand_Id,
@@ -255,65 +261,65 @@
         <cfreturn local.qryBrand>
     </cffunction>
 
-    <cffunction name = "qryProductData" returnType = "query">
-        <cfargument name = "productName" required = "no">
-        <cfargument name = "subCategoryId" required = "no">     
-        <cfargument name = "productId" required = "no">     
+    <cffunction name = "qryProductData" access = "public" returnType = "query">
+        <cfargument name = "productName" required = "no" type = "string">
+        <cfargument name = "subCategoryId" required = "no" type = "integer">     
+        <cfargument name = "productId" required = "no" type = "integer">     
         <cfquery name = "local.qryProduct">
             SELECT 
-                p.fldProduct_Id,
-                p.fldProductName,
-                p.fldSubcategoryId,
-                p.fldBrandId,
-                b.fldBrandName,
-                p.fldDescription,
-                p.fldUnitPrice,
-                p.fldUnitTax,
-                pi.fldImageFilePath,
-                pi.fldDefaultImage
+                P.fldProduct_Id,
+                P.fldProductName,
+                P.fldSubcategoryId,
+                P.fldBrandId,
+                B.fldBrandName,
+                P.fldDescription,
+                P.fldUnitPrice,
+                P.fldUnitTax,
+                PI.fldImageFilePath,
+                PI.fldDefaultImage
             FROM
                 tblproduct p
             LEFT JOIN
-                tblproductimages pi ON p.fldProduct_Id = pi.fldProductId
+                tblproductimages pi ON P.fldProduct_Id = PI.fldProductId
             LEFT JOIN
-                tblbrand b ON p.fldBrandId = b.fldBrand_Id 
+                tblbrand b ON P.fldBrandId = B.fldBrand_Id 
             WHERE
-                p.fldActive = <cfqueryparam value = "1" cfsqltype = "integer">
-                AND pi.fldDefaultImage = <cfqueryparam value = "1" cfsqltype = "integer">
+                PI.fldDefaultImage = 1
+                AND P.fldActive = 1
                 <cfif structKeyExists(arguments, "subCategoryId") AND len(trim(arguments.subCategoryId))>
-                    AND p.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                    AND P.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                 </cfif>
                 <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
-                    AND p.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
+                    AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
                 </cfif>
                 <cfif structKeyExists(arguments, "productId") AND len(trim(arguments.productId))>
-                    AND p.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
                 </cfif>
             GROUP BY
-                p.fldProduct_Id,
-                p.fldProductName,
-                p.fldSubcategoryId,
-                p.fldBrandId,
-                b.fldBrandName,
-                p.fldDescription,
-                p.fldUnitPrice,
-                p.fldUnitTax,
-                pi.fldImageFilePath,
-                pi.fldDefaultImage;             
+                P.fldProduct_Id,
+                P.fldProductName,
+                P.fldSubcategoryId,
+                P.fldBrandId,
+                B.fldBrandName,
+                P.fldDescription,
+                P.fldUnitPrice,
+                P.fldUnitTax,
+                PI.fldImageFilePath,
+                PI.fldDefaultImage;             
         </cfquery>
         <cfreturn local.qryProduct>
     </cffunction>
 
     <cffunction name = "addProduct" access = "public" returnType = "struct">
-        <cfargument name = "categoryId">
-        <cfargument name = "subCategoryId">
-        <cfargument name = "productName">
-        <cfargument name = "productBrandId">
-        <cfargument name = "productDesc">
-        <cfargument name = "productPrice">
-        <cfargument name = "productTax">
-        <cfargument name = "productImage">
-        <cfargument name = "productId">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer">
+        <cfargument name = "productName" required = "yes" type = "string">
+        <cfargument name = "productBrandId" required = "yes" type = "integer">
+        <cfargument name = "productDesc" required = "yes" type = "string">
+        <cfargument name = "productPrice" required = "yes" type = "numeric">
+        <cfargument name = "productTax" required = "yes" type = "numeric">
+        <cfargument name = "productImage" required = "yes" type = "array">
+        <cfargument name = "productId" required = "no" type = "integer">
        
         <cfif len(trim(arguments.productId))>
             <cfset local.qryFetchProduct = qryProductData(
@@ -326,7 +332,7 @@
                     <cfset local.result['resultMsg'] = "ProductName Already Exists">
                 <cfelse>
                     <!---edit--->
-                    <cfquery name = "qryEditProduct">  
+                    <cfquery>  
                         UPDATE 
                             tblproduct
                         SET
@@ -339,6 +345,7 @@
                         WHERE
                             fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
                             AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                            AND fldActive = 1
                     </cfquery>
                     <cfif len(trim(arguments.productImage))>
                         <cffile
@@ -348,7 +355,7 @@
                             strict = "true"
                             result = "local.imageUploadedResult"
                         >
-                        <cfquery name = "qryAddImages">
+                        <cfquery>
                             INSERT INTO tblproductimages(
                                 fldProductId,
                                 fldImageFilePath,
@@ -359,7 +366,7 @@
                                 (
                                     <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
                                     <cfqueryparam value = "#imagesArr.SERVERFILE#" cfsqltype = "varchar">,
-                                    <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                                    <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                                 )
                                 <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
                             </cfloop>;
@@ -391,7 +398,7 @@
                         strict = "true"
                         result = "local.imageUploadedResult"
                     >
-                    <cfquery name = "local.qryInsertProduct" result = "local.resultProductId">
+                    <cfquery result = "local.resultProductId">
                         INSERT INTO tblproduct(
                             fldSubCategoryId,
                             fldProductName,
@@ -408,10 +415,10 @@
                             <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
                             <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
                             <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                            <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                         );
                     </cfquery>
-                    <cfquery name = "insertProductImages">
+                    <cfquery>
                         INSERT INTO tblproductimages(
                             fldProductId,
                             fldImageFilePath,
@@ -428,7 +435,7 @@
                                 <cfelse>
                                     <cfqueryparam value = 0 cfsqltype = "integer">
                                 </cfif>,
-                                <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                                <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                             )
                             <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
                         </cfloop>;
@@ -436,7 +443,7 @@
                     <cfset local.result['errorStatus'] = "true">
                     <cfset local.result['resultMsg'] = "ProductName Added Succesfully">
                 </cfif>
-                <cfcatch type="exception">
+                <cfcatch type = "exception">
                     <cfset local.result['errorStatus'] = "false">
                     <cfset local.result['resultMsg'] = "Error adding images: #cfcatch.message#">
                 </cfcatch>
@@ -446,8 +453,8 @@
     </cffunction>
 
     <cffunction name = "viewProduct" access = "remote" returnType = "struct" returnFormat = "JSON">
-        <cfargument name = "productId">
-        <cfargument name = "subCategoryId">
+        <cfargument name = "productId" required = "yes" type = "integer">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer">
         <cfset local.productData = qryProductData(
             productId = productId,
             subCategoryId = subCategoryId
@@ -462,32 +469,34 @@
     </cffunction>
 
     <cffunction name = "deleteProduct" access = "remote" returnType = "void">
-        <cfargument name = "productId">
-        <cfargument name = "subCategoryId">
-        <cfquery name = "local.qryDeactivateProduct"> 
+        <cfargument name = "productId" required = "yes" type = "integer">
+        <cfargument name = "subCategoryId" required = "yes" type = "integer">
+        <cfquery> 
             UPDATE  
                 tblproduct
             SET
-                fldActive = <cfqueryparam value = "0" cfsqltype = "integer">,
-                fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                fldActive = 0,
+                fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
             WHERE
                 fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">;
+                AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
-        <cfquery name = "local.qryDeactivateProductImages">
+        <cfquery>
             UPDATE 
                 tblproductimages
             SET
-                fldActive = <cfqueryparam value = "0" cfsqltype = "integer">,
-                fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                fldActive = 0,
+                fldDeactivatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">,
                 fldDeactivatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
             WHERE
-                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">;
+                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
     </cffunction>
 
     <cffunction name = "qryProductImage" access = "remote" returnFormat = "JSON" returnType = "query">
-        <cfargument name = "productId">
+        <cfargument name = "productId" required = "yes" type = "integer">
         <cfquery name = "local.qryProductImage">
             SELECT
                 fldProductImage_Id,
@@ -497,45 +506,48 @@
             FROM
                 tblproductimages
             WHERE
-                fldActive = <cfqueryparam value = "1" cfsqltype = "integer">
+                fldActive = 1
                 AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
         </cfquery>
         <cfreturn local.qryProductImage>
     </cffunction>
 
-    <cffunction name = "setDefaultProductImage" access = "remote">
-        <cfargument name = "productImageId">
-        <cfargument name = "productId">
-        <cfquery name = "local.removeDefault">
+    <cffunction name = "setDefaultProductImage" access = "remote" returnType = "void">
+        <cfargument name = "productImageId" required = "yes" type = "integer">
+        <cfargument name = "productId" required = "yes" type = "integer">
+        <cfquery>
             UPDATE
                 tblproductimages
             SET
-                fldDefaultImage = <cfqueryparam value = "0" cfsqltype = "integer">
+                fldDefaultImage = 0
             WHERE
                 fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
-        <cfquery name = "local.setDefault">
+        <cfquery>
             UPDATE
                 tblproductimages
             SET
-                fldDefaultImage = <cfqueryparam value = "1" cfsqltype = "integer">
+                fldDefaultImage = 1
             WHERE
                 fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
-                AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">;
+                AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
     </cffunction>
 
     <cffunction name = "deleteProductImage" access = "remote">
-        <cfargument name = "productImageId">
-        <cfquery name = "local.deleteProductImage">
+        <cfargument name = "productImageId" required = "yes" type = "integer">
+        <cfquery>
             UPDATE
                 tblproductimages
             SET
-                fldActive = <cfqueryparam value = "0" cfsqltype = "integer">,
-                fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                fldActive = 0,
+                fldDeactivatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">,
                 fldDeactivatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
             WHERE
-                fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">;
+                fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
+                AND fldActive = 1;
         </cfquery>
     </cffunction>
 </cfcomponent>

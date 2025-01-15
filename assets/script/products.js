@@ -162,24 +162,24 @@ function editImage(thisProductId){
                 let active = "";
                 let checkbox = `
                         <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex btn btn-outline-success p-0 px-1">
-                                <label class="text-nowrap me-1">Set Default</label>
+                            <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px">
+                                <label class="text-nowrap me-1">Set</label>
                                 <input type="radio" class="m-0 btn" name="productImageCheck" onclick="setDefaultImage(${serverData[i][0]},${serverData[i][1]})">
                             </div>
-                            <button class="btn btn-outline-danger py-0 px-1" onclick="deleteImage(${serverData[i][0]})">Del</button>
+                            <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage(${serverData[i][0]})">Delete</button>
                         </div>
                     `;
                 if(serverData[i][3] === 1){
                     active = "active";
                     checkbox = `
-                        <div class="d-flex align-items-center p-0 px-1 btn border">
-                            <div class="text-nowrap">Current Thumbnail</div>
+                        <div class="d-flex align-items-center p-0 btn border fs-12px">
+                            <div class="text-nowrap ps-1">Current Thumbnail</div>
                             <input type="radio" name="productImageCheck" class="m-0" checked>
                         </div>
                     `;
                 }
                 const carouselItem = `
-                    <div class="${active} w-25 carousel-imageDiv" id="${serverData[i][0]}">
+                    <div class="${active} carousel-imageDiv" id="${serverData[i][0]}">
                         <img src="../assets/images/productImages/${serverData[i][2]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
