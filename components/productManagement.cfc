@@ -32,7 +32,7 @@
                 <cfquery name = "local.qryAddCategory" result = "local.categoryId">
                     INSERT INTO tblcategory(
                         fldCategoryName,
-                        fldCrehhatedBy
+                        fldCreatedBy
                     ) 
                     VALUES(
                         <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">,
