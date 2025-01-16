@@ -15,7 +15,8 @@
 <body>
     <cfoutput>
         <cfset subCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
-        <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
+        <cfset getCategoriesData = application.productManagementObj.getCategory()>
+<!---         <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)> --->
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -23,6 +24,7 @@
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
             <ul class="d-flex list-unstyled my-0">
                 <li class="nav-item">
                     <a class="nav-link" id="logoutCategory">
@@ -57,8 +59,8 @@
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
-                                                    <cfloop query="qryCategoriesData">
-                                                        <option value="#qryCategoriesData.fldCategory_Id#">#qryCategoriesData.fldCategoryName#</option>
+                                                    <cfloop index="i" from="1" to="#arrayLen(getCategoriesData.categoryId)#">
+                                                        <option value="#getCategoriesData.categoryId[i]#">#getCategoriesData.categoryName[i]#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
@@ -81,7 +83,7 @@
 
                         <div class="d-flex flex-column w-100 mt-3">
                             
-                            <cfloop query = "subCategoryData">
+                           <cfloop query = "subCategoryData">
 
                                 <div class="card shadow-lg" id = "#subCategoryData.fldSubCategory_Id#">
                                     <div class="d-flex align-items-center">
@@ -103,6 +105,9 @@
                                 </div>
                                 
                             </cfloop>
+                            <!---<cfdump  var="#getSubCategoriesData#">
+                            <cfloop index="i" from="1" to="#arraylen(getSubCategoriesData.subCategoryId)#">
+                            </cfloop>  --->
                         </div>
                     </div>
                 </div>

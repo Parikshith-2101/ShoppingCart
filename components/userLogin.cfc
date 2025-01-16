@@ -1,56 +1,53 @@
 <cfcomponent>
-    <cffunction name = "adminLogin" access = "remote" returnFormat = "JSON" returnType = "Struct">
+    <cffunction name = "adminLogin" access = "remote" returnFormat = "JSON" returnType = "struct">
         <cfargument name = "userName" required = "yes" type = "string">
         <cfargument name = "password" required = "yes" type = "string">
-        <cfset local.loginResult = structNew()>
+        <cfset local.loginResult = {
+            'message' : "Invalid User",
+            'error' :  "false"
+        }>
         <cftry>
-
-            <cfquery name = "local.getSaltString">
+            <cfquery name = "local.qryFetchData" datasource = "shoppingCart">
                 SELECT 
+                    fldUser_Id,
+                    fldRoleId,
+                    fldFirstName,
+                    fldLastName,
+                    fldEmail,
+                    fldPhone,
+                    fldHashedPassword,
                     fldUserSaltString
                 FROM 
-                    tbluser
+                    tbluser                   
                 WHERE
-                    (fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
-                    OR fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">)
+                    fldRoleId = 1
+                    AND fldActive = 1
+                    AND (fldEmail = <cfqueryparam value="#arguments.userName#" cfsqltype="varchar">
+                        OR fldPhone = <cfqueryparam value="#arguments.userName#" cfsqltype="varchar">);                
             </cfquery>
-            <cfset local.pwd = arguments.password & local.getSaltString.fldUserSaltString>
-            <cfset local.encrypted_pass = Hash(local.pwd, 'SHA-512')/>
-            <cfquery name = "local.qryFetchData">
-                SELECT 
-                    U.fldUser_Id,
-                    U.fldRoleId,
-                    U.fldFirstName,
-                    U.fldLastName,
-                    U.fldEmail,
-                    U.fldPhone,
-                    U.fldHashedPassword,
-                    U.fldUserSaltString,
-                    R.fldRoleName
-                FROM 
-                    tbluser u
-                    INNER JOIN tblrole r ON U.fldRoleId = R.fldRole_Id
-                WHERE
-                    (U.fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
-                    OR U.fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">)
-                    AND U.fldHashedPassword = <cfqueryparam value = "#local.encrypted_pass#" cfsqltype = "varchar">
-                    AND U.fldActive = <cfqueryparam value = "1" cfsqltype = "integer">
-                    AND R.fldRoleName = <cfqueryparam value = "admin" cfsqltype = "varchar">
-            </cfquery>
-            <cfif local.qryFetchData.RecordCount>
+            <cfset local.pwd = arguments.password & local.qryFetchData.fldUserSaltString>
+            <cfset local.encrypted_pass = Hash(local.pwd, 'SHA-512')>
+            <cfif local.qryFetchData.RecordCount AND (local.qryFetchData.fldHashedPassword EQ local.encrypted_pass)>
                 <cfset session.adminUserId = local.qryFetchData.fldUser_Id>
+                <cfset session.roleId = local.qryFetchData.fldRoleId>
                 <cfset session.email = local.qryFetchData.fldEmail>
                 <cfset session.firstName = local.qryFetchData.fldFirstName>
                 <cfset session.lastName = local.qryFetchData.fldLastName>
-                <cfset local.loginResult['resultMsg'] = "Login SuccessFull">
-                <cfset local.loginResult['errorStatus'] = "true">
-            <cfelse>
-                <cfset local.loginResult['resultMsg'] = "Invalid User">
-                <cfset local.loginResult['errorStatus'] = "false">
+                <cfset local.loginResult['message'] = "Login Successful">
+                <cfset local.loginResult['error'] = "true">
             </cfif>
             <cfcatch type = "exception">          
-                <cfset local.loginResult['resultMsg'] = "An error occurred: #cfcatch.message#">
-                <cfset local.loginResult['errorStatus'] = "false">
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfmail 
+                    from = "parikshith2101@gmail.com" 
+                    to = "parikshith2k23@gmail.com" 
+                    subject = "Error in Function: #local.currentFunction#"
+                >
+                    <h3>An error occurred in function: #functionName#</h3>
+                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
+                </cfmail>
+                <cfset local.loginResult['message'] = "An error occurred: #cfcatch.message#">
+                <cfset local.loginResult['error'] = "false">
             </cfcatch>
         </cftry>
         <cfreturn local.loginResult>

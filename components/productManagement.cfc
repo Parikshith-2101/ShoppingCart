@@ -1,9 +1,13 @@
 <cfcomponent>
     <!---Category--->
-    <cffunction name = "qryCategoryData" access = "public" returnType = "query">
+    <cffunction name = "getCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryId" required = "no" type = "integer">
         <cfargument name = "categoryName" required = "no" type = "string">
-        <cfquery name = "local.fetchCategoryData">
+        <cfset local.categoryResult = {
+            'categoryId' : [],
+            'categoryName' : []
+        }>
+        <cfquery name = "local.qryCategoryData" dataSource = "shoppingCart">
             SELECT 
                 fldCategory_Id,
                 fldCategoryName
@@ -11,27 +15,35 @@
                 tblcategory
             WHERE           
                 fldActive = 1
-                <cfif structKeyExists(arguments, "categoryId") AND len(trim(arguments.categoryId))>
+                <cfif structKeyExists(arguments, "categoryId")>
                     AND fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
                 </cfif>
                 <cfif structKeyExists(arguments, "categoryName") AND len(trim(arguments.categoryName))>
                     AND fldCategoryName = <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">
                 </cfif>;
         </cfquery>
-        <cfreturn local.fetchCategoryData>
+        <cfloop query = "local.qryCategoryData">
+            <cfset arrayAppend(local.categoryResult['categoryId'], local.qryCategoryData.fldCategory_Id)>
+            <cfset arrayAppend(local.categoryResult['categoryName'], local.qryCategoryData.fldCategoryName)>
+        </cfloop>
+        <cfreturn local.categoryResult>
     </cffunction>
 
     <cffunction name = "addCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryName" required = "yes" type = "string">
+        <cfset local.result = {
+            'message' : "",
+            'error' : "false"
+        }>
         <cftry>                
-            <cfset local.fetchCategoryData = qryCategoryData(
+            <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>
-            <cfif local.fetchCategoryData.RecordCount>
-                <cfset local.result['resultMsg'] = "Catergory Already Exists">
-                <cfset local.result['errorStatus'] = "false">
+            <cfif arrayLen(local.fetchCategoryData.categoryId)>
+                <cfset local.result['message'] = "Catergory Already Exists">
+                <cfset local.result['error'] = "false">
             <cfelse>
-                <cfquery result = "local.categoryId">
+                <cfquery result = "local.categoryId" dataSource = "shoppingCart">
                     INSERT INTO tblcategory(
                         fldCategoryName,
                         fldCreatedBy
@@ -41,42 +53,33 @@
                         <cfqueryparam value = "#session.adminUserId#" cfsqltype = "varchar">
                     );
                 </cfquery>
-                <cfset local.result['resultMsg'] = "Catergory Created">
-                <cfset local.result['errorStatus'] = "true">
+                <cfset local.result['message'] = "Catergory Created">
+                <cfset local.result['error'] = "true">
             </cfif>
             <cfcatch type = "exception">
-                <cfset local.result['resultMsg'] = "Error: #cfcatch.message#">
-                <cfset local.result['errorStatus'] = "false">
+                <cfset local.result['message'] = "Error: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
             </cfcatch>
         </cftry>
         <cfreturn local.result>
     </cffunction>
 
-    <cffunction name = "viewCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "categoryId" required = "yes" type = "integer">
-        <cfset local.categoryData = qryCategoryData(arguments.categoryId)>
-        <cfset local.category['categoryName'] = local.categoryData.fldCategoryName>
-        <cfset local.category['categoryId'] = local.categoryData.fldCategory_Id>
-        <cfreturn local.category>
-    </cffunction>
-
-    <cffunction name = "editCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
+    <cffunction name = "editCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryId" required = "yes" type = "integer"> 
         <cfargument name = "categoryName" required = "yes" type = "string"> 
+        <cfset local.result = {
+            'message' : "",
+            'error' : "false",
+            'sameId' : "false"
+        }>
         <cftry>  
-            <cfset local.categoryNameCheck = qryCategoryData(
-                categoryId = arguments.categoryId,
+            <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>
-            <cfset local.categoryData = qryCategoryData(
-                categoryName = arguments.categoryName
-            )>
-            <cfif local.categoryNameCheck.RecordCount>
-                <cfset local.output['resultMsg'] = "">
-                <cfset local.output['errorStatus'] = "nill">
-            <cfelseif local.categoryData.RecordCount>
-                <cfset local.output['resultMsg'] = "Category Already Exists">
-                <cfset local.output['errorStatus'] = "false">
+            <cfif arrayLen(local.fetchCategoryData.categoryId) 
+                AND (ArrayContains(local.fetchCategoryData.categoryId, arguments.categoryId) EQ false)>
+                <cfset local.result['message'] = "Category Already Exists">
+                <cfset local.result['error'] = "false">
             <cfelse>
                 <cfquery>
                     UPDATE 
@@ -88,15 +91,16 @@
                         fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
                         AND fldActive = 1;
                 </cfquery>
-                <cfset local.output['resultMsg'] = "Category Edited SuccessFully">
-                <cfset local.output['errorStatus'] = "true">
+                <cfset local.result['message'] = "Category Edited SuccessFully">
+                <cfset local.result['error'] = "true">
+                <cfset local.result['sameId'] = ArrayContains(local.fetchCategoryData.categoryId, arguments.categoryId)>
             </cfif>
             <cfcatch type = "exception">
-                <cfset local.output['resultMsg'] = "Error: #cfcatch.message#">
-                <cfset local.output['errorStatus'] = "false">
+                <cfset local.result['message'] = "Error: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
             </cfcatch>
         </cftry>
-        <cfreturn local.output>
+        <cfreturn local.result>
     </cffunction>
 
     <cffunction name = "deleteCategory" access = "remote" returnType = "void">
@@ -118,7 +122,7 @@
         <cfargument name = "subCategoryId" required = "no" type = "integer">
         <cfargument name = "subCategoryName" required = "no" type = "string">
         <cfargument name = "categoryId" required = "no" type = "integer">
-        <cfquery name = "local.qrySubCategoryData">
+        <cfquery name = "local.qrySubCategoryData" dataSource = "shoppingCart">
             SELECT 
                 fldSubCategory_Id,
                 fldCategoryId,
@@ -138,19 +142,57 @@
         <cfreturn local.qrySubCategoryData>
     </cffunction>
 
+    <cffunction name = "getSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
+        <cfargument name = "subCategoryId" required = "no" type = "integer">
+        <cfargument name = "subCategoryName" required = "no" type = "string">
+        <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfset local.fetchSubCategoryData = {
+            'subCategoryId' : [],
+            'categoryId' : [],
+            'subCategoryName' : []
+        }>
+        <cfquery name = "local.qrySubCategoryData" dataSource = "shoppingCart">
+            SELECT 
+                fldSubCategory_Id,
+                fldCategoryId,
+                fldSubCategoryName
+            FROM
+                tblsubcategory
+            WHERE
+                fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
+                AND fldActive = 1
+                <cfif structKeyExists(arguments, "subCategoryId")>
+                    AND fldSubCategory_Id = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                </cfif>
+                <cfif structKeyExists(arguments, "subCategoryName") AND len(trim(arguments.subCategoryName))>
+                    AND fldSubCategoryName = <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "varchar">
+                </cfif>;
+        </cfquery>
+        <cfloop query = "local.qrySubCategoryData">
+            <cfset arrayAppend(local.fetchSubCategoryData['subCategoryId'], local.qrySubCategoryData.fldSubCategory_Id)>
+            <cfset arrayAppend(local.fetchSubCategoryData['categoryId'], local.qrySubCategoryData.fldCategoryId)>
+            <cfset arrayAppend(local.fetchSubCategoryData['subCategoryName'], local.qrySubCategoryData.fldSubCategoryName)>
+        </cfloop>
+        <cfreturn local.fetchSubCategoryData>
+    </cffunction>
+
     <cffunction name = "addSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "subCategoryName" required = "yes" type = "string">
         <cfargument name = "categoryId" required = "yes" type = "integer">
+        <cfset local.result = {
+            'message' : "",
+            'error' : "false"
+        }>
         <cftry>
-            <cfset local.fetchSubCategoryData = qrySubCategoryData(
+            <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryId = arguments.subCategoryId,
                 categoryId = arguments.categoryId
             )>
-            <cfif local.fetchSubCategoryData.RecordCount>
-                <cfset local.result['resultMsg'] = "SubCatergory Already Exists">
-                <cfset local.result['errorStatus'] = "false">
+            <cfif arrayLen(local.fetchSubCategoryData.subCategoryId)>
+                <cfset local.result['message'] = "SubCatergory Already Exists">
+                <cfset local.result['error'] = "false">
             <cfelse>
-                <cfquery result = "local.subCategoryId">
+                <cfquery result = "local.subCategoryId" dataSource = "shoppingCart">
                     INSERT INTO tblsubcategory(
                         fldSubCategoryName,
                         fldCategoryId,
@@ -162,52 +204,36 @@
                         <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                     );
                 </cfquery>
-                <cfset local.result['resultMsg'] = "SubCatergory Created">
-                <cfset local.result['errorStatus'] = "true">
+                <cfset local.result['message'] = "SubCatergory Created">
+                <cfset local.result['error'] = "true">
             </cfif>
             <cfcatch type = "exception">
-                <cfset local.result['resultMsg'] = "Error: #cfcatch.message#">
-                <cfset local.result['errorStatus'] = "false">
+                <cfset local.result['message'] = "Error: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
             </cfcatch>
         </cftry>
         <cfreturn local.result>
     </cffunction>
 
-    <cffunction name = "viewSubCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
-        <cfargument name = "subCategoryId" required = "yes" type = "integer">
-        <cfargument name = "categoryId" required = "yes" type = "integer">
-        <cfset local.subCategoryData = qrySubCategoryData(
-            subCategoryId = arguments.subCategoryId,
-            categoryId = arguments.categoryId
-        )>
-        <cfset local.subCategory['subCategoryName'] = local.subCategoryData.fldSubCategoryName>
-        <cfset local.subCategory['subCategoryId'] = local.subCategoryData.fldSubCategory_Id>
-        <cfset local.subCategory['categoryId'] = local.subCategoryData.fldcategoryId>
-        <cfreturn local.subCategory>
-    </cffunction> 
-
-    <cffunction name = "editSubCategory" access = "remote" returnType = "Struct" returnFormat = "JSON">
+    <cffunction name = "editSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "subCategoryId" required = "yes" type = "integer"> 
         <cfargument name = "subCategoryName" required = "yes" type = "string">
         <cfargument name = "categoryId" required = "yes" type = "integer">
         <cfargument name = "newCategoryId" required = "yes" type = "integer">
+        <cfset local.result = {
+            'message' : "",
+            'error' : "false",
+            'sameId' : "false"
+        }>
         <cftry>
-            <cfset local.subCategoryNameCheck = qrySubCategoryData(
-                subCategoryName = arguments.subCategoryName,
-                subCategoryId = arguments.subCategoryId,
-                categoryId = arguments.newCategoryId
-            )>
-            <cfset local.subCategoryData = qrySubCategoryData(
+            <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.newCategoryId
             )>
-
-            <cfif local.subCategoryNameCheck.RecordCount>
-                <cfset local.output['resultMsg'] = "">
-                <cfset local.output['errorStatus'] = "nill">
-            <cfelseif local.subCategoryData.RecordCount>
-                <cfset local.output['resultMsg'] = "Category Already Exists">
-                <cfset local.output['errorStatus'] = "false">
+            <cfif arrayLen(local.fetchSubCategoryData.subCategoryId)
+                AND (ArrayContains(local.fetchSubCategoryData.subCategoryId, arguments.subCategoryId) EQ false)>
+                <cfset local.result['message'] = "Category Already Exists">
+                <cfset local.result['error'] = "false">
             <cfelse>
                 <cfquery>
                     UPDATE 
@@ -221,15 +247,16 @@
                         AND fldCategoryId = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
                         AND fldActive = 1;
                 </cfquery>
-                <cfset local.output['resultMsg'] = "Category Edited SuccessFully">
-                <cfset local.output['errorStatus'] = "true">
+                <cfset local.result['message'] = "Category Edited SuccessFully">
+                <cfset local.result['error'] = "true">
+                <cfset local.result['sameId'] = ArrayContains(local.fetchSubCategoryData.subCategoryId, arguments.subCategoryId)>
             </cfif>
             <cfcatch type="exception">
-                <cfset local.output['resultMsg'] = "Error: #cfcatch.message#">
-                <cfset local.output['errorStatus'] = "false">
+                <cfset local.result['message'] = "Error: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
             </cfcatch>
         </cftry>
-        <cfreturn local.output>
+        <cfreturn local.result>
     </cffunction>
 
     <cffunction name = "deleteSubCategory" access = "remote" returnType = "void">
@@ -249,7 +276,7 @@
     </cffunction>
 
     <cffunction name = "qryBrandData" access = "public" returnType = "query">
-        <cfquery name = "local.qryBrand">
+        <cfquery name = "local.qryBrand" dataSource = "shoppingCart">
             SELECT 
                 fldBrand_Id,
                 fldBrandName
@@ -265,7 +292,7 @@
         <cfargument name = "productName" required = "no" type = "string">
         <cfargument name = "subCategoryId" required = "no" type = "integer">     
         <cfargument name = "productId" required = "no" type = "integer">     
-        <cfquery name = "local.qryProduct">
+        <cfquery name = "local.qryProduct" dataSource = "shoppingCart">
             SELECT 
                 P.fldProduct_Id,
                 P.fldProductName,
@@ -278,11 +305,11 @@
                 PI.fldImageFilePath,
                 PI.fldDefaultImage
             FROM
-                tblproduct p
+                tblproduct P
             LEFT JOIN
-                tblproductimages pi ON P.fldProduct_Id = PI.fldProductId
+                tblproductimages PI ON P.fldProduct_Id = PI.fldProductId
             LEFT JOIN
-                tblbrand b ON P.fldBrandId = B.fldBrand_Id 
+                tblbrand B ON P.fldBrandId = B.fldBrand_Id 
             WHERE
                 PI.fldDefaultImage = 1
                 AND P.fldActive = 1
@@ -294,18 +321,7 @@
                 </cfif>
                 <cfif structKeyExists(arguments, "productId") AND len(trim(arguments.productId))>
                     AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                </cfif>
-            GROUP BY
-                P.fldProduct_Id,
-                P.fldProductName,
-                P.fldSubcategoryId,
-                P.fldBrandId,
-                B.fldBrandName,
-                P.fldDescription,
-                P.fldUnitPrice,
-                P.fldUnitTax,
-                PI.fldImageFilePath,
-                PI.fldDefaultImage;             
+                </cfif>            
         </cfquery>
         <cfreturn local.qryProduct>
     </cffunction>
@@ -318,9 +334,8 @@
         <cfargument name = "productDesc" required = "yes" type = "string">
         <cfargument name = "productPrice" required = "yes" type = "numeric">
         <cfargument name = "productTax" required = "yes" type = "numeric">
-        <cfargument name = "productImage" required = "yes" type = "array">
-        <cfargument name = "productId" required = "no" type = "integer">
-       
+        <cfargument name = "productImage" required = "yes" type = "string">
+        <cfargument name = "productId" required = "no">
         <cfif len(trim(arguments.productId))>
             <cfset local.qryFetchProduct = qryProductData(
                 productName = arguments.productName,
@@ -328,8 +343,8 @@
             )>
             <cftry>
                 <cfif local.qryFetchProduct.RecordCount AND (local.qryFetchProduct.fldProduct_Id NEQ arguments.productId)>
-                    <cfset local.result['errorStatus'] = "false">
-                    <cfset local.result['resultMsg'] = "ProductName Already Exists">
+                    <cfset local.result['error'] = "false">
+                    <cfset local.result['message'] = "ProductName Already Exists">
                 <cfelse>
                     <!---edit--->
                     <cfquery>  
@@ -347,10 +362,10 @@
                             AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                             AND fldActive = 1
                     </cfquery>
-                    <cfif len(trim(arguments.productImage))>
+                    <cfif len(trim(arguments.productImage))>                    
                         <cffile
                             action = "uploadall"
-                            destination = "#expandpath("../assets/images/productImages")#"
+                            destination = "#expandPath('../assets/images/product#arguments.productId#')#"
                             nameconflict = "MakeUnique"
                             strict = "true"
                             result = "local.imageUploadedResult"
@@ -372,12 +387,12 @@
                             </cfloop>;
                         </cfquery>
                     </cfif>
-                    <cfset local.result['errorStatus'] = "true">
-                    <cfset local.result['resultMsg'] = "ProductName Edited Succesfully">
+                    <cfset local.result['error'] = "true">
+                    <cfset local.result['message'] = "ProductName Edited Succesfully">
                 </cfif>
                 <cfcatch type="exception">
-                    <cfset local.result['errorStatus'] = "false">
-                    <cfset local.result['resultMsg'] = "Error updating product: #cfcatch.message#">
+                    <cfset local.result['error'] = "false">
+                    <cfset local.result['message'] = "Error updating product: #cfcatch.message#">
                 </cfcatch>
             </cftry>
         <cfelse>
@@ -388,17 +403,10 @@
                     subCategoryId = arguments.subCategoryId
                 )>
                 <cfif local.qryFetchProduct.RecordCount>
-                    <cfset local.result['errorStatus'] = "false">
-                    <cfset local.result['resultMsg'] = "ProductName Already Exists">
+                    <cfset local.result['error'] = "false">
+                    <cfset local.result['message'] = "ProductName Already Exists">
                 <cfelse>
-                    <cffile
-                        action = "uploadall"
-                        destination = "#expandpath("../assets/images/productImages")#"
-                        nameconflict = "MakeUnique"
-                        strict = "true"
-                        result = "local.imageUploadedResult"
-                    >
-                    <cfquery result = "local.resultProductId">
+                    <cfquery result = "local.resultProductId" dataSource = "shoppingCart">
                         INSERT INTO tblproduct(
                             fldSubCategoryId,
                             fldProductName,
@@ -418,6 +426,14 @@
                             <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">
                         );
                     </cfquery>
+                    <cfdirectory action = "create" directory = "#expandPath('../assets/images/product#local.resultProductId.generatedkey#')#">
+                    <cffile
+                        action = "uploadall"
+                        destination = "#expandPath('../assets/images/product#local.resultProductId.generatedkey#')#"
+                        nameconflict = "MakeUnique"
+                        strict = "true"
+                        result = "local.imageUploadedResult"
+                    >
                     <cfquery>
                         INSERT INTO tblproductimages(
                             fldProductId,
@@ -440,12 +456,12 @@
                             <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
                         </cfloop>;
                     </cfquery>
-                    <cfset local.result['errorStatus'] = "true">
-                    <cfset local.result['resultMsg'] = "ProductName Added Succesfully">
+                    <cfset local.result['error'] = "true">
+                    <cfset local.result['message'] = "ProductName Added Succesfully">
                 </cfif>
                 <cfcatch type = "exception">
-                    <cfset local.result['errorStatus'] = "false">
-                    <cfset local.result['resultMsg'] = "Error adding images: #cfcatch.message#">
+                    <cfset local.result['error'] = "false">
+                    <cfset local.result['message'] = "Error adding images: #cfcatch.message#">
                 </cfcatch>
             </cftry>        
         </cfif>
@@ -482,22 +498,12 @@
                 AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
                 AND fldActive = 1;
         </cfquery>
-        <cfquery>
-            UPDATE 
-                tblproductimages
-            SET
-                fldActive = 0,
-                fldDeactivatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">,
-                fldDeactivatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
-            WHERE
-                fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                AND fldActive = 1;
-        </cfquery>
     </cffunction>
 
     <cffunction name = "qryProductImage" access = "remote" returnFormat = "JSON" returnType = "query">
         <cfargument name = "productId" required = "yes" type = "integer">
-        <cfquery name = "local.qryProductImage">
+        <cfargument name = "productImageId" required = "no" type = "integer">
+        <cfquery name = "local.qryProductImage" dataSource = "shoppingCart">
             SELECT
                 fldProductImage_Id,
                 fldProductId,
@@ -508,6 +514,9 @@
             WHERE
                 fldActive = 1
                 AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                <cfif structKeyExists(arguments, "productImageId")>
+                    AND fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
+                </cfif>;
         </cfquery>
         <cfreturn local.qryProductImage>
     </cffunction>
@@ -538,6 +547,13 @@
 
     <cffunction name = "deleteProductImage" access = "remote">
         <cfargument name = "productImageId" required = "yes" type = "integer">
+        <cfargument name = "productId" required = "yes" type = "integer">
+        <cfset productImageData = qryProductImage(
+            productId = arguments.productId,
+            productImageId = arguments.productImageId
+        )>
+        <cffile action = "delete" file = "#expandPath('../assets/images/product#productImageData.fldProductId#/#productImageData.fldImageFilePath#')#">>
+        
         <cfquery>
             UPDATE
                 tblproductimages

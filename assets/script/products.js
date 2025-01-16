@@ -1,4 +1,16 @@
 $(document).ready(function () {
+    // Logout
+    $('#logoutCategory').on('click', function () {
+        if (confirm("Logout! Are you sure?")) {
+            $.ajax({
+                url: "../components/userLogin.cfc?method=logout",
+                method: "POST",
+                success: function () {
+                    window.location.href = "adminLogin.cfm";
+                }
+            });
+        }
+    });
     //productModal
     $('#addProductBtn').on('click', function(){
         const searchParams = new URLSearchParams(window.location.search);
@@ -41,6 +53,7 @@ $(document).ready(function () {
         $('#productIdHolder').val('');
         $('#productModal').modal('show');
     });
+
 
 });
 
@@ -166,7 +179,7 @@ function editImage(thisProductId){
                                 <label class="text-nowrap me-1">Set</label>
                                 <input type="radio" class="m-0 btn" name="productImageCheck" onclick="setDefaultImage(${serverData[i][0]},${serverData[i][1]})">
                             </div>
-                            <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage(${serverData[i][0]})">Delete</button>
+                            <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage(${serverData[i][0]},${serverData[i][1]})">Delete</button>
                         </div>
                     `;
                 if(serverData[i][3] === 1){
@@ -180,7 +193,7 @@ function editImage(thisProductId){
                 }
                 const carouselItem = `
                     <div class="${active} carousel-imageDiv" id="${serverData[i][0]}">
-                        <img src="../assets/images/productImages/${serverData[i][2]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                        <img src="../assets/images/product${serverData[i][1]}/${serverData[i][2]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
                 `;
@@ -205,13 +218,14 @@ function setDefaultImage(productImageId,productId){
     });
 }
 
-function deleteImage(productImageId){
+function deleteImage(productImageId,productId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             url: "../components/productManagement.cfc?method=deleteProductImage",
             method: "POST",
             data: {
-                productImageId : productImageId
+                productImageId : productImageId,
+                productId : productId
             },
             success: function() {
                 $('#' + productImageId).remove();

@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <cfset qryCategoryData =  application.productManagementObj.qryCategoryData()>
+    <cfset getCategoriesData = application.productManagementObj.getCategory()>
     <cfset qrySubCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
     <cfset qryBrandData = application.productManagementObj.qryBrandData()>
     <cfset qryProductData = application.productManagementObj.qryProductData(subCategoryId = url.subCategoryId)>
@@ -25,6 +25,7 @@
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
             <ul class="d-flex list-unstyled my-0">
                 <li class="nav-item">
                     <a class="nav-link" id="logoutCategory">
@@ -58,8 +59,8 @@
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                 
-                                                    <cfloop query="qryCategoryData">
-                                                        <option value="#qryCategoryData.fldCategory_Id#">#qryCategoryData.fldCategoryName#</option>
+                                                    <cfloop index="i" from="1" to="#arrayLen(getCategoriesData.categoryId)#">
+                                                        <option value="#getCategoriesData.categoryId[i]#">#getCategoriesData.categoryName[i]#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
@@ -166,7 +167,7 @@
                                 <div class="card shadow-lg mb-3" id="#qryProductData.fldProduct_Id#">
                                     <div class="d-flex align-items-center p-3">
                                         <div class="me-4 d-flex flex-column align-items-center cursor-pointer" onclick="editImage(#qryProductData.fldProduct_Id#)">
-                                            <img src="../assets/images/productImages/#qryProductData.fldImageFilePath#" width="80" class="rounded">
+                                            <img src="../assets/images/product#qryProductData.fldProduct_Id#/#qryProductData.fldImageFilePath#" width="80" class="rounded">
                                         </div>
                                         <div class="flex-grow-1">
                                             <h3 class="card-title mb-1">#qryProductData.fldProductName#</h3>
