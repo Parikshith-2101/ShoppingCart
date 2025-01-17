@@ -3,7 +3,7 @@
     <cfset this.sessionManagement = true>
     <cfset this.datasource = "shoppingCart">
 
-    <cffunction name = "onApplicationStart">
+<!---     <cffunction name = "onApplicationStart">
         <cfset application.userLoginObj = createObject("component", "components.userLogin")>
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
         <cfset application.userObj = createObject("component", "components.user")>
@@ -22,5 +22,5 @@
         <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
             <cfset onApplicationStart()>
         </cfif>
-    </cffunction>
+    </cffunction> --->
 </cfcomponent>

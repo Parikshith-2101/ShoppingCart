@@ -14,9 +14,8 @@
 
 <body>
     <cfoutput>
-        <cfset subCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
         <cfset getCategoriesData = application.productManagementObj.getCategory()>
-<!---         <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)> --->
+        <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -81,33 +80,27 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column w-100 mt-3">
-                            
-                           <cfloop query = "subCategoryData">
-
-                                <div class="card shadow-lg" id = "#subCategoryData.fldSubCategory_Id#">
+                        <div class="d-flex flex-column w-100 mt-3">                          
+                            <cfloop index="i" from="1" to="#arraylen(getSubCategoriesData.subCategoryId)#">
+                                <div class="card shadow-lg" id = "#getSubCategoriesData.subCategoryId[i]#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
-                                            #subCategoryData.fldSubCategoryName#
+                                            #getSubCategoriesData.subCategoryName[i]#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory(#getSubCategoriesData.subCategoryId[i]#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory(#getSubCategoriesData.subCategoryId[i]#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="products.cfm?subCategoryId=#subCategoryData.fldSubCategory_Id#&subCategoryName=#subCategoryData.fldSubCategoryName#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#getSubCategoriesData.subCategoryId[i]#&subCategoryName=#getSubCategoriesData.subCategoryName[i]#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>
                                     </div>
-                                </div>
-                                
-                            </cfloop>
-                            <!---<cfdump  var="#getSubCategoriesData#">
-                            <cfloop index="i" from="1" to="#arraylen(getSubCategoriesData.subCategoryId)#">
-                            </cfloop>  --->
+                                </div>                           
+                            </cfloop> 
                         </div>
                     </div>
                 </div>

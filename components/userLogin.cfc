@@ -36,8 +36,10 @@
                 <cfset local.loginResult['message'] = "Login Successful">
                 <cfset local.loginResult['error'] = "true">
             </cfif>
-            <cfcatch type = "exception">          
+            <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.loginResult['message'] = "An error occurred: #cfcatch.message#">
+                <cfset local.loginResult['error'] = "false">
                 <cfmail 
                     from = "parikshith2101@gmail.com" 
                     to = "parikshith2k23@gmail.com" 
@@ -46,8 +48,6 @@
                     <h3>An error occurred in function: #functionName#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
-                <cfset local.loginResult['message'] = "An error occurred: #cfcatch.message#">
-                <cfset local.loginResult['error'] = "false">
             </cfcatch>
         </cftry>
         <cfreturn local.loginResult>

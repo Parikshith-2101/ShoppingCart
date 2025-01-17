@@ -51,7 +51,10 @@
                                     password = form.password
                                 )>
                                 <cfif loginResult.error EQ false>
-                                    <div id="resultMsg" class="fw-bold text-danger">#loginResult.message#</div>
+                                    <div id="resultMsg" class="fw-bold text-danger fs-5">
+                                        #loginResult.message#
+                                        <a href="userSignup.cfm">Click here</a>
+                                    </div>
                                 <cfelse>
                                     <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
                                     <script type = "text/javascript">
