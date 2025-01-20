@@ -30,7 +30,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -78,7 +78,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -127,7 +127,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -156,7 +156,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -198,7 +198,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -220,7 +220,7 @@
         }>
         <cftry>
             <cfset local.fetchSubCategoryData = getSubCategory(
-                subCategoryId = arguments.subCategoryId,
+                subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.categoryId
             )>
             <cfif arrayLen(local.fetchSubCategoryData.subCategoryId)>
@@ -251,7 +251,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -305,7 +305,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -336,7 +336,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -365,7 +365,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -381,6 +381,11 @@
         <cfargument name = "productName" required = "no" type = "string">
         <cfargument name = "subCategoryId" required = "no" type = "integer">     
         <cfargument name = "productId" required = "no" type = "integer"> 
+        <cfargument name = "limit" required = "no" type = "integer"> 
+        <cfargument name = "sortType" required = "no" type = "string">
+        <cfargument name = "minPrice" required = "no" type = "string"> 
+        <cfargument name = "maxPrice" required = "no" type = "string"> 
+        <cfargument name = "priceRange" required = "no" type = "string"> 
         <cfset local.productData = {
             'productId' : [],
             'productName' : [],
@@ -408,7 +413,7 @@
                     PI.fldDefaultImage
                 FROM
                     tblproduct P
-                LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId And PI.fldDefaultImage = 1
+                LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
                 LEFT JOIN tblbrand B ON P.fldBrandId = B.fldBrand_Id 
                 WHERE
                     P.fldActive = 1
@@ -420,7 +425,31 @@
                     </cfif>
                     <cfif structKeyExists(arguments, "productId")>
                         AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                    </cfif>    
+                    </cfif>
+                    <cfif structKeyExists(arguments, "priceRange") AND len(trim(arguments.priceRange))>
+                        AND
+                        <cfif arguments.priceRange EQ "low">
+                            (P.fldUnitPrice BETWEEN 10000 AND 20000)
+                        <cfelseif arguments.priceRange EQ "mid">
+                            (P.fldUnitPrice BETWEEN 20000 AND 30000)
+                        <cfelseif arguments.priceRange EQ "high"> 
+                            (P.fldUnitPrice > 30000)
+                        </cfif>
+                    <cfelse>
+                        <cfif (structKeyExists(arguments, "minPrice") AND len(trim(arguments.minPrice))) 
+                            AND (structKeyExists(arguments, "maxPrice") AND len(trim(arguments.maxPrice)))>
+                                AND (P.fldUnitPrice BETWEEN <cfqueryparam value = "#arguments.minPrice#"> 
+                                    AND <cfqueryparam value = "#arguments.maxPrice#">)
+                        </cfif>
+                    </cfif>
+                <cfif structKeyExists(arguments, "sortType")>   
+                    ORDER BY P.fldUnitPrice #arguments.sortType#
+                <cfelse>
+                    ORDER BY RAND()
+                </cfif>
+                <cfif structKeyExists(arguments, "limit")>
+                    LIMIT <cfqueryparam value = "#arguments.limit#" cfsqltype = "integer">   
+                </cfif>
             </cfquery>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
@@ -429,7 +458,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -481,7 +510,7 @@
                             fldDescription = <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
                             fldUnitPrice = <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
                             fldUnitTax = <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
-                            fldUpdateBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">,
+                            fldUpdatedBy = <cfqueryparam value = "#session.adminUserId#" cfsqltype = "integer">,
                             fldUpdatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
                         WHERE
                             fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
@@ -525,7 +554,7 @@
                         to = "parikshith2k23@gmail.com" 
                         subject = "Error in Function: #local.currentFunction#"
                     >
-                        <h3>An error occurred in function: #functionName#</h3>
+                        <h3>An error occurred in function: #local.currentFunction#</h3>
                         <p><strong>Error Message:</strong> #cfcatch.message#</p>
                     </cfmail>
                 </cfcatch>
@@ -603,7 +632,7 @@
                         to = "parikshith2k23@gmail.com" 
                         subject = "Error in Function: #local.currentFunction#"
                     >
-                        <h3>An error occurred in function: #functionName#</h3>
+                        <h3>An error occurred in function: #local.currentFunction#</h3>
                         <p><strong>Error Message:</strong> #cfcatch.message#</p>
                     </cfmail>
                 </cfcatch>
@@ -635,7 +664,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -674,7 +703,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -718,7 +747,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
@@ -752,7 +781,7 @@
                     to = "parikshith2k23@gmail.com" 
                     subject = "Error in Function: #local.currentFunction#"
                 >
-                    <h3>An error occurred in function: #functionName#</h3>
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>

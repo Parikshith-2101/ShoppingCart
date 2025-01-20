@@ -19,7 +19,7 @@
     <cfset getProductsData = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
     <cfoutput>
         <nav class="navbar fixed-top p-0">
-            <a href="##" class="nav-link">
+            <a href="categories.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
@@ -163,32 +163,42 @@
                         </cfif>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfloop index="i" from="1" to="#arraylen(getProductsData.productId)#">
-                                <div class="card shadow-lg mb-3" id="#getProductsData.productId[i]#">
-                                    <div class="d-flex align-items-center p-3">
-                                        <div class="me-4 d-flex flex-column align-items-center cursor-pointer" onclick="editImage(#getProductsData.productId[i]#)">
-                                            <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" width="80" class="rounded">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h3 class="card-title mb-1">#getProductsData.productName[i]#</h3>
-                                            <p class="card-text mb-1"><span class="fldName">Brand</span>: #getProductsData.brandName[i]#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Description</span>: #getProductsData.description[i]#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Price</span>: Rs.#getProductsData.unitPrice[i]#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Tax</span>: Rs.#getProductsData.unitTax[i]#</p>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <button onclick="editProduct(#getProductsData.productId[i]#,#url.subCategoryId#,#url.categoryId#)" class="btn btn-outline-info mx-1" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button onclick="deleteProduct(#getProductsData.productId[i]#,#url.subCategoryId#)" class="btn btn-outline-danger mx-1" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                            <div class="row g-4">
+                                <cfloop index="i" from="1" to="#arraylen(getProductsData.productId)#">
+                                    <div class="col-sm-6 col-md-4 col-lg-3">
+                                        <div class="card product-card shadow-sm">
+                                            <div onclick="editImage(#getProductsData.productId[i]#)">
+                                                <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" 
+                                                    class="card-img-top" alt="#getProductsData.productName[i]#">
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
+                                                <p class="card-text text-muted small mb-1">
+                                                    <strong>Brand:</strong> #getProductsData.brandName[i]#
+                                                </p>
+                                                <p class="card-text product-desc text-muted small mb-1">
+                                                    <strong>Description:</strong> #getProductsData.description[i]#
+                                                </p>
+                                                <p class="card-text text-muted small mb-1">
+                                                    <strong>Price:</strong> Rs.#getProductsData.unitPrice[i]#
+                                                </p>
+                                                <p class="card-text text-muted small mb-3">
+                                                    <strong>Tax:</strong> Rs.#getProductsData.unitTax[i]#
+                                                </p>
+                                                <div class="d-flex justify-content-between">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct(#getProductsData.productId[i]#,#url.subCategoryId#,#url.categoryId#)">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct(#getProductsData.productId[i]#,#url.subCategoryId#)">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </cfloop>
+                                </cfloop>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
