@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adminLogin</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/style/userLogin.css">
+    <link rel="stylesheet" href="../assets/style/adminLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
             integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -35,16 +35,36 @@
                         <div class="text-uppercase text-center login-title fs-2 mb-3">Login</div>
                         <form method="post" class="align-items-center d-flex flex-column w-100" enctype="multipart/form-data">
                             <div class="w-100 py-2">
-                                <input type="text" id="userName" class="border-0 border-bottom w-100" placeholder="Username/PhoneNo.">
+                                <input type="text" id="userName" name="userName" class="border-0 border-bottom w-100" placeholder="Username/PhoneNo.">
                                 <div id = "userName-error" class="text-danger fw-bold"></div>
                             </div>
                             <div class="w-100 py-2">
-                                <input type="password" id="password" class="border-0 border-bottom w-100" placeholder="Password">
+                                <input type="password" id="password" name="password" class="border-0 border-bottom w-100" placeholder="Password">
                                 <div id = "password-error" class="text-danger fw-bold"></div>
                             </div>
-                            <button type="button" onclick="userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
+                            <button type="submit" name="loginBtn" onclick="return userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
                         </form>
-                        <div id="resultMsg" class="fw-bold"></div>
+                        <cfoutput>
+                            <cfif structKeyExists(form, "loginBtn")>
+                                <cfset loginResult = application.userObj.userLogin(
+                                    userName = form.userName,
+                                    password = form.password
+                                )>
+                                <cfif loginResult.error EQ false>
+                                    <div id="resultMsg" class="text-danger">
+                                        #loginResult.message#
+                                        <a href="userSignup.cfm">Click here</a>
+                                    </div>
+                                <cfelse>
+                                    <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
+                                    <script type = "text/javascript">
+                                        setTimeout(function() {
+                                            window.location.href = "cart.cfm";
+                                        }, 1200); 
+                                    </script>
+                                </cfif>
+                            </cfif>
+                        </cfoutput>
                     </div>
                 </div>
             </div>
@@ -52,6 +72,6 @@
     
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/userLogin.js"></script>
+    <script src="../assets/script/user.js"></script>
 </body>
 </html>
