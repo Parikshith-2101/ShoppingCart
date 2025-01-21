@@ -24,13 +24,17 @@
                 AND (fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
                     OR fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">);
         </cfquery>
-        <cfset local.saltString = local.qryFetchUserData.fldUserSaltString>
-        <cfset local.hashedPassword = hmac( arguments.password, local.saltString, 'hmacSHA256')>
-        <cfif local.qryFetchUserData.RecordCount AND (local.qryFetchUserData.fldHashedPassword EQ local.hashedPassword)>
-            <cfset session.userId = local.qryFetchUserData.fldUser_Id>
-            <cfset session.email = local.qryFetchUserData.fldEmail>
-            <cfset local.result['message'] = "Login Successful">
-            <cfset local.result['error'] = "true">
+        <cfif local.qryFetchUserData.RecordCount>
+            <cfset local.saltString = local.qryFetchUserData.fldUserSaltString>
+            <cfset local.hashedPassword = hmac(arguments.password, local.saltString, 'hmacSHA256')>
+            <cfif local.qryFetchUserData.fldHashedPassword EQ local.hashedPassword>
+                <cfset session.userId = local.qryFetchUserData.fldUser_Id>
+                <cfset session.email = local.qryFetchUserData.fldEmail>
+                <cfset session.firstName = local.qryFetchUserData.fldFirstName>
+                <cfset session.lastName = local.qryFetchUserData.fldLastName>
+                <cfset local.result['message'] = "Login Successful">
+                <cfset local.result['error'] = "true">
+            </cfif>
         </cfif>
         <cfreturn local.result>
     </cffunction>

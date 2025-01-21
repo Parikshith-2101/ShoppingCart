@@ -1,19 +1,20 @@
 function userLogin () {
     const userName = $('#userName').val();
     const password = $('#password').val();
-
+    let isValid = true;
     $('#userName-error').text('');
     $('#password-error').text('');
     $('#resultMsg').text('');
 
     if (!userName) {
         $('#userName-error').text('Username is required.');
-        return;
+        isValid =  false;
     }
     if (!password) {
         $('#password-error').text('Password is required.');
-        return;
+        isValid = false;
     }
+    return isValid;
 }
 
 function userSignUpValidation(){

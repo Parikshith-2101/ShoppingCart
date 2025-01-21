@@ -14,8 +14,10 @@
 
 <body>
     <cfoutput>
+        <cfset local.categoryId = url.categoryId>
+        <cfset local.categoryName = url.categoryName>
         <cfset getCategoriesData = application.productManagementObj.getCategory()>
-        <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
+        <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = local.categoryId)>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -38,7 +40,7 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="login-title fs-4 px-2">#url.categoryName#</div>
+                            <div class="login-title fs-4 px-2">#local.categoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
 
@@ -88,13 +90,13 @@
                                             #getSubCategoriesData.subCategoryName[i]#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#getSubCategoriesData.subCategoryId[i]#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory(#getSubCategoriesData.subCategoryId[i]#,#local.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory(#getSubCategoriesData.subCategoryId[i]#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory(#getSubCategoriesData.subCategoryId[i]#,#local.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="products.cfm?subCategoryId=#getSubCategoriesData.subCategoryId[i]#&subCategoryName=#getSubCategoriesData.subCategoryName[i]#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#getSubCategoriesData.subCategoryId[i]#&subCategoryName=#getSubCategoriesData.subCategoryName[i]#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>

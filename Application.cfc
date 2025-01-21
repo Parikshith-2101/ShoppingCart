@@ -19,7 +19,8 @@
             OR arguments.requestPage EQ "/ShoppingCart/views/userHomePage.cfm"
             OR arguments.requestPage EQ "/ShoppingCart/views/userSubCategories.cfm"
             OR arguments.requestPage EQ "/ShoppingCart/views/userCategories.cfm"
-            OR arguments.requestPage EQ "/ShoppingCart/views/userProducts.cfm">
+            OR arguments.requestPage EQ "/ShoppingCart/views/userProducts.cfm"
+            OR arguments.requestPage EQ "/ShoppingCart/views/userSearch.cfm">
             <cfinclude template = "#arguments.requestPage#">
         <cfelse> 
             <cfinclude template = "/ShoppingCart/views/userLogin.cfm">

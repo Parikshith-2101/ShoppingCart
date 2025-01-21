@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Categories</title>
+    <title>userHome</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/style/home.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -11,9 +11,12 @@
 </head>
 <body>
 <cfoutput>
-    
     <cfset getCategories = application.productManagementObj.getCategory()>
-    <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
+    <cfif structKeyExists(form, "searchForProducts") AND len(trim(form.searchForProducts))>
+        <cfset getProductsData = application.productManagementObj.getProduct(searchForProducts = form.searchForProducts)>
+    <cfelse>
+        <cflocation  url="userHome.cfm" addToken="No">
+    </cfif>
     <header>
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container-fluid">
@@ -21,10 +24,10 @@
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
                     <span class="fs-4 nav-brand">ShoppingCart</span>
                 </a> 
-                <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
+                <form method="get" class="d-flex m-0" action="userSearch.cfm">                    
                     <input class="form-control me-2" name="searchForProducts" type="search" placeholder="Search for products..." aria-label="Search">
                     <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
-                </form> 
+                </form>                        
                 <ul class="navbar-nav">
                     <li class="nav-item me-3">
                         <a class="nav-link" href="cart.cfm">
@@ -39,8 +42,13 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="##">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Login</span>
+                            <cfif structKeyExists(session, "email")>    
+                                <i class="fa-solid fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            <cfelse>
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Login</span>
+                            </cfif>
                         </a>
                     </li>
                 </ul>
@@ -76,35 +84,30 @@
     <main>
         <div class="container products-container">
             <!---products--->
-            <cfloop index="i" from="1" to="#arrayLen(getSubCategoriesData.subCategoryId)#">
-                <cfset getProductsData = application.productManagementObj.getProduct(subCategoryId = getSubCategoriesData.subCategoryId[i])>
-                <cfif arraylen(getProductsData.productId)>
-                    <div class="row g-4 mt-3">
-                        <h3>#getSubCategoriesData.subCategoryName[i]#</h3>
-                        <cfloop index="i" from="1" to="#arrayLen(getProductsData.productId)#">
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                <div class="product-card pb-0">
-                                    <a href="userProducts.cfm?productId=#getProductsData.productId[i]#">
-                                        <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" alt="Electronics">
-                                    </a>
-                                    <div class="card-body text-start">
-                                        <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
-                                        <p class="card-text text-muted small mb-1">
-                                            <strong>Brand:</strong> #getProductsData.brandName[i]#
-                                        </p>
-                                        <p class="card-text product-desc text-muted small mb-1">
-                                            <strong>Description:</strong> #getProductsData.description[i]#
-                                        </p>
-                                        <p class="card-text text-muted small mb-1">
-                                            <strong>Price:</strong> Rs.#getProductsData.unitPrice[i]#/-
-                                        </p>
-                                    </div>
-                                </div>
+            <div class="row g-4 mt-4">
+                <h3>Showing Results for '#form.searchForProducts#'</h3>
+                <cfloop index="i" from="1" to="#arrayLen(getProductsData.productId)#">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="product-card pb-0">
+                            <a href="userProducts.cfm?productId=#getProductsData.productId[i]#">
+                                <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" alt="Electronics">
+                            </a>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
+                                <p class="card-text text-muted small mb-1">
+                                    <strong>Brand:</strong> #getProductsData.brandName[i]#
+                                </p>
+                                <p class="card-text product-desc text-muted small mb-1">
+                                    <strong>Description:</strong> #getProductsData.description[i]#
+                                </p>
+                                <p class="card-text text-muted small mb-1">
+                                    <strong>Price:</strong> Rs.#getProductsData.unitPrice[i]#/-
+                                </p>
                             </div>
-                        </cfloop> 
+                        </div>
                     </div>
-                </cfif>
-            </cfloop>
+                </cfloop> 
+            </div>
         </div>
     </main>
     <footer class="mt-5 w-100">

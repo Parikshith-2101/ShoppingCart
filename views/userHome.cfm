@@ -20,15 +20,32 @@
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
                     <span class="fs-4 nav-brand">ShoppingCart</span>
                 </a> 
-                <div class="d-flex">                        
-                    <input class="form-control me-2" type="search" placeholder="Search for products..." aria-label="Search">
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </div>
+                <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
+                    <input class="form-control me-2" name="searchForProducts" type="search" placeholder="Search for products..." aria-label="Search">
+                    <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
+                </form>
+
                 <ul class="navbar-nav">
+                    <li class="nav-item me-3">
+                        <a class="nav-link" href="cart.cfm">
+                            <i class="fa-solid fa-cart-shopping position-relative">
+                                <span 
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    3 
+                                </span>
+                            </i>
+                            <span>Cart</span>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="##">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Login</span>
+                            <cfif structKeyExists(session, "email")>    
+                                <i class="fa-solid fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            <cfelse>
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Login</span>
+                            </cfif>
                         </a>
                     </li>
                 </ul>
@@ -95,7 +112,9 @@
                 <cfloop index="i" from="1" to="#arrayLen(getProductsData.productId)#">
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="product-card pb-0">
-                            <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" alt="Electronics">
+                            <a href="userProducts.cfm?productId=#getProductsData.productId[i]#">
+                                <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" alt="Electronics">
+                            </a>
                             <div class="card-body text-start">
                                 <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
                                 <p class="card-text text-muted small mb-1">

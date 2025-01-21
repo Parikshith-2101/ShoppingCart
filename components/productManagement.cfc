@@ -386,6 +386,7 @@
         <cfargument name = "minPrice" required = "no" type = "string"> 
         <cfargument name = "maxPrice" required = "no" type = "string"> 
         <cfargument name = "priceRange" required = "no" type = "string"> 
+        <cfargument name = "searchForProducts" required = "no" type = "string"> 
         <cfset local.productData = {
             'productId' : [],
             'productName' : [],
@@ -425,6 +426,13 @@
                     </cfif>
                     <cfif structKeyExists(arguments, "productId")>
                         AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    </cfif>
+                    <cfif structKeyExists(arguments, "searchForProducts") AND len(trim(arguments.searchForProducts))>
+                        AND (
+                            P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
+                            OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
+                            OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
+                            )
                     </cfif>
                     <cfif structKeyExists(arguments, "priceRange") AND len(trim(arguments.priceRange))>
                         AND

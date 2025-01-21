@@ -42,7 +42,7 @@
                                 <input type="password" id="password" name="password" class="border-0 border-bottom w-100" placeholder="Password">
                                 <div id = "password-error" class="text-danger fw-bold"></div>
                             </div>
-                            <button type="submit" name="loginBtn" onclick="userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
+                            <button type="submit" name="loginBtn" onclick="return userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
                         </form>
                         <cfoutput>
                             <cfif structKeyExists(form, "loginBtn")>
@@ -51,7 +51,7 @@
                                     password = form.password
                                 )>
                                 <cfif loginResult.error EQ false>
-                                    <div id="resultMsg" class="fw-bold text-danger fs-5">
+                                    <div id="resultMsg" class="text-danger">
                                         #loginResult.message#
                                         <a href="userSignup.cfm">Click here</a>
                                     </div>
