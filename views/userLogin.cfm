@@ -50,18 +50,26 @@
                                     userName = form.userName,
                                     password = form.password
                                 )>
-                                <cfif loginResult.error EQ false>
+                                <cfif loginResult.error EQ true>
+                                    <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
+                                    <cfif session.roleId EQ 1>
+                                        <script type = "text/javascript">
+                                            setTimeout(function() {
+                                                window.location.href = "categories.cfm";
+                                            }, 1200); 
+                                        </script>
+                                    <cfelse>
+                                        <script type = "text/javascript">
+                                            setTimeout(function() {
+                                                window.location.href = "userHome.cfm";
+                                            }, 1200); 
+                                        </script>
+                                    </cfif>
+                                <cfelse>
                                     <div id="resultMsg" class="text-danger">
                                         #loginResult.message#
                                         <a href="userSignup.cfm">Click here</a>
                                     </div>
-                                <cfelse>
-                                    <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
-                                    <script type = "text/javascript">
-                                        setTimeout(function() {
-                                            window.location.href = "cart.cfm";
-                                        }, 1200); 
-                                    </script>
                                 </cfif>
                             </cfif>
                         </cfoutput>

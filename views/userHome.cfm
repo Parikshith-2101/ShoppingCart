@@ -38,15 +38,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="##">
-                            <cfif structKeyExists(session, "email")>    
+                        <cfif structKeyExists(session, "email")>    
+                            <a class="nav-link" href="##" id="logoutBtn">                                
                                 <i class="fa-solid fa-sign-out-alt"></i>
                                 <span>Logout</span>
-                            <cfelse>
+                            </a>
+                        <cfelse>
+                            <a class="nav-link" href="##">
                                 <i class="fa-solid fa-user-plus"></i>
                                 <span>Login</span>
-                            </cfif>
-                        </a>
+                            </a>
+                        </cfif>
                     </li>
                 </ul>
             </div>
@@ -138,6 +140,7 @@
     </footer>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
+    <script src="../assets/script/user.js"></script>
 </cfoutput>
 </body>
 </html>

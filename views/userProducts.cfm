@@ -83,7 +83,7 @@
                         </div>
                         <div class="product-images">
                             <cfloop index="j" from="1" to="#arrayLen(getProductImagesData.productImageId)#">
-                                <img src="../assets/images/product#getProductImagesData.productId[j]#/#getProductImagesData.imageFile[j]#" alt="Product Image 1" onclick="updateMainImage(this)">
+                                <img src="../assets/images/product#getProductImagesData.productId[j]#/#getProductImagesData.imageFile[j]#" alt="Product Image 1" onmouseover="updateMainImage(this)">
                             </cfloop>
                         </div>
                     </div>

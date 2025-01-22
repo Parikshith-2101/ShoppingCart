@@ -24,8 +24,8 @@
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
                     <span class="fs-4 nav-brand">ShoppingCart</span>
                 </a> 
-                <form method="get" class="d-flex m-0" action="userSearch.cfm">                    
-                    <input class="form-control me-2" name="searchForProducts" type="search" placeholder="Search for products..." aria-label="Search">
+                <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
+                    <input class="form-control me-2" name="searchForProducts" type="search" value="#form.searchForProducts#" placeholder="Search for products..." aria-label="Search">
                     <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
                 </form>                        
                 <ul class="navbar-nav">
