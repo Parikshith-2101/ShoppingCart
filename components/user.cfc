@@ -6,36 +6,64 @@
             'error' : "false",
             'message' : "Invalid User , Please Signup"
         }>
-        <cfquery name = "local.qryFetchUserData">
-            SELECT 
-                fldUser_Id,
-                fldRoleId,
-                fldFirstName,
-                fldLastName,
-                fldEmail,
-                fldPhone,
-                fldHashedPassword,
-                fldUserSaltString
-            FROM
-                tbluser
-            WHERE
-                fldActive = 1
-                AND fldROleId = 2
-                AND (fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
-                    OR fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">);
-        </cfquery>
-        <cfif local.qryFetchUserData.RecordCount>
-            <cfset local.saltString = local.qryFetchUserData.fldUserSaltString>
-            <cfset local.hashedPassword = hmac(arguments.password, local.saltString, 'hmacSHA256')>
-            <cfif local.qryFetchUserData.fldHashedPassword EQ local.hashedPassword>
-                <cfset session.userId = local.qryFetchUserData.fldUser_Id>
-                <cfset session.email = local.qryFetchUserData.fldEmail>
-                <cfset session.firstName = local.qryFetchUserData.fldFirstName>
-                <cfset session.lastName = local.qryFetchUserData.fldLastName>
-                <cfset local.result['message'] = "Login Successful">
-                <cfset local.result['error'] = "true">
+        <cftry>
+            <cfquery name = "local.qryFetchUserData">
+                SELECT 
+                    U.fldUser_Id,
+                    U.fldRoleId,
+                    U.fldFirstName,
+                    U.fldLastName,
+                    U.fldEmail,
+                    U.fldPhone,
+                    U.fldHashedPassword,
+                    U.fldUserSaltString,
+                    COUNT(C.fldProductId) AS cartQuantity
+                FROM
+                    tbluser U
+                LEFT JOIN tblcart C ON U.fldUser_Id = C.fldUserId
+                WHERE
+                    U.fldActive = 1
+                    AND (U.fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
+                        OR U.fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">)
+                GROUP BY
+                    U.fldUser_Id,
+                    U.fldRoleId,
+                    U.fldFirstName,
+                    U.fldLastName,
+                    U.fldEmail,
+                    U.fldPhone,
+                    U.fldHashedPassword,
+                    U.fldUserSaltString;
+            </cfquery>
+            
+            <cfif local.qryFetchUserData.RecordCount>
+                <cfset local.saltString = local.qryFetchUserData.fldUserSaltString>
+                <cfset local.hashedPassword = hmac(arguments.password, local.saltString, 'hmacSHA256')>
+                <cfif local.qryFetchUserData.fldHashedPassword EQ local.hashedPassword>
+                    <cfset session.userId = local.qryFetchUserData.fldUser_Id>
+                    <cfset session.email = local.qryFetchUserData.fldEmail>
+                    <cfset session.firstName = local.qryFetchUserData.fldFirstName>
+                    <cfset session.lastName = local.qryFetchUserData.fldLastName>
+                    <cfset session.roleId = local.qryFetchUserData.fldRoleId>
+                    <cfset session.cartQuantity = local.qryFetchUserData.cartQuantity>
+                    <cfset local.result['message'] = "Login Successful">
+                    <cfset local.result['error'] = "true">
+                </cfif>
             </cfif>
-        </cfif>
+            <cfcatch>
+                <cfset local.result['error'] = "false">
+                <cfset local.result['message'] = "Error : #cfcatch.message#">
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfmail 
+                    from = "parikshith2101@gmail.com" 
+                    to = "parikshith2k23@gmail.com" 
+                    subject = "Error in Function: #local.currentFunction#"
+                >
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
+                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
+                </cfmail>
+            </cfcatch>
+        </cftry>
         <cfreturn local.result>
     </cffunction>
 
@@ -57,7 +85,6 @@
                     tbluser
                 WHERE
                     fldActive = 1
-                    AND fldRoleId = 2
                     AND (
                         fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">
                         OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "varchar">
@@ -99,5 +126,9 @@
         </cfcatch>
         </cftry>
         <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "logout" access = "remote" returnType = "void">
+        <cfset structClear(session)>
     </cffunction>
 </cfcomponent>

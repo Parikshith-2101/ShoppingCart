@@ -58,3 +58,14 @@ function userSignUpValidation(){
     }
     return isValid;
 }
+$('#logoutBtn').click(function(){
+    if (confirm("Logout! Are you sure?")) {
+        $.ajax({
+            url: "../components/user.cfc?method=logout",
+            method: "POST",
+            success: function () {
+                window.location.reload();
+            }
+        });
+    }
+});

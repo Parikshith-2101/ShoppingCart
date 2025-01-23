@@ -15,6 +15,15 @@
     <cfset getCategories = application.productManagementObj.getCategory()>
     <cfset getProductsData = application.productManagementObj.getProduct(productId = url.productId)>
     <cfset getProductImagesData = application.productManagementObj.getProductImage(productId = url.productId)>
+    <cfif structKeyExists(form, "addToCartBtn")>
+        <cfif structKeyExists(session, "userId")>
+            <cfset addToCartResult = application.productManagementObj.addCart(
+                productId = form.addToCartBtn
+            )>
+        <cfelse>
+            <cflocation url="userLogin.cfm">
+        </cfif>
+    </cfif>
     <header>
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container-fluid">
@@ -28,20 +37,31 @@
                 </form> 
                 <ul class="navbar-nav">
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="cart.cfm">
+                        <a class="nav-link" href="userCart.cfm">
                             <i class="fa-solid fa-cart-shopping position-relative">
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    3 
+                                    <cfif structKeyExists(session, "cartQuantity")>
+                                        #session.cartQuantity#
+                                    <cfelse>
+                                        0
+                                    </cfif> 
                                 </span>
                             </i>
                             <span>Cart</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="##">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Login</span>
-                        </a>
+                        <cfif structKeyExists(session, "email")>    
+                            <a class="nav-link" href="##" id="logoutBtn">                                
+                                <i class="fa-solid fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        <cfelse>
+                            <a class="nav-link" href="##">
+                                <i class="fa-solid fa-user-plus"></i>
+                                <span>Login</span>
+                            </a>
+                        </cfif>
                     </li>
                 </ul>
             </div>
@@ -94,10 +114,10 @@
                             <div class="product-description">
                                 <p>#getProductsData.description[i]#</p>
                             </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-primary">Add to Cart</button>
+                            <form method="post" class="action-buttons">
+                                <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
                                 <button class="btn btn-success">Buy Now</button>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -110,6 +130,7 @@
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/userProducts.js"></script>
+    <script src="../assets/script/user.js"></script>
 </cfoutput>
 </body>
 </html>

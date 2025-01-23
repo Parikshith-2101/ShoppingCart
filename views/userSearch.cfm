@@ -30,11 +30,15 @@
                 </form>                        
                 <ul class="navbar-nav">
                     <li class="nav-item me-3">
-                        <a class="nav-link" href="cart.cfm">
+                        <a class="nav-link" href="userCart.cfm">
                             <i class="fa-solid fa-cart-shopping position-relative">
                                 <span 
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    3 
+                                    <cfif structKeyExists(session, "cartQuantity")>
+                                        #session.cartQuantity#
+                                    <cfelse>
+                                        0
+                                    </cfif>
                                 </span>
                             </i>
                             <span>Cart</span>
@@ -115,6 +119,7 @@
     </footer>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
+    <script src="../assets/script/user.js"></script>
 </cfoutput>
 </body>
 </html>

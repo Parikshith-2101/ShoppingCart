@@ -11,7 +11,7 @@ $(document).ready(function () {
                 url: "../components/userLogin.cfc?method=logout",
                 method: "POST",
                 success: function () {
-                    window.location.href = "adminLogin.cfm";
+                    window.location.reload();
                 },
                 error: handleAjaxError
             });
