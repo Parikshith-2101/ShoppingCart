@@ -732,7 +732,7 @@
         <cfargument name = "productImageId" required = "yes" type = "integer">
         <cfargument name = "productId" required = "yes" type = "integer">
         <cftry>
-            <cfquery>
+            <cfquery dataSource = "shoppingCart">
                 UPDATE
                     tblproductimages
                 SET
@@ -741,7 +741,7 @@
                     fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
-            <cfquery>
+            <cfquery dataSource = "shoppingCart">
                 UPDATE
                     tblproductimages
                 SET
@@ -774,7 +774,7 @@
         )>
         <cffile action = "delete" file = "#expandPath('../assets/images/product#productImageData.productId[1]#/#productImageData.imageFile[1]#')#">>    
         <cftry>
-            <cfquery>
+            <cfquery dataSource = "shoppingCart">
                 UPDATE
                     tblproductimages
                 SET
@@ -813,7 +813,7 @@
             'description' : [],
             'imageFile' : []
         }>
-        <cfquery name = "local.qryCart">
+        <cfquery name = "local.qryCart" dataSource = "shoppingCart">
             SELECT 
                 C.fldCart_Id,
                 C.fldUserId,
@@ -857,13 +857,11 @@
             'error' : "",
             'message' : ""
         }>
-        <cfset local.fetchCartQuantity = getCart()>
-        <cfset session.cartQuantity = arrayLen(local.fetchCartQuantity['productId'])>
         <cfset local.cartData = getCart(productId = arguments.productId)>
         <cftry>  
             <cfif arrayLen(local.cartData.cartId)>
                 <cfset local.quantityCount = local.cartData.quantity[1] + 1>
-                <cfquery>
+                <cfquery dataSource = "shoppingCart">
                     UPDATE
                         tblcart
                     SET
@@ -875,7 +873,7 @@
                 <cfset local.result['error'] = "true">
                 <cfset local.result['message'] = "Edited">
             <cfelse>
-                <cfquery>
+                <cfquery dataSource = "shoppingCart">
                     INSERT INTO tblcart(
                         fldUserId,
                         fldProductId,
@@ -890,6 +888,8 @@
                 <cfset local.result['error'] = "true">
                 <cfset local.result['message'] = "Added">
             </cfif>
+            <cfset local.fetchCartQuantity = getCart()>
+            <cfset session.cartQuantity = arrayLen(local.fetchCartQuantity['productId'])>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset local.result['error'] = "false">
@@ -904,6 +904,76 @@
                 </cfmail>
             </cfcatch>
         </cftry>
+        <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "deleteCart" access = "remote" returnType = "struct" returnFormat = "JSON">
+        <cfargument name = "cartId" required = "yes" type = "integer">
+        <cfset local.result = {
+            'cartQuantity' : "",
+            'getCartData' : {}
+        }>
+        <cfquery dataSource = "shoppingCart">
+            DELETE FROM tblcart
+            WHERE
+                fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype = "integer">
+        </cfquery>
+        <cfset local.getCartData = getCart()>
+        <cfset session.cartQuantity = arrayLen(local.getCartData['productId'])>
+        <cfset local.result['cartQuantity'] = session.cartQuantity>
+        <cfset local.result['getCartData'] = local.getCartData>        
+        <cfreturn local.result>
+    </cffunction>
+
+    <cffunction  name = "modifyQuantity" access = "remote" returnType = "any" returnFormat = "JSON">
+        <cfargument name = "modifyStatus" required = "yes" type = "string">
+        <cfargument name = "productId" required = "yes" type = "integer">
+        <cfset local.result = {
+            'error' : "true",
+            'getCartData' : {}
+        }>
+        <cfset local.quantityCount = 0>
+        <cftry>
+            <cfset local.getCartData = getCart(productId = arguments.productId)>
+            <cfif arguments.modifyStatus EQ "add">
+                <cfset local.quantityCount = local.getCartData.quantity[1] + 1>
+                <cfquery dataSource = "shoppingCart">
+                    UPDATE
+                        tblcart
+                    SET
+                        fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer"> 
+                    WHERE 
+                        fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                </cfquery>
+            <cfelseif (arguments.modifyStatus EQ "remove") AND (local.getCartData.quantity[1] GT 1)>
+                <cfset local.quantityCount = local.getCartData.quantity[1] - 1>
+                <cfquery dataSource = "shoppingCart">
+                    UPDATE
+                        tblcart
+                    SET
+                        fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer">
+                    WHERE 
+                        fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                </cfquery>
+            <cfelse>
+                <cfset local.result['error'] = "false">
+            </cfif>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfmail 
+                    from = "parikshith2101@gmail.com" 
+                    to = "parikshith2k23@gmail.com" 
+                    subject = "Error in Function: #local.currentFunction#"
+                >
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
+                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
+                </cfmail>
+            </cfcatch>
+        </cftry>
+        <cfset local.getCart = getCart()>
+        <cfset local.result['getCartData'] = local.getCart>
         <cfreturn local.result>
     </cffunction>
 </cfcomponent>

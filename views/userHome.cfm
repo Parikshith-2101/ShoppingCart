@@ -29,14 +29,11 @@
                     <li class="nav-item me-3">
                         <a class="nav-link" href="userCart.cfm">
                             <i class="fa-solid fa-cart-shopping position-relative">
-                                <span 
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    <cfif structKeyExists(session, "cartQuantity")>
+                                <cfif structKeyExists(session, "cartQuantity")>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         #session.cartQuantity#
-                                    <cfelse>
-                                        0
-                                    </cfif>
-                                </span>
+                                    </span>
+                                </cfif>
                             </i>
                             <span>Cart</span>
                         </a>

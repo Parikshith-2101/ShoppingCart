@@ -39,7 +39,7 @@
                                     <span
                                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         <cfif structKeyExists(session, "cartQuantity")>
-                                            #session.cartQuantity#
+                                            <div class="cart-quantity">#session.cartQuantity#</div>
                                         <cfelse>
                                             0
                                         </cfif>
@@ -108,16 +108,22 @@
                     <cfset local.totalPrice = 0>
                     <cfset local.totalTax = 0>
                     <cfloop index="i" from="1" to="#arrayLen(getCartData.cartId)#">
-                        <div class="card-product">
+                        <div class="card-product" id="#getCartData.cartId[i]#">
                             <div class="product d-flex">
                                 <div class="product-image d-flex">
                                     <img src="../assets/images/product#getCartData.productId[i]#/#getCartData.imageFile[i]#" class="w-100 object-fit-contain" alt="product" height="112">
                                 </div>
                                 <div class="product-details d-flex flex-column">
                                     <p class="product-name">#getCartData.productName[i]#</p>
-                                    <div class="price-tag fw-bold">
-                                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                                    <div class="price-tag fs-7 d-flex align-items-center">
+                                        Actual Price :  
+                                        <i class="fa-solid fa-indian-rupee-sign mx-1"></i>
                                         #getCartData.unitPrice[i]#
+                                        <span class="green mx-auto">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#getCartData.unitTax[i]#</span>
+                                    </div>
+                                    <div class="price-tag fs-5 mt-auto fw-bold">
+                                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                                        #getCartData.unitPrice[i] + getCartData.unitTax[i]#
                                     </div>
                                 </div>
                                 <div class="product-delivery">
@@ -126,12 +132,12 @@
                             </div>                    
                             <div class="quantity d-flex">
                                 <div class="btnDiv d-flex">
-                                    <div class="rounded"><button>-</button></div>
-                                    <div class="rectangle"><input type="text" value="#getCartData.quantity[i]#" align="center"></div>
-                                    <div class="rounded"><button>+</button></div>
+                                    <div class="rounded"><button id="removeBtn#getCartData.productId[i]#" onclick="modifyQuantity(#getCartData.productId[i]#,'remove')">-</button></div>
+                                    <div class="rectangle"><input type="text" id="quantity#getCartData.productId[i]#" value="#getCartData.quantity[i]#" align="center"></div>
+                                    <div class="rounded"><button onclick="modifyQuantity(#getCartData.productId[i]#,'add')">+</button></div>
                                 </div>
                                 <a href="" class="tit">SAVE FOR LATER</a>
-                                <a href="" class="tit">REMOVE</a>
+                                <a href="##" class="tit" onclick="deleteCartItem(#getCartData.cartId[i]#)">REMOVE</a>
                             </div>
                         </div>
                         <cfset local.totalPrice += (getCartData.unitPrice[i] * getCartData.quantity[i])>
@@ -148,26 +154,26 @@
                         <p class="title">PRICE DETAILS</p>
                         <div class="checkoutDiv">
                             <div class="checkout">
-                                <p class="price">Price (1 item)</p>
+                                <p class="price">Price </p>
                                 <p class="number">
-                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i> 
-                                    #local.totalPrice#
+                                    <i class="fa-solid fa-indian-rupee-sign"></i> 
+                                    <span class="totalPriceDiv">#local.totalPrice#</span>
                                 </p>
                             </div>
                             <div class="checkout">
                                 <p class="price">Total Tax</p>
                                 <p class="number">
                                     <span class="green">
-                                        <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                        #local.totalTax#
+                                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                                        <span class="totalTaxDiv">#local.totalTax#</span>
                                     </span>
                                 </p>
                             </div>
                             <div class="final d-flex">
                                 <p class="bold">Total Amount</p>
                                 <p class="number">
-                                    <i class="fa-solid fa-indian-rupee-sign me-1"></i>
-                                    #local.totalAmount#
+                                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                                    <span class="totalAmountDiv">#local.totalAmount#</span>
                                 </p>
                             </div>
                         </div>
@@ -180,7 +186,9 @@
             </div>
         </main>
     </cfoutput>
+    <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/user.js"></script>
+    <script src="../assets/script/userProducts.js"></script>
 </body>
 
 </html>

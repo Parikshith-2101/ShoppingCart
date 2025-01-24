@@ -21,7 +21,7 @@
                 productId = form.addToCartBtn
             )>
         <cfelse>
-            <cflocation url="userLogin.cfm">
+            <cflocation url="userLogin.cfm?productId=#url.productId#">
         </cfif>
     </cfif>
     <header>
@@ -39,13 +39,11 @@
                     <li class="nav-item me-3">
                         <a class="nav-link" href="userCart.cfm">
                             <i class="fa-solid fa-cart-shopping position-relative">
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    <cfif structKeyExists(session, "cartQuantity")>
+                                <cfif structKeyExists(session, "cartQuantity")>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                                         #session.cartQuantity#
-                                    <cfelse>
-                                        0
-                                    </cfif> 
-                                </span>
+                                    </span>
+                                </cfif>
                             </i>
                             <span>Cart</span>
                         </a>
@@ -115,7 +113,16 @@
                                 <p>#getProductsData.description[i]#</p>
                             </div>
                             <form method="post" class="action-buttons">
-                                <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
+                                <cfif structKeyExists(session, "userId")>
+                                <cfset getCartData = application.productManagementObj.getCart(productId = getProductsData.productId[i])>
+                                    <cfif arrayLen(getCartData.cartId)> 
+                                        <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
+                                    <cfelse>
+                                        <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
+                                    </cfif>
+                                <cfelse>
+                                    <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
+                                </cfif>
                                 <button class="btn btn-success">Buy Now</button>
                             </form>
                         </div>

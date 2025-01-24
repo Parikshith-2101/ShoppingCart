@@ -75,6 +75,9 @@ a{
 .additemDiv{
     width:27%;
 }
+.fs-7{
+    font-size: 14px;
+}
 .additemDiv>button{
     background-color: #ff9f00;
     font-size: 14px;
@@ -91,6 +94,8 @@ a{
     padding:0 24px 16px;
 }
 .rounded>button{
+    display: flex;
+    justify-content: center;
     width: 28px;
     height: 28px;
     background: linear-gradient(#fff, #f9f9f9);
@@ -119,15 +124,19 @@ a{
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .2);
     border: none;
     color: #fff;
-    padding: 16px 80px;
+    padding: 12px 80px;
     font-weight: 600;
     font-size: 16px;
     border-radius:2px;
+    transition: all ease .3s;
 }
 .card-order>.button{
     display:flex;
     justify-content:end;
     padding:16px 24px;
+}
+.card-order>.button>button:hover{
+    transform: scale(1.03);
 }
 .card-order{
     background:#fff;
@@ -143,7 +152,7 @@ a{
     margin-left:12px;
     background:#fff;
     position: sticky;
-    top: 62px;
+    top: 120px;
     z-index:1;
 }
 .card-right>.title{
@@ -202,6 +211,9 @@ button{
 }
 .additemDiv>button:hover{
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+}
+input:focus {
+    outline: none;
 }
 /*footer*/
 footer{
