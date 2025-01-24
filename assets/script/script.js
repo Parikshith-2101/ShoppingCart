@@ -11,7 +11,7 @@ $(document).ready(function () {
                 url: "../components/userLogin.cfc?method=logout",
                 method: "POST",
                 success: function () {
-                    window.location.href = "adminLogin.cfm";
+                    window.location.reload();
                 },
                 error: handleAjaxError
             });
@@ -37,6 +37,7 @@ $(document).ready(function () {
             return;
         }
         if(categoryId.trim()){
+            console.log("name : "+categoryName)
             //edit
             $.ajax({
                 url: "../components/productManagement.cfc?method=editCategory",
@@ -48,18 +49,18 @@ $(document).ready(function () {
                 success: function(editCategoryData){
                     const data = JSON.parse(editCategoryData);
                     console.log(data);
-                    if (data.errorStatus === "true") {
-                        $('#category-error').text(data.resultMsg);
+                    if(data.sameId === true){
+                        $('#categoryModal').modal('hide');
+                    }
+                    else if (data.error === "true") {
+                        $('#category-error').text(data.message);
                         $('#category-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
                     }                     
-                    else if(data.errorStatus === "nill") {
-                        $('#categoryModal').modal('hide');
-                    }
                     else {
-                        $('#category-error').text(data.resultMsg);
+                        $('#category-error').text(data.message);
                     }
                 },
                 error: handleAjaxError
@@ -75,15 +76,16 @@ $(document).ready(function () {
                 },
                 success: function (categoryServerResponse) {
                     const data = JSON.parse(categoryServerResponse);
-                    if (data.errorStatus === "true") {
-                        $('#category-error').text(data.resultMsg);
+                    console.log(data)
+                    if (data.error === "true") {
+                        $('#category-error').text(data.message);
                         $('#category-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
                     } 
                     else{
-                        $('#category-error').text(data.resultMsg);
+                        $('#category-error').text(data.message);
                     }
                 },
                 error: handleAjaxError
@@ -132,15 +134,15 @@ $(document).ready(function () {
                 success: function(response){
                     const data = JSON.parse(response);
                     console.log(data);
-                    if(data.errorStatus == "true"){
-                        $('#subCategory-error').text(data.resultMsg);
+                    if(data.error == "true"){
+                        $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
                             window.location.reload();
                         }, 900);
                     }
                     else{
-                        $('#subCategory-error').text(data.resultMsg);                       
+                        $('#subCategory-error').text(data.message);                       
                     }
                 },
                 error: handleAjaxError
@@ -160,18 +162,18 @@ $(document).ready(function () {
                 success : function(response){
                     const data = JSON.parse(response);
                     console.log(data);
-                    if(data.errorStatus === "true"){
-                        $('#subCategory-error').text(data.resultMsg);
+                    if(data.sameId === true){
+                        $('#subCategoryModal').modal('hide');
+                    }                   
+                    else if(data.error === "true"){
+                        $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
                             window.location.reload();
                         }, 900);
                     }
-                    else if(data.errorStatus === "nill"){
-                        $('#subCategoryModal').modal('hide');
-                    }
                     else{
-                        $('#subCategory-error').text(data.resultMsg);                       
+                        $('#subCategory-error').text(data.message);                       
                     }
                 },
                 error: handleAjaxError
@@ -184,18 +186,19 @@ $(document).ready(function () {
 function editCategory(categoryId){
     $('#category-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=viewCategory",
+        url: "../components/productManagement.cfc?method=getCategory",
         method: "POST",
         data:{
             categoryId : categoryId
         },
-        success: function(viewCategoryData){
-            const data = JSON.parse(viewCategoryData);
+        success: function(getCategoryData){
+            const data = JSON.parse(getCategoryData);
             console.log(data);
             $('#categoryValue').val(data.categoryName);
             $('#categoryModal').modal('show'); 
             $('#saveCategory').val(data.categoryId);
-        }
+        },
+        error: handleAjaxError
     });
 }
 
@@ -219,18 +222,18 @@ function deleteCategory(categoryId){
 function editSubCategory(subCategoryId,categoryId){
     $('#subCategory-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=viewSubCategory",
+        url: "../components/productManagement.cfc?method=getSubCategory",
         method: "POST",
         data:{
             subCategoryId : subCategoryId,
             categoryId : categoryId
         },
-        success: function(viewSubCategoryData){
-            const data = JSON.parse(viewSubCategoryData);
+        success: function(getSubCategoryData){
+            const data = JSON.parse(getSubCategoryData);
             console.log(data);
+            $('#categoryDropdown').val(data.categoryId);
             $('#subCategoryValue').val(data.subCategoryName);
             $('#saveSubCategory').val(data.subCategoryId);
-            $('#categoryDropdown').val(data.categoryId);
             $('#subCategoryModal').modal('show');
         },
         error: handleAjaxError
