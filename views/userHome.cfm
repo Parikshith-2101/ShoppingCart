@@ -11,8 +11,8 @@
 </head>
 <body>
 <cfoutput>
-    <cfset getCategories = application.productManagementObj.getCategory()>
-    <cfset getProductsData = application.productManagementObj.getProduct(limit = 8)>
+    <cfset getCategoryArray = application.productManagementObj.getCategory()>
+    <cfset getProductArray = application.productManagementObj.getProduct(limit = 8)>
     <header>
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container-fluid">
@@ -58,17 +58,17 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="categoriesNavbar">
                     <ul class="navbar-nav justify-content-evenly w-100">
-                        <cfloop index="i" from="1" to="#arrayLen(getCategories.categoryId)#">
+                        <cfloop array="#getCategoryArray#" item="categoryItem">
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="userCategories.cfm?categoryId=#getCategories.categoryId[i]#" id="#getCategories.categoryId[i]#" role="button">
-                                    #getCategories.categoryName[i]#
+                                <a class="nav-link" href="userCategories.cfm?categoryId=#categoryItem.categoryId#" id="#categoryItem.categoryId#" role="button">
+                                    #categoryItem.categoryName#
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="#getCategories.categoryId[i]#">
-                                    <cfset getSubCategories = application.productManagementObj.getSubCategory(categoryId = getCategories.categoryId[i])>
-                                    <cfloop index="i" from="1" to="#arrayLen(getSubCategories.subCategoryId)#">
+                                <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
+                                    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryItem.categoryId)>
+                                    <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
                                         <li>
-                                            <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#getSubCategories.subCategoryId[i]#&subCategoryName=#getSubCategories.subCategoryName[i]#">
-                                                #getSubCategories.subCategoryName[i]#
+                                            <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#">
+                                                #subCategoryItem.subCategoryName#
                                             </a>
                                         </li>
                                     </cfloop>
@@ -112,22 +112,22 @@
             <!---products--->
             <div class="row g-4 mt-4">
                 <h3>Random Products</h3>
-                <cfloop index="i" from="1" to="#arrayLen(getProductsData.productId)#">
+                <cfloop array="#getProductArray#" item="productItem">
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="product-card pb-0">
-                            <a href="userProducts.cfm?productId=#getProductsData.productId[i]#">
-                                <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" alt="Electronics">
+                            <a href="userProducts.cfm?productId=#productItem.productId#">
+                                <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" alt="Electronics">
                             </a>
                             <div class="card-body text-start">
-                                <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
+                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                 <p class="card-text text-muted small mb-1">
-                                    <strong>Brand:</strong> #getProductsData.brandName[i]#
+                                    <strong>Brand:</strong> #productItem.brandName#
                                 </p>
                                 <p class="card-text product-desc text-muted small mb-1">
-                                    <strong>Description:</strong> #getProductsData.description[i]#
+                                    <strong>Description:</strong> #productItem.description#
                                 </p>
                                 <p class="card-text text-muted small mb-1">
-                                    <strong>Price:</strong> Rs.#getProductsData.unitPrice[i]#/-
+                                    <strong>Price:</strong> Rs.#productItem.unitPrice#/-
                                 </p>
                             </div>
                         </div>

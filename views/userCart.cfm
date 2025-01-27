@@ -16,8 +16,8 @@
 
 <body>
     <cfoutput>
-        <cfset getCategories=application.productManagementObj.getCategory()>
-        <cfset getCartData=application.productManagementObj.getCart()>
+        <cfset getCategoryArray=application.productManagementObj.getCategory()>
+        <cfset getCartArray=application.productManagementObj.getCart()>
         <header>
             <nav class="navbar navbar-expand-lg fixed-top">
                 <div class="container-fluid">
@@ -68,22 +68,21 @@
                 <div class="container-fluid">
                     <div class="collapse navbar-collapse" id="categoriesNavbar">
                         <ul class="navbar-nav justify-content-evenly w-100">
-                            <cfloop index="i" from="1" to="#arrayLen(getCategories.categoryId)#">
+                            <cfloop array="#getCategoryArray#" item="categoryItem">
                                 <li class="nav-item dropdown">
                                     <a class="nav-link"
-                                        href="userCategories.cfm?categoryId=#getCategories.categoryId[i]#"
-                                        id="#getCategories.categoryId[i]#" role="button">
-                                        #getCategories.categoryName[i]#
+                                        href="userCategories.cfm?categoryId=#categoryItem.categoryId#"
+                                        id="#categoryItem.categoryId#" role="button">
+                                        #categoryItem.categoryName#
                                     </a>
-                                    <ul class="dropdown-menu" aria-labelledby="#getCategories.categoryId[i]#">
+                                    <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
                                         <cfset
-                                            getSubCategories=application.productManagementObj.getSubCategory(categoryId=getCategories.categoryId[i])>
-                                        <cfloop index="i" from="1"
-                                            to="#arrayLen(getSubCategories.subCategoryId)#">
+                                            getSubCategoryArray=application.productManagementObj.getSubCategory(categoryId=categoryItem.categoryId)>
+                                        <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
                                             <li>
                                                 <a class="dropdown-item"
-                                                    href="userSubCategories.cfm?subCategoryId=#getSubCategories.subCategoryId[i]#&subCategoryName=#getSubCategories.subCategoryName[i]#">
-                                                    #getSubCategories.subCategoryName[i]#
+                                                    href="userSubCategories.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#">
+                                                    #subCategoryItem.subCategoryName#
                                                 </a>
                                             </li>
                                         </cfloop>
@@ -107,23 +106,23 @@
                     <cfset local.totalAmount = 0>
                     <cfset local.totalPrice = 0>
                     <cfset local.totalTax = 0>
-                    <cfloop index="i" from="1" to="#arrayLen(getCartData.cartId)#">
-                        <div class="card-product" id="#getCartData.cartId[i]#">
+                    <cfloop array="#getCartArray#" item="cartItem">
+                        <div class="card-product" id="#cartItem.cartId#">
                             <div class="product d-flex">
                                 <div class="product-image d-flex">
-                                    <img src="../assets/images/product#getCartData.productId[i]#/#getCartData.imageFile[i]#" class="w-100 object-fit-contain" alt="product" height="112">
+                                    <img src="../assets/images/product#cartItem.productId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
                                 </div>
                                 <div class="product-details d-flex flex-column">
-                                    <p class="product-name">#getCartData.productName[i]#</p>
+                                    <p class="product-name">#cartItem.productName#</p>
                                     <div class="price-tag fs-7 d-flex align-items-center">
                                         Actual Price :  
                                         <i class="fa-solid fa-indian-rupee-sign mx-1"></i>
-                                        #getCartData.unitPrice[i]#
-                                        <span class="green mx-auto">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#getCartData.unitTax[i]#</span>
+                                        #cartItem.unitPrice#
+                                        <span class="green mx-auto">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#cartItem.unitTax#</span>
                                     </div>
                                     <div class="price-tag fs-5 mt-auto fw-bold">
                                         <i class="fa-solid fa-indian-rupee-sign"></i>
-                                        #getCartData.unitPrice[i] + getCartData.unitTax[i]#
+                                        #cartItem.unitPrice + cartItem.unitTax#
                                     </div>
                                 </div>
                                 <div class="product-delivery">
@@ -132,17 +131,17 @@
                             </div>                    
                             <div class="quantity d-flex">
                                 <div class="btnDiv d-flex">
-                                    <div class="rounded"><button id="removeBtn#getCartData.productId[i]#" onclick="modifyQuantity(#getCartData.productId[i]#,'remove')">-</button></div>
-                                    <div class="rectangle"><input type="text" id="quantity#getCartData.productId[i]#" value="#getCartData.quantity[i]#" align="center"></div>
-                                    <div class="rounded"><button onclick="modifyQuantity(#getCartData.productId[i]#,'add')">+</button></div>
+                                    <div class="rounded"><button id="removeBtn#cartItem.productId#" onclick="modifyQuantity(#cartItem.productId#,'remove')">-</button></div>
+                                    <div class="rectangle"><input type="text" id="quantity#cartItem.productId#" value="#cartItem.quantity#" align="center"></div>
+                                    <div class="rounded"><button onclick="modifyQuantity(#cartItem.productId#,'add')">+</button></div>
                                 </div>
                                 <a href="" class="tit">SAVE FOR LATER</a>
-                                <a href="##" class="tit" onclick="deleteCartItem(#getCartData.cartId[i]#)">REMOVE</a>
+                                <a href="##" class="tit" onclick="deleteCartItem(#cartItem.cartId#)">REMOVE</a>
                             </div>
                         </div>
-                        <cfset local.totalPrice += (getCartData.unitPrice[i] * getCartData.quantity[i])>
-                        <cfset local.totalTax += (getCartData.unitTax[i] * getCartData.quantity[i])>
-                        <cfset local.totalAmount += (getCartData.unitPrice[i] + getCartData.unitTax[i]) * getCartData.quantity[i]>
+                        <cfset local.totalPrice += (cartItem.unitPrice * cartItem.quantity)>
+                        <cfset local.totalTax += (cartItem.unitTax * cartItem.quantity)>
+                        <cfset local.totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>
                     </cfloop>
 
                     <div class="card-order">

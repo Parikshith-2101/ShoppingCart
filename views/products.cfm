@@ -13,10 +13,10 @@
 </head>
 
 <body>
-    <cfset getCategoriesData = application.productManagementObj.getCategory()>
-    <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
-    <cfset getBrandsData = application.productManagementObj.getBrand()>
-    <cfset getProductsData = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
+    <cfset getCategoryArray = application.productManagementObj.getCategory()>
+    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
+    <cfset getBrandArray = application.productManagementObj.getBrand()>
+    <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
     <cfoutput>
         <nav class="navbar fixed-top p-0">
             <a href="categories.cfm" class="nav-link">
@@ -59,16 +59,16 @@
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                 
-                                                    <cfloop index="i" from="1" to="#arrayLen(getCategoriesData.categoryId)#">
-                                                        <option value="#getCategoriesData.categoryId[i]#">#getCategoriesData.categoryName[i]#</option>
+                                                    <cfloop array="#getCategoryArray#" item="categoryItem">
+                                                        <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
                                             <div class="d-flex flex-column">
                                                 <label for="subCategoryDropdown">SubCategory</label>
                                                 <select id="subCategoryDropdown" name="subCategoryDropdown"> 
-                                                    <cfloop index="i" from="1" to="#arrayLen(getSubCategoriesData.subCategoryId)#">
-                                                        <option value="#getSubCategoriesData.subCategoryId[i]#">#getSubCategoriesData.subCategoryName[i]#</option>
+                                                    <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
+                                                        <option value="#subCategoryItem.subCategoryId#">#subCategoryItem.subCategoryName#</option>
                                                     </cfloop>                                         
                                                 </select>
                                             </div>
@@ -81,8 +81,8 @@
                                                 <label for="productBrand">Product Brand*</label>
                                                 <select id="productBrand" name="productBrand">                                                  
                                                     <option value="" disabled selected>Select Brand Name</option>                                          
-                                                    <cfloop index="i" from="1" to="#arraylen(getBrandsData.brandId)#">
-                                                        <option value="#getBrandsData.brandId[i]#">#getBrandsData.brandName[i]#</option>
+                                                    <cfloop array="#getBrandArray#" item="brandItem">
+                                                        <option value="#brandItem.brandId#">#brandItem.brandName#</option>
                                                     </cfloop>                                          
                                                 </select>
                                                 <div id="productBrand-error" class="fw-bold text-danger"></div>
@@ -164,32 +164,32 @@
 
                         <div class="d-flex flex-column w-100 mt-3">
                             <div class="row g-4">
-                                <cfloop index="i" from="1" to="#arraylen(getProductsData.productId)#">
-                                    <div class="col-sm-6 col-md-4 col-lg-3">
+                                <cfloop array="#getProductArray#" item="productItem">
+                                    <div class="col-sm-6 col-md-4 col-lg-3" id="product#productItem.productId#">
                                         <div class="card product-card shadow-sm">
-                                            <div onclick="editImage(#getProductsData.productId[i]#)">
-                                                <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" 
-                                                    class="card-img-top" alt="#getProductsData.productName[i]#">
+                                            <div onclick="editImage(#productItem.productId#)">
+                                                <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" 
+                                                    class="card-img-top" alt="#productItem.productName#">
                                             </div>
                                             <div class="card-body">
-                                                <h5 class="card-title text-truncate">#getProductsData.productName[i]#</h5>
+                                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                                 <p class="card-text text-muted small mb-1">
-                                                    <strong>Brand:</strong> #getProductsData.brandName[i]#
+                                                    <strong>Brand:</strong> #productItem.brandName#
                                                 </p>
                                                 <p class="card-text product-desc text-muted small mb-1">
-                                                    <strong>Description:</strong> #getProductsData.description[i]#
+                                                    <strong>Description:</strong> #productItem.description#
                                                 </p>
                                                 <p class="card-text text-muted small mb-1">
-                                                    <strong>Price:</strong> Rs.#getProductsData.unitPrice[i]#
+                                                    <strong>Price:</strong> Rs.#productItem.unitPrice#
                                                 </p>
                                                 <p class="card-text text-muted small mb-3">
-                                                    <strong>Tax:</strong> Rs.#getProductsData.unitTax[i]#
+                                                    <strong>Tax:</strong> Rs.#productItem.unitTax#
                                                 </p>
                                                 <div class="d-flex justify-content-between">
-                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct(#getProductsData.productId[i]#,#url.subCategoryId#,#url.categoryId#)">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct(#productItem.productId#,#url.subCategoryId#,#url.categoryId#)">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </button>
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct(#getProductsData.productId[i]#,#url.subCategoryId#)">
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct(#productItem.productId#,#url.subCategoryId#)">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 </div>

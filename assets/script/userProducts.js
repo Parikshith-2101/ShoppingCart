@@ -21,10 +21,10 @@ function deleteCartItem(cartId){
                 let totalPrice = 0;
                 let totalTax = 0;
                 let totalAmount = 0;
-                for(let i = 0; i < Data.getCartData.cartId.length ; i++){
-                    totalPrice += Data.getCartData.unitPrice[i] * Data.getCartData.quantity[i];
-                    totalTax += Data.getCartData.unitTax[i] * Data.getCartData.quantity[i];
-                    totalAmount += (Data.getCartData.unitPrice[i] + Data.getCartData.unitTax[i]) * Data.getCartData.quantity[i];
+                for(let i = 0; i < Data.getCartData.length ; i++){
+                    totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
+                    totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
+                    totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
                 }
                 $('.cart-quantity').text(Data.cartQuantity);
                 $('.totalPriceDiv').text(totalPrice);
@@ -53,11 +53,11 @@ function modifyQuantity(productId,modifyStatus){
             let totalPrice = 0;
             let totalTax = 0;
             let totalAmount = 0;
-            for(let i = 0; i < Data.getCartData.cartId.length ; i++){
-                totalPrice += Data.getCartData.unitPrice[i] * Data.getCartData.quantity[i];
-                totalTax += Data.getCartData.unitTax[i] * Data.getCartData.quantity[i];
-                totalAmount += (Data.getCartData.unitPrice[i] + Data.getCartData.unitTax[i]) * Data.getCartData.quantity[i];
-                $(`#quantity${Data.getCartData.productId[i]}`).val(Data.getCartData.quantity[i]);
+            for(let i = 0; i < Data.getCartData.length ; i++){
+                totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
+                totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
+                totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
+                $(`#quantity${Data.getCartData[i].productId}`).val(Data.getCartData[i].quantity);
             }
             $('.totalPriceDiv').text(totalPrice);
             $('.totalTaxDiv').text(totalTax);

@@ -193,10 +193,10 @@ function editCategory(categoryId){
         },
         success: function(getCategoryData){
             const data = JSON.parse(getCategoryData);
-            console.log(data);
-            $('#categoryValue').val(data.categoryName);
+            console.log(data[0]);
+            $('#categoryValue').val(data[0].categoryName);
             $('#categoryModal').modal('show'); 
-            $('#saveCategory').val(data.categoryId);
+            $('#saveCategory').val(data[0].categoryId);
         },
         error: handleAjaxError
     });
@@ -230,10 +230,10 @@ function editSubCategory(subCategoryId,categoryId){
         },
         success: function(getSubCategoryData){
             const data = JSON.parse(getSubCategoryData);
-            console.log(data);
-            $('#categoryDropdown').val(data.categoryId);
-            $('#subCategoryValue').val(data.subCategoryName);
-            $('#saveSubCategory').val(data.subCategoryId);
+            console.log(data[0]);
+            $('#categoryDropdown').val(data[0].categoryId);
+            $('#subCategoryValue').val(data[0].subCategoryName);
+            $('#saveSubCategory').val(data[0].subCategoryId);
             $('#subCategoryModal').modal('show');
         },
         error: handleAjaxError

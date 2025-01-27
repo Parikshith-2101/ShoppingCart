@@ -16,8 +16,8 @@
     <cfoutput>
         <cfset local.categoryId = url.categoryId>
         <cfset local.categoryName = url.categoryName>
-        <cfset getCategoriesData = application.productManagementObj.getCategory()>
-        <cfset getSubCategoriesData = application.productManagementObj.getSubCategory(categoryId = local.categoryId)>
+        <cfset getCategoryArray = application.productManagementObj.getCategory()>
+        <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = local.categoryId)>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -60,8 +60,8 @@
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
-                                                    <cfloop index="i" from="1" to="#arrayLen(getCategoriesData.categoryId)#">
-                                                        <option value="#getCategoriesData.categoryId[i]#">#getCategoriesData.categoryName[i]#</option>
+                                                    <cfloop array="#getCategoryArray#" item="categoryItem">
+                                                        <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
@@ -83,20 +83,20 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">                          
-                            <cfloop index="i" from="1" to="#arraylen(getSubCategoriesData.subCategoryId)#">
-                                <div class="card shadow-lg" id = "#getSubCategoriesData.subCategoryId[i]#">
+                            <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
+                                <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
-                                            #getSubCategoriesData.subCategoryName[i]#
+                                            #subCategoryItem.subCategoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#getSubCategoriesData.subCategoryId[i]#,#local.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory(#getSubCategoriesData.subCategoryId[i]#,#local.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="products.cfm?subCategoryId=#getSubCategoriesData.subCategoryId[i]#&subCategoryName=#getSubCategoriesData.subCategoryName[i]#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>

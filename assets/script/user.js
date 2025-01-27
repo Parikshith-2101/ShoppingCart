@@ -32,24 +32,44 @@ function userSignUpValidation(){
     $('#phoneNumber-error').text('');
     $('#password-error').text('');
     $('#confirmPassword-error').text('');
+
+    const nameRegex = /^[A-Za-z]+$/;
     if(!firstName){
         $('#firstName-error').text('Please Enter FirstName');
         isValid = false;
     }
+    else if (!nameRegex.test(firstName)){
+        $('#firstName-error').text('First Name should only contain alphabets');
+        isValid = false;
+    }
+
     if(!lastName){
         $('#lastName-error').text('Please Enter LastName');
         isValid = false;
     }
-    if(!email){
-        $('#email-error').text('Please Enter Valid Email');
+    else if (!nameRegex.test(lastName)){
+        $('#firstName-error').text('First Name should only contain alphabets');
         isValid = false;
     }
-    if(!phoneNumber){
-        $('#phoneNumber-error').text('Please Enter Valid Number');
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+        $('#email-error').text('Please Enter a Valid Email');
         isValid = false;
     }
-    if(!password){
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+        $('#phoneNumber-error').text('Please Enter a Valid Phone Number (10 digits)');
+        isValid = false;
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!password || password.trim() === '') {
         $('#password-error').text('Please Enter Password');
+        isValid = false;
+    } else if (!passwordRegex.test(password)) {
+        $('#password-error').text('Password must be at least 8 characters long, include an uppercase letter, a number, and a special character');
         isValid = false;
     }
     if(!confirmPassword || confirmPassword !== password){

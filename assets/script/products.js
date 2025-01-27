@@ -28,8 +28,8 @@ $(document).ready(function () {
                 success: function(response){
                     const serverData = JSON.parse(response);
                     $('#subCategoryDropdown').empty();
-                    for(let i in serverData.categoryId){
-                        const optionTag = `<option value = ${serverData.subCategoryId[i]}>${serverData.subCategoryName[i]}</option>`;
+                    for(let i in serverData){
+                        const optionTag = `<option value = ${serverData[i].subCategoryId}>${serverData[i].subCategoryName}</option>`;
                         $('#subCategoryDropdown').append(optionTag);
                     }
                 }
@@ -72,15 +72,15 @@ function editProduct(productId,subCategoryId,categoryId){
         },
         success: function(viewSubCategoryData){
             const data = JSON.parse(viewSubCategoryData);
-            console.log(data);
+            console.log(data[0]);
             $('#categoryDropdown').val(categoryId);
             $('#subCategoryDropdown').val(subCategoryId);
-            $('#productName').val(data.productName);
-            $('#productBrand').val(data.brandId);
-            $('#productDesc').val(data.description);
-            $('#productPrice').val(data.unitPrice);
-            $('#productTax').val(data.unitTax);
-            $('#productIdHolder').val(data.productId);
+            $('#productName').val(data[0].productName);
+            $('#productBrand').val(data[0].brandId);
+            $('#productDesc').val(data[0].description);
+            $('#productPrice').val(data[0].unitPrice);
+            $('#productTax').val(data[0].unitTax);
+            $('#productIdHolder').val(data[0].productId);
             $('#productModal').modal('show');
         }
     });
@@ -97,7 +97,7 @@ function deleteProduct(productId,subCategoryId){
                 productId : productId
             },
             success: function() {
-                $('#' + productId).remove();
+                $('#product' + productId).remove();
             }
         });
     }     
@@ -168,18 +168,18 @@ function editImage(thisProductId){
             const serverData = JSON.parse(response);
             console.log(serverData);
             $('#displayProductImage').empty();
-            for(let i = 0; i < serverData.productImageId.length; i++){
+            for(let i = 0; i < serverData.length; i++){
                 let active = "";
                 let checkbox = `
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px">
                                 <label class="text-nowrap me-1">Set</label>
-                                <input type="radio" class="m-0 btn" name="productImageCheck" onclick="setDefaultImage(${serverData.productImageId[i]},${serverData.productId[i]})">
+                                <input type="radio" class="m-0 btn" name="productImageCheck" onclick="setDefaultImage(${serverData[i].productImageId},${serverData[i].productId})">
                             </div>
-                            <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage(${serverData.productImageId[i]},${serverData.productId[i]})">Delete</button>
+                            <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage(${serverData[i].productImageId},${serverData[i].productId})">Delete</button>
                         </div>
                     `;
-                if(serverData.defaultImage[i] === 1){
+                if(serverData[i].defaultImage === 1){
                     active = "active";
                     checkbox = `
                         <div class="d-flex align-items-center p-0 btn border fs-12px">
@@ -189,8 +189,8 @@ function editImage(thisProductId){
                     `;
                 }
                 const carouselItem = `
-                    <div class="${active} carousel-imageDiv" id="${serverData.productImageId[i]}">
-                        <img src="../assets/images/product${serverData.productId[i]}/${serverData.imageFile[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                    <div class="${active} carousel-imageDiv" id="${serverData[i].productImageId}">
+                        <img src="../assets/images/product${serverData[i].productId}/${serverData[i].imageFile}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
                 `;

@@ -1,12 +1,9 @@
 <cfcomponent>
     <!---Category--->
-    <cffunction name = "getCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
+    <cffunction name = "getCategory" access = "remote" returnType = "array" returnFormat = "JSON">
         <cfargument name = "categoryId" required = "no" type = "integer">
         <cfargument name = "categoryName" required = "no" type = "string">
-        <cfset local.categoryResult = {
-            'categoryId' : [],
-            'categoryName' : []
-        }>
+        <cfset local.categoryResult = []>
         <cftry>
             <cfquery name = "local.qryCategoryData" dataSource = "shoppingCart">
                 SELECT 
@@ -14,7 +11,7 @@
                     fldCategoryName
                 FROM
                     tblcategory
-                WHERE           
+                WHERE
                     fldActive = 1
                     <cfif structKeyExists(arguments, "categoryId")>
                         AND fldCategory_Id = <cfqueryparam value = "#arguments.categoryId#" cfsqltype = "integer">
@@ -28,19 +25,21 @@
                 <cfmail 
                     from = "parikshith2101@gmail.com" 
                     to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
+                    subject = "Error in Function: #local.currentFunction#">
                     <h3>An error occurred in function: #local.currentFunction#</h3>
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
         </cftry>
         <cfloop query = "local.qryCategoryData">
-            <cfset arrayAppend(local.categoryResult['categoryId'], local.qryCategoryData.fldCategory_Id)>
-            <cfset arrayAppend(local.categoryResult['categoryName'], local.qryCategoryData.fldCategoryName)>
+            <cfset arrayAppend(local.categoryResult, {
+                'categoryId' : local.qryCategoryData.fldCategory_Id,
+                'categoryName' : local.qryCategoryData.fldCategoryName
+            })>
         </cfloop>
         <cfreturn local.categoryResult>
     </cffunction>
+
 
     <cffunction name = "addCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryName" required = "yes" type = "string">
@@ -52,7 +51,7 @@
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>
-            <cfif arrayLen(local.fetchCategoryData.categoryId)>
+            <cfif arrayLen(local.fetchCategoryData)>
                 <cfset local.result['message'] = "Catergory Already Exists">
                 <cfset local.result['error'] = "false">
             <cfelse>
@@ -92,14 +91,13 @@
         <cfset local.result = {
             'message' : "",
             'error' : "false",
-            'sameId' : "false"
+            'sameId' : "no"
         }>
-        <cftry>  
+        <cftry> 
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
-            )>
-            <cfif arrayLen(local.fetchCategoryData.categoryId) 
-                AND (ArrayContains(local.fetchCategoryData.categoryId, arguments.categoryId) EQ false)>
+            )>  
+            <cfif arrayLen(local.fetchCategoryData) AND (local.fetchCategoryData[1].categoryId NEQ arguments.categoryId)>
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = "false">
             <cfelse>
@@ -116,12 +114,14 @@
                 </cfquery>
                 <cfset local.result['message'] = "Category Edited SuccessFully">
                 <cfset local.result['error'] = "true">
-                <cfset local.result['sameId'] = ArrayContains(local.fetchCategoryData.categoryId, arguments.categoryId)>
+                <cfif arrayLen(local.fetchCategoryData)>
+                    <cfset local.result['sameId'] = local.fetchCategoryData[1].categoryId EQ arguments.categoryId>
+                </cfif>
             </cfif>
             <cfcatch>
-                <cfset local.result['message'] = "Error: #cfcatch.message#">
-                <cfset local.result['error'] = "false">
                 <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
                 <cfmail 
                     from = "parikshith2101@gmail.com" 
                     to = "parikshith2k23@gmail.com" 
@@ -131,7 +131,7 @@
                     <p><strong>Error Message:</strong> #cfcatch.message#</p>
                 </cfmail>
             </cfcatch>
-        </cftry>
+        </cftry> 
         <cfreturn local.result>
     </cffunction>
 
@@ -164,15 +164,11 @@
     </cffunction>
 
     <!---SubCategory--->
-    <cffunction name = "getSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
+    <cffunction name = "getSubCategory" access = "remote" returnType = "array" returnFormat = "JSON">
         <cfargument name = "subCategoryId" required = "no" type = "integer">
         <cfargument name = "subCategoryName" required = "no" type = "string">
         <cfargument name = "categoryId" required = "yes" type = "integer">
-        <cfset local.fetchSubCategoryData = {
-            'subCategoryId' : [],
-            'categoryId' : [],
-            'subCategoryName' : []
-        }>
+        <cfset local.subCategoryResult = []>
         <cftry>
             <cfquery name = "local.qrySubCategoryData" dataSource = "shoppingCart">
                 SELECT 
@@ -204,11 +200,13 @@
             </cfcatch>
         </cftry>
         <cfloop query = "local.qrySubCategoryData">
-            <cfset arrayAppend(local.fetchSubCategoryData['subCategoryId'], local.qrySubCategoryData.fldSubCategory_Id)>
-            <cfset arrayAppend(local.fetchSubCategoryData['categoryId'], local.qrySubCategoryData.fldCategoryId)>
-            <cfset arrayAppend(local.fetchSubCategoryData['subCategoryName'], local.qrySubCategoryData.fldSubCategoryName)>
+            <cfset arrayAppend(local.subCategoryResult,{
+                'subCategoryId' : local.qrySubCategoryData.fldSubCategory_Id,
+                'categoryId' : local.qrySubCategoryData.fldCategoryId,
+                'subCategoryName' : local.qrySubCategoryData.fldSubCategoryName
+            })>
         </cfloop>
-        <cfreturn local.fetchSubCategoryData>
+        <cfreturn local.subCategoryResult>
     </cffunction>
 
     <cffunction name = "addSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
@@ -223,7 +221,7 @@
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.categoryId
             )>
-            <cfif arrayLen(local.fetchSubCategoryData.subCategoryId)>
+            <cfif arrayLen(local.fetchSubCategoryData)>
                 <cfset local.result['message'] = "SubCatergory Already Exists">
                 <cfset local.result['error'] = "false">
             <cfelse>
@@ -274,8 +272,7 @@
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.newCategoryId
             )>
-            <cfif arrayLen(local.fetchSubCategoryData.subCategoryId)
-                AND (ArrayContains(local.fetchSubCategoryData.subCategoryId, arguments.subCategoryId) EQ false)>
+            <cfif arrayLen(local.fetchSubCategoryData) AND (local.fetchSubCategoryData[1].subCategoryId NEQ arguments.subCategoryId)>
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = "false">
             <cfelse>
@@ -294,12 +291,14 @@
                 </cfquery>
                 <cfset local.result['message'] = "Category Edited SuccessFully">
                 <cfset local.result['error'] = "true">
-                <cfset local.result['sameId'] = ArrayContains(local.fetchSubCategoryData.subCategoryId, arguments.subCategoryId)>
+                <cfif arrayLen(local.fetchSubCategoryData)>
+                    <cfset local.result['sameId'] = local.fetchSubCategoryData[1].subCategoryId EQ arguments.subCategoryId>
+                </cfif>
             </cfif>
-            <cfcatch type="exception">
-                <cfset local.result['message'] = "Error: #cfcatch.message#">
-                <cfset local.result['error'] = "false">
+            <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
+                <cfset local.result['error'] = "false">
                 <cfmail 
                     from = "parikshith2101@gmail.com" 
                     to = "parikshith2k23@gmail.com" 
@@ -343,11 +342,8 @@
         </cftry>
     </cffunction>
 
-    <cffunction name = "getBrand" access = "public" returnType = "struct">
-        <cfset local.brandData = {
-            'brandId' : [],
-            'brandName' : []
-        }>
+    <cffunction name = "getBrand" access = "public" returnType = "array">
+        <cfset local.brandData = []>
         <cftry>
             <cfquery name = "local.qryBrand" dataSource = "shoppingCart">
                 SELECT 
@@ -371,13 +367,15 @@
             </cfcatch>
         </cftry>
         <cfloop query = "local.qryBrand">
-            <cfset arrayAppend(local.brandData['brandId'], local.qryBrand.fldBrand_Id)>
-            <cfset arrayAppend(local.brandData['brandName'], local.qryBrand.fldBrandName)>
+            <cfset arrayAppend(local.brandData,{
+                'brandId' : local.qryBrand.fldBrand_Id,
+                'brandName' : local.qryBrand.fldBrandName
+            })>
         </cfloop>
         <cfreturn local.brandData>
     </cffunction>
 
-    <cffunction name = "getProduct" access = "remote" returnType = "struct" returnFormat = "JSON">
+    <cffunction name = "getProduct" access = "remote" returnType = "array" returnFormat = "JSON">
         <cfargument name = "productName" required = "no" type = "string">
         <cfargument name = "subCategoryId" required = "no" type = "integer">     
         <cfargument name = "productId" required = "no" type = "integer"> 
@@ -387,18 +385,7 @@
         <cfargument name = "maxPrice" required = "no" type = "string"> 
         <cfargument name = "priceRange" required = "no" type = "string"> 
         <cfargument name = "searchForProducts" required = "no" type = "string"> 
-        <cfset local.productData = {
-            'productId' : [],
-            'productName' : [],
-            'subCategoryId' : [],
-            'brandId' : [],
-            'brandName' : [],
-            'description' : [],
-            'unitPrice' : [],
-            'unitTax' : [],
-            'imageFile' : [],
-            'defaultImage' : []
-        }>    
+        <cfset local.productData = []>    
         <cftry>
             <cfquery name = "local.qryProduct" dataSource = "shoppingCart">
                 SELECT 
@@ -475,16 +462,18 @@
             </cfcatch>
         </cftry>
         <cfloop query = "local.qryProduct">
-            <cfset arrayAppend(local.productData['productId'], local.qryProduct.fldProduct_Id)>
-            <cfset arrayAppend(local.productData['productName'], local.qryProduct.fldProductName)>
-            <cfset arrayAppend(local.productData['subCategoryId'], local.qryProduct.fldSubCategoryId)>
-            <cfset arrayAppend(local.productData['brandId'], local.qryProduct.fldBrandId)>
-            <cfset arrayAppend(local.productData['brandName'], local.qryProduct.fldBrandName)>
-            <cfset arrayAppend(local.productData['description'], local.qryProduct.fldDescription)>
-            <cfset arrayAppend(local.productData['unitPrice'], local.qryProduct.fldUnitPrice)>
-            <cfset arrayAppend(local.productData['unitTax'], local.qryProduct.fldUnitTax)>
-            <cfset arrayAppend(local.productData['imageFile'], local.qryProduct.fldImageFilePath)>
-            <cfset arrayAppend(local.productData['defaultImage'], local.qryProduct.fldDefaultImage)>
+            <cfset arrayAppend(local.productData,{
+                'productId' : local.qryProduct.fldProduct_Id,
+                'productName' : local.qryProduct.fldProductName,
+                'subCategoryId' : local.qryProduct.fldSubCategoryId,
+                'brandId' : local.qryProduct.fldBrandId,
+                'brandName' : local.qryProduct.fldBrandName,
+                'description' : local.qryProduct.fldDescription,
+                'unitPrice' : local.qryProduct.fldUnitPrice,
+                'unitTax' : local.qryProduct.fldUnitTax,
+                'imageFile' : local.qryProduct.fldImageFilePath,
+                'defaultImage' : local.qryProduct.fldDefaultImage
+            })>
         </cfloop>
         <cfreturn local.productData>
     </cffunction>
@@ -505,8 +494,8 @@
                 subCategoryId = arguments.subCategoryId
             )>
             <cftry>
-                <cfif arrayLen(local.FetchProduct.productId) 
-                    AND (ArrayContains(local.FetchProduct.productId, arguments.productId) EQ false)>
+                <cfif arrayLen(local.FetchProduct) 
+                    AND (local.FetchProduct[1].productId NEQ arguments.productId)>
                     <cfset local.result['error'] = "false">
                     <cfset local.result['message'] = "ProductName Already Exists">
                 <cfelse>
@@ -556,10 +545,10 @@
                     <cfset local.result['error'] = "true">
                     <cfset local.result['message'] = "ProductName Edited Succesfully">
                 </cfif>
-                <cfcatch type="exception">
+                <cfcatch>
+                    <cfset local.currentFunction = getFunctionCalledName()>
                     <cfset local.result['error'] = "false">
                     <cfset local.result['message'] = "Error updating product: #cfcatch.message#">
-                    <cfset local.currentFunction = getFunctionCalledName()>
                     <cfmail 
                         from = "parikshith2101@gmail.com" 
                         to = "parikshith2k23@gmail.com" 
@@ -577,7 +566,7 @@
                     productName = arguments.productName,
                     subCategoryId = arguments.subCategoryId
                 )>
-                <cfif arrayLen(local.FetchProduct.productId)>
+                <cfif arrayLen(local.FetchProduct)>
                     <cfset local.result['error'] = "false">
                     <cfset local.result['message'] = "ProductName Already Exists">
                 <cfelse>
@@ -682,15 +671,10 @@
         </cftry>
     </cffunction>
 
-    <cffunction name = "getProductImage" access = "remote" returnFormat = "JSON" returnType = "struct">
+    <cffunction name = "getProductImage" access = "remote" returnFormat = "JSON" returnType = "array">
         <cfargument name = "productId" required = "yes" type = "integer">
         <cfargument name = "productImageId" required = "no" type = "integer">
-        <cfset local.productImages = {
-            'productImageId' : [],
-            'productId' : [],
-            'imageFile' : [],
-            'defaultImage' : []
-        }>
+        <cfset local.productImages = []>
         <cftry>
             <cfquery name = "local.qryProductImage" dataSource = "shoppingCart">
                 SELECT
@@ -720,10 +704,12 @@
             </cfcatch>
         </cftry>
         <cfloop query = "local.qryProductImage">
-            <cfset arrayAppend(local.productImages['productImageId'], local.qryProductImage.fldProductImage_Id)>
-            <cfset arrayAppend(local.productImages['productId'], local.qryProductImage.fldProductId)>
-            <cfset arrayAppend(local.productImages['imageFile'], local.qryProductImage.fldImageFilePath)>
-            <cfset arrayAppend(local.productImages['defaultImage'], local.qryProductImage.fldDefaultImage)>
+            <cfset arrayAppend(local.productImages,{
+                'productImageId' : local.qryProductImage.fldProductImage_Id,
+                'productId' : local.qryProductImage.fldProductId,
+                'imageFile' : local.qryProductImage.fldImageFilePath,
+                'defaultImage' : local.qryProductImage.fldDefaultImage
+            })>
         </cfloop>
         <cfreturn local.productImages>
     </cffunction>
@@ -772,7 +758,7 @@
             productId = arguments.productId,
             productImageId = arguments.productImageId
         )>
-        <cffile action = "delete" file = "#expandPath('../assets/images/product#productImageData.productId[1]#/#productImageData.imageFile[1]#')#">>    
+        <cffile action = "delete" file = "#expandPath('../assets/images/product#productImageData[1].productId#/#productImageData[1].imageFile#')#">>    
         <cftry>
             <cfquery dataSource = "shoppingCart">
                 UPDATE
@@ -799,20 +785,9 @@
         </cftry>
     </cffunction>
 
-    <cffunction name = "getCart" access = "public" returnType = "struct">
+    <cffunction name = "getCart" access = "public" returnType = "array">
         <cfargument name = "productId" required = "no" type = "integer"> 
-        <cfset local.getCart = {
-            'cartId' : [],
-            'userId' : [],
-            'productId' : [],
-            'quantity' : [],
-            'productName' : [],
-            'unitPrice' : [],
-            'unitTax' : [],
-            'subCategoryId' : [],
-            'description' : [],
-            'imageFile' : []
-        }>
+        <cfset local.getCart = []>
         <cfquery name = "local.qryCart" dataSource = "shoppingCart">
             SELECT 
                 C.fldCart_Id,
@@ -837,16 +812,18 @@
                 </cfif>
         </cfquery>
         <cfloop query = "local.qryCart">
-            <cfset arrayAppend(local.getCart['cartId'], local.qryCart.fldCart_Id)>
-            <cfset arrayAppend(local.getCart['userId'], local.qryCart.fldUserId)>
-            <cfset arrayAppend(local.getCart['productId'], local.qryCart.fldProductId)>
-            <cfset arrayAppend(local.getCart['quantity'], local.qryCart.fldQuantity)>
-            <cfset arrayAppend(local.getCart['productName'], local.qryCart.fldProductName)>
-            <cfset arrayAppend(local.getCart['unitPrice'], local.qryCart.fldUnitPrice)>
-            <cfset arrayAppend(local.getCart['unitTax'], local.qryCart.fldUnitTax)>
-            <cfset arrayAppend(local.getCart['subCategoryId'], local.qryCart.fldSubCategoryId)>
-            <cfset arrayAppend(local.getCart['description'], local.qryCart.fldDescription)>
-            <cfset arrayAppend(local.getCart['imageFile'], local.qryCart.fldImageFilePath)>
+        <cfset arrayAppend(local.getCart,{
+            'cartId' : local.qryCart.fldCart_Id,
+            'userId' : local.qryCart.fldUserId,
+            'productId' : local.qryCart.fldProductId,
+            'quantity' : local.qryCart.fldQuantity,
+            'productName' : local.qryCart.fldProductName,
+            'unitPrice' : local.qryCart.fldUnitPrice,
+            'unitTax' : local.qryCart.fldUnitTax,
+            'subCategoryId' : local.qryCart.fldSubCategoryId,
+            'description' : local.qryCart.fldDescription,
+            'imageFile' : local.qryCart.fldImageFilePath
+        })>
         </cfloop>
         <cfreturn local.getCart>
     </cffunction>
@@ -859,8 +836,8 @@
         }>
         <cfset local.cartData = getCart(productId = arguments.productId)>
         <cftry>  
-            <cfif arrayLen(local.cartData.cartId)>
-                <cfset local.quantityCount = local.cartData.quantity[1] + 1>
+            <cfif arrayLen(local.cartData)>
+                <cfset local.quantityCount = local.cartData[1].quantity + 1>
                 <cfquery dataSource = "shoppingCart">
                     UPDATE
                         tblcart
@@ -889,7 +866,7 @@
                 <cfset local.result['message'] = "Added">
             </cfif>
             <cfset local.fetchCartQuantity = getCart()>
-            <cfset session.cartQuantity = arrayLen(local.fetchCartQuantity['productId'])>
+            <cfset session.cartQuantity = arrayLen(local.fetchCartQuantity)>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset local.result['error'] = "false">
@@ -919,7 +896,7 @@
                 fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype = "integer">
         </cfquery>
         <cfset local.getCartData = getCart()>
-        <cfset session.cartQuantity = arrayLen(local.getCartData['productId'])>
+        <cfset session.cartQuantity = arrayLen(local.getCartData)>
         <cfset local.result['cartQuantity'] = session.cartQuantity>
         <cfset local.result['getCartData'] = local.getCartData>        
         <cfreturn local.result>
@@ -936,7 +913,7 @@
         <cftry>
             <cfset local.getCartData = getCart(productId = arguments.productId)>
             <cfif arguments.modifyStatus EQ "add">
-                <cfset local.quantityCount = local.getCartData.quantity[1] + 1>
+                <cfset local.quantityCount = local.getCartData[1].quantity + 1>
                 <cfquery dataSource = "shoppingCart">
                     UPDATE
                         tblcart
@@ -946,8 +923,8 @@
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
                         AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
                 </cfquery>
-            <cfelseif (arguments.modifyStatus EQ "remove") AND (local.getCartData.quantity[1] GT 1)>
-                <cfset local.quantityCount = local.getCartData.quantity[1] - 1>
+            <cfelseif (arguments.modifyStatus EQ "remove") AND (local.getCartData[1].quantity GT 1)>
+                <cfset local.quantityCount = local.getCartData[1].quantity - 1>
                 <cfquery dataSource = "shoppingCart">
                     UPDATE
                         tblcart

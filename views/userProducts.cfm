@@ -12,9 +12,9 @@
 </head>
 <body>
 <cfoutput>
-    <cfset getCategories = application.productManagementObj.getCategory()>
-    <cfset getProductsData = application.productManagementObj.getProduct(productId = url.productId)>
-    <cfset getProductImagesData = application.productManagementObj.getProductImage(productId = url.productId)>
+    <cfset getCategoryArray = application.productManagementObj.getCategory()>
+    <cfset getProductArray = application.productManagementObj.getProduct(productId = url.productId)>
+    <cfset getProductImageArray = application.productManagementObj.getProductImage(productId = url.productId)>
     <cfif structKeyExists(form, "addToCartBtn")>
         <cfif structKeyExists(session, "userId")>
             <cfset addToCartResult = application.productManagementObj.addCart(
@@ -68,17 +68,17 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="categoriesNavbar">
                     <ul class="navbar-nav justify-content-evenly w-100">
-                        <cfloop index="i" from="1" to="#arrayLen(getCategories.categoryId)#">
+                        <cfloop array="#getCategoryArray#" item="categoryItem">
                             <li class="nav-item dropdown">
-                                <a class="nav-link" href="userCategories.cfm?categoryId=#getCategories.categoryId[i]#" id="#getCategories.categoryId[i]#" role="button">
-                                    #getCategories.categoryName[i]#
+                                <a class="nav-link" href="userCategories.cfm?categoryId=#categoryItem.categoryId#" id="#categoryItem.categoryId#" role="button">
+                                    #categoryItem.categoryName#
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="#getCategories.categoryId[i]#">
-                                    <cfset getSubCategories = application.productManagementObj.getSubCategory(categoryId = getCategories.categoryId[i])>
-                                    <cfloop index="i" from="1" to="#arrayLen(getSubCategories.subCategoryId)#">
+                                <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
+                                    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryItem.categoryId)>
+                                    <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
                                         <li>
-                                            <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#getSubCategories.subCategoryId[i]#&subCategoryName=#getSubCategories.subCategoryName[i]#">
-                                                #getSubCategories.subCategoryName[i]#
+                                            <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#">
+                                                #subCategoryItem.subCategoryName#
                                             </a>
                                         </li>
                                     </cfloop>
@@ -93,35 +93,35 @@
 
     <main>
         <div class="container products-container mt-5">
-            <cfloop index="i" from="1" to="#arrayLen(getProductsData.productId)#">
+            <cfloop array="#getProductArray#" item="productItem">
                 <div class="row mt-5">
                     <div class="col-md-6">
                         <div class="main-product-image mb-3">
-                            <img src="../assets/images/product#getProductsData.productId[i]#/#getProductsData.imageFile[i]#" id="mainImage" alt="Main Product" height="300">
+                            <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" id="mainImage" alt="Main Product" height="300">
                         </div>
                         <div class="product-images">
-                            <cfloop index="j" from="1" to="#arrayLen(getProductImagesData.productImageId)#">
-                                <img src="../assets/images/product#getProductImagesData.productId[j]#/#getProductImagesData.imageFile[j]#" alt="Product Image 1" onmouseover="updateMainImage(this)">
+                            <cfloop array="#getProductImageArray#" item="productImageItem">
+                                <img src="../assets/images/product#productImageItem.productId#/#productImageItem.imageFile#" alt="Product Image 1" onmouseover="updateMainImage(this)">
                             </cfloop>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="product-details">
-                            <div class="product-title">#getProductsData.productName[i]#</div>
-                            <div class="product-price">Rs. #getProductsData.unitPrice[i]#</div>
+                            <div class="product-title">#productItem.productName#</div>
+                            <div class="product-price">Rs. #productItem.unitPrice#</div>
                             <div class="product-description">
-                                <p>#getProductsData.description[i]#</p>
+                                <p>#productItem.description#</p>
                             </div>
                             <form method="post" class="action-buttons">
                                 <cfif structKeyExists(session, "userId")>
-                                <cfset getCartData = application.productManagementObj.getCart(productId = getProductsData.productId[i])>
-                                    <cfif arrayLen(getCartData.cartId)> 
+                                <cfset getCartData = application.productManagementObj.getCart(productId = productItem.productId)>
+                                    <cfif arrayLen(getCartData)> 
                                         <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                     <cfelse>
-                                        <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
+                                        <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
                                     </cfif>
                                 <cfelse>
-                                    <button type="submit" value="#getProductsData.productId[i]#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
+                                    <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
                                 </cfif>
                                 <button class="btn btn-success">Buy Now</button>
                             </form>
