@@ -14,8 +14,10 @@
 
 <body>
     <cfoutput>
-        <cfset subCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
-        <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
+        <cfset local.categoryId = url.categoryId>
+        <cfset local.categoryName = url.categoryName>
+        <cfset getCategoryArray = application.productManagementObj.getCategory()>
+        <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = local.categoryId)>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -23,6 +25,7 @@
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
             <ul class="d-flex list-unstyled my-0">
                 <li class="nav-item">
                     <a class="nav-link" id="logoutCategory">
@@ -37,7 +40,7 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">#url.categoryName#</div>
+                            <div class="login-title fs-4 px-2">#local.categoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
 
@@ -57,8 +60,8 @@
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
-                                                    <cfloop query="qryCategoriesData">
-                                                        <option value="#qryCategoriesData.fldCategory_Id#">#qryCategoriesData.fldCategoryName#</option>
+                                                    <cfloop array="#getCategoryArray#" item="categoryItem">
+                                                        <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
@@ -79,30 +82,27 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column w-100 mt-3">
-                            
-                            <cfloop query = "subCategoryData">
-
-                                <div class="card shadow-lg" id = "#subCategoryData.fldSubCategory_Id#">
+                        <div class="d-flex flex-column w-100 mt-3">                          
+                            <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
+                                <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
-                                            #subCategoryData.fldSubCategoryName#
+                                            #subCategoryItem.subCategoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="products.cfm?subCategoryId=#subCategoryData.fldSubCategory_Id#&subCategoryName=#subCategoryData.fldSubCategoryName#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>
                                     </div>
-                                </div>
-                                
-                            </cfloop>
+                                </div>                           
+                            </cfloop> 
                         </div>
                     </div>
                 </div>
