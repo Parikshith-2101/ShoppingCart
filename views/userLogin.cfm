@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adminLogin</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/style/adminLogin.css">
+    <link rel="stylesheet" href="../assets/style/userLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
             integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
             crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
     <nav class="navbar fixed-top p-0">
-        <a href="##" class="nav-link">
+        <a href="userHome.cfm" class="nav-link">
             <div class="d-flex nav-brand">
                 <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                 <span class="fs-4">Shopping Cart</span>
@@ -20,7 +20,7 @@
         </a>
         <ul class = "d-flex list-unstyled my-0">
             <li class = "nav-item">
-                <a class = "nav-link" href = "userSignup.cfm">
+                <a class = "nav-link" href="userSignup.cfm">
                     <i class="fa-solid fa-user-plus"></i>
                     <span>SignUp</span>
                 </a>
@@ -38,7 +38,12 @@
                             <div id = "userName-error" class="text-danger fw-bold"></div>
                         </div>
                         <div class="w-100 py-2">
-                            <input type="password" id="password" name="password" class="border-0 border-bottom w-100" placeholder="Password">
+                            <div class="d-flex position-relative align-items-center">
+                                <input type="password" id="password" name="password" class="border-0 border-bottom w-100 m-0" placeholder="Password">
+                                <span id="eyeIcon" class="position-absolute">
+                                    <i class="fa-solid fa-eye"></i>
+                                </span>
+                            </div>
                             <div id = "password-error" class="text-danger fw-bold"></div>
                         </div>
                         <button type="submit" name="loginBtn" onclick="return userLogin()" class="rounded-pill login-btn w-75 my-4 btn fw-bold">LOGIN</button>
@@ -55,7 +60,8 @@
                                     <cflocation  url = "categories.cfm">
                                 <cfelse>
                                     <cfif structKeyExists(url, "productId")>    
-                                        <cflocation url = "userProducts.cfm?productId=#url.productId#">
+                                        <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = url.productId)>
+                                        <cflocation url = "userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">
                                     <cfelse>
                                         <cflocation url = "userHome.cfm">
                                     </cfif> 

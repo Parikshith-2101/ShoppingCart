@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/style/home.css">
+    <link rel="stylesheet" href="../assets/style/home.css">   
     <link rel="stylesheet" href="../assets/style/Cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
@@ -15,86 +15,12 @@
 </head>
 
 <body>
-    <cfoutput>
-        <cfset getCategoryArray=application.productManagementObj.getCategory()>
-        <cfset getCartArray=application.productManagementObj.getCart()>
-        <header>
-            <nav class="navbar navbar-expand-lg fixed-top">
-                <div class="container-fluid">
-                    <a href="userHome.cfm" class="navbar-brand d-flex align-items-center">
-                        <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40"
-                            class="me-2">
-                        <span class="fs-4 nav-brand">ShoppingCart</span>
-                    </a>
-                    <form method="post" class="d-flex m-0" action="userSearch.cfm">
-                        <input class="form-control me-2" name="searchForProducts" type="search"
-                            placeholder="Search for products..." aria-label="Search">
-                        <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
-                    </form>
-
-                    <ul class="navbar-nav">
-                        <li class="nav-item me-3">
-                            <a class="nav-link" href="userCart.cfm">
-                                <i class="fa-solid fa-cart-shopping position-relative">
-                                    <span
-                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        <cfif structKeyExists(session, "cartQuantity")>
-                                            <div class="cart-quantity">#session.cartQuantity#</div>
-                                        <cfelse>
-                                            0
-                                        </cfif>
-                                    </span>
-                                </i>
-                                <span>Cart</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <cfif structKeyExists(session, "email" )>
-                                <a class="nav-link" href="##" id="logoutBtn">
-                                    <i class="fa-solid fa-sign-out-alt"></i>
-                                    <span>Logout</span>
-                                </a>
-                            <cfelse>
-                                <a class="nav-link" href="##">
-                                    <i class="fa-solid fa-user-plus"></i>
-                                    <span>Login</span>
-                                </a>
-                            </cfif>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-            <nav class="navbar-expand-lg categories-navbar fixed-top">
-                <div class="container-fluid">
-                    <div class="collapse navbar-collapse" id="categoriesNavbar">
-                        <ul class="navbar-nav justify-content-evenly w-100">
-                            <cfloop array="#getCategoryArray#" item="categoryItem">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link"
-                                        href="userCategories.cfm?categoryId=#categoryItem.categoryId#"
-                                        id="#categoryItem.categoryId#" role="button">
-                                        #categoryItem.categoryName#
-                                    </a>
-                                    <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
-                                        <cfset
-                                            getSubCategoryArray=application.productManagementObj.getSubCategory(categoryId=categoryItem.categoryId)>
-                                        <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    href="userSubCategories.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#">
-                                                    #subCategoryItem.subCategoryName#
-                                                </a>
-                                            </li>
-                                        </cfloop>
-                                    </ul>
-                                </li>
-                            </cfloop>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
-        <main>
+    <header>
+        <cfinclude template="userHeader.cfm">
+    </header>
+    <main> 
+        <cfoutput>
+            <cfset getCartArray=application.productManagementObj.getCart()>
             <div class="main-container d-flex">
                 <div class="container-left">
                     <div class="card-head d-flex">
@@ -183,8 +109,9 @@
                     </div>
                 </div>
             </div>
-        </main>
-    </cfoutput>
+        </cfoutput>
+    </main>
+    <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/user.js"></script>
     <script src="../assets/script/userProducts.js"></script>

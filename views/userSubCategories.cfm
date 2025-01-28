@@ -11,85 +11,22 @@
 </head>
 <body>
 <cfoutput>
-    <cfset getCategoryArray = application.productManagementObj.getCategory()>
-    <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
     <header>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container-fluid">
-                <a href="userHome.cfm" class="navbar-brand d-flex align-items-center">
-                    <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
-                    <span class="fs-4 nav-brand">ShoppingCart</span>
-                </a> 
-                <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
-                    <input class="form-control me-2" name="searchForProducts" type="search" placeholder="Search for products..." aria-label="Search">
-                    <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
-                </form> 
-                <ul class="navbar-nav">
-                    <li class="nav-item me-3">
-                        <a class="nav-link" href="userCart.cfm">
-                            <i class="fa-solid fa-cart-shopping position-relative">
-                                <cfif structKeyExists(session, "cartQuantity")>
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                        #session.cartQuantity#
-                                    </span>
-                                </cfif>
-                            </i>
-                            <span>Cart</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <cfif structKeyExists(session, "email")>    
-                            <a class="nav-link" href="##" id="logoutBtn">                                
-                                <i class="fa-solid fa-sign-out-alt"></i>
-                                <span>Logout</span>
-                            </a>
-                        <cfelse>
-                            <a class="nav-link" href="##">
-                                <i class="fa-solid fa-user-plus"></i>
-                                <span>Login</span>
-                            </a>
-                        </cfif>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <nav class="navbar-expand-lg categories-navbar fixed-top">
-            <div class="container-fluid">
-                <div class="collapse navbar-collapse" id="categoriesNavbar">
-                    <ul class="navbar-nav justify-content-evenly w-100">
-                        <cfloop array="#getCategoryArray#" item="categoryItem">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link" href="userCategories.cfm?categoryId=#categoryItem.categoryId#" id="#categoryItem.categoryId#" role="button">
-                                    #categoryItem.categoryName#
-                                </a>
-                                <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
-                                    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryItem.categoryId)>
-                                    <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
-                                        <li>
-                                            <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#">
-                                                #subCategoryItem.subCategoryName#
-                                            </a>
-                                        </li>
-                                    </cfloop>
-                                </ul>
-                            </li>
-                        </cfloop>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <cfinclude template="userHeader.cfm">
     </header>
 
     <main>
+        <cfset decryptedSubCategoryId = application.productManagementObj.decryptDetails(data = url.subCategoryId)>
+        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = decryptedSubCategoryId)>
         <cfif structKeyExists(form, "sortBtn")>
             <cfset getProductArray = application.productManagementObj.getProduct(
-                subCategoryId = url.subCategoryId,
+                subCategoryId = decryptedSubCategoryId,
                 sortType = form.sortBtn
             )>
         </cfif>
         <cfif structKeyExists(form, "priceFilterBtn")>
              <cfset getProductArray = application.productManagementObj.getProduct(
-                subCategoryId = url.subCategoryId,
+                subCategoryId = decryptedSubCategoryId,
                 minPrice = form.minPrice,
                 maxPrice = form.maxPrice,
                 priceRange = (structKeyExists(form, "priceRange")? form.priceRange : "")
@@ -97,10 +34,9 @@
         </cfif>
         <form method="post">
             <div class="container products-container">
-                <!---products--->
                 <div class="row g-4 mt-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="m-0">#url.subCategoryName#</h3>
+                        <h3 class="m-0">#getProductArray[1].subCategoryName#</h3>
                         <div class="d-flex">
                             <div class="d-flex">
                                 <h4 class="m-0">Sort By</h4>
@@ -124,9 +60,18 @@
                                                 <input type="number" name="maxPrice" id="maxPrice" placeholder="Max" class="w-50 form-control p-0">
                                             </div> 
                                         </li> 
-                                        <li class="d-flex m-2"><input type="radio" name="priceRange" value="low" class="dropdown-item priceFilter me-1">₹10000 - ₹20000</li>
-                                        <li class="d-flex m-2"><input type="radio" name="priceRange" value="mid" class="dropdown-item priceFilter me-1">₹20000 - ₹30000</li>
-                                        <li class="d-flex m-2"><input type="radio" name="priceRange" value="high" class="dropdown-item priceFilter me-1">₹30000+</li>
+                                        <li class="d-flex m-2 align-items-center">
+                                            <input type="radio" name="priceRange" value="low" class="dropdown-item priceFilter me-1">
+                                            <i class="fa-solid fa-indian-rupee-sign"></i>10000 - <i class="fa-solid fa-indian-rupee-sign ms-1"></i>20000
+                                        </li>
+                                        <li class="d-flex m-2 align-items-center">
+                                            <input type="radio" name="priceRange" value="mid" class="dropdown-item priceFilter me-1">
+                                            <i class="fa-solid fa-indian-rupee-sign"></i>20000 - <i class="fa-solid fa-indian-rupee-sign ms-1"></i>30000
+                                        </li>
+                                        <li class="d-flex m-2 align-items-center">
+                                            <input type="radio" name="priceRange" value="high" class="dropdown-item priceFilter me-1">
+                                            <i class="fa-solid fa-indian-rupee-sign"></i>30000+
+                                        </li>
                                         <li>
                                             <div class="mx-2">
                                                 <button type="submit" name="priceFilterBtn" class="form-control btn btn-success">Filter</button>
@@ -138,9 +83,10 @@
                         </div>
                     </div>
                     <cfloop array="#getProductArray#" item="productItem">
+                        <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = productItem.productId)>
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                             <div class="product-card pb-0">
-                                <a href="userProducts.cfm?productId=#productItem.productId#">                                
+                                <a href="userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">                                
                                     <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" alt="Electronics">
                                 </a>
                                 <div class="card-body text-start">
@@ -150,10 +96,8 @@
                                     </p>
                                     <p class="card-text product-desc text-muted small mb-1">
                                         <strong>Description:</strong> #productItem.description#
-                                    </p>
-                                    <p class="card-text text-muted small mb-1">
-                                        <strong>Price:</strong> Rs.#productItem.unitPrice#/-
-                                    </p>
+                                    </p>                                   
+                                    <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
                                 </div>
                             </div>
                         </div>

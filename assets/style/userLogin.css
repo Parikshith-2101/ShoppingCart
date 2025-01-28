@@ -116,3 +116,7 @@ select {
 .nav-link{
     cursor: pointer;
 }
+#eyeIcon{
+    left: 90%;
+    cursor: pointer;
+}

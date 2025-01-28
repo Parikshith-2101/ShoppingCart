@@ -48,7 +48,7 @@ function userSignUpValidation(){
         isValid = false;
     }
     else if (!nameRegex.test(lastName)){
-        $('#firstName-error').text('First Name should only contain alphabets');
+        $('#lastName-error').text('First Name should only contain alphabets');
         isValid = false;
     }
 
@@ -87,5 +87,16 @@ $('#logoutBtn').click(function(){
                 window.location.reload();
             }
         });
+    }
+});
+$('#eyeIcon').click(function () {
+    let passfield = $('#password');
+    if (passfield.attr("type") === "password") {
+        passfield.attr("type","text");
+        $('#eyeIcon').html(`<i class="fa-solid fa-eye-slash"></i>`);
+    } 
+    else {
+        passfield.attr("type","password");
+        $('#eyeIcon').html(`<i class="fa-solid fa-eye"></i>`);
     }
 });

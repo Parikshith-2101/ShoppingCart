@@ -7,7 +7,16 @@
         <cfset application.userLoginObj = createObject("component", "components.userLogin")>
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
         <cfset application.userObj = createObject("component", "components.user")>
+        <cfset application.key = generateSecretKey("AES")>
     </cffunction>   
+
+    <cffunction name = "onRequestStart" returnType = "boolean">
+        <cfargument type = "String" name = "targetPage" required = true>
+        <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
+            <cfset onApplicationStart()>
+        </cfif>
+        <cfreturn true>
+    </cffunction>
 
     <cffunction name = "onRequest" returnType = "void">
         <cfargument name = "requestPage">
@@ -25,8 +34,6 @@
         <cfelse> 
             <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
         </cfif>
-        <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
-            <cfset onApplicationStart()>
-        </cfif>
+        
     </cffunction>
 </cfcomponent>

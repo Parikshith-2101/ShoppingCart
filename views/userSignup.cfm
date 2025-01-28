@@ -47,11 +47,16 @@
                                 <div id="email-error" class="text-danger fw-bold"></div>
                             </div>
                             <div class="w-100 py-2">
-                                <input type="text" id="phoneNumber" name="phoneNumber" class="border-0 border-bottom w-100 m-0" placeholder="Phone Number">
+                                <input type="tel" id="phoneNumber" name="phoneNumber" class="border-0 border-bottom w-100 m-0" placeholder="Phone Number">
                                 <div id="phoneNumber-error" class="text-danger fw-bold"></div>
                             </div>
                             <div class="w-100 py-2"> 
-                                <input type="password" id="password" name="password" class="border-0 border-bottom w-100 m-0" placeholder="Password">
+                                <div class="d-flex position-relative align-items-center">
+                                    <input type="password" id="password" name="password" class="border-0 border-bottom w-100 m-0" placeholder="Password">
+                                    <span id="eyeIcon" class="position-absolute">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </span>
+                                </div>
                                 <div id="password-error" class="text-danger fw-bold"></div>
                             </div>
                             <div class="w-100 py-2"> 

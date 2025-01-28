@@ -466,6 +466,7 @@
                 'productId' : local.qryProduct.fldProduct_Id,
                 'productName' : local.qryProduct.fldProductName,
                 'subCategoryId' : local.qryProduct.fldSubCategoryId,
+                'subCategoryName' : local.qryProduct.fldSubCategoryName,
                 'brandId' : local.qryProduct.fldBrandId,
                 'brandName' : local.qryProduct.fldBrandName,
                 'description' : local.qryProduct.fldDescription,
@@ -952,5 +953,32 @@
         <cfset local.getCart = getCart()>
         <cfset local.result['getCartData'] = local.getCart>
         <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "encryptDetails" access="public" returnType = "string">
+        <cfargument name = "data" required = "yes" type = "string">
+            <cfset local.encryptedData = encrypt(arguments.data, application.key,"AES","base64")>
+            <cfreturn local.encryptedData>
+    </cffunction>
+
+    <cffunction name = "decryptDetails" access="public" returnType = "string">
+        <cfargument name = "data" required = "yes" type = "string">
+        <cfset local.decryptedData = "">
+        <cftry>
+            <cfset local.decryptedData = decrypt(arguments.data, application.key,"AES","base64")>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfmail 
+                    from = "parikshith2101@gmail.com" 
+                    to = "parikshith2k23@gmail.com" 
+                    subject = "Error in Function: #local.currentFunction#"
+                >
+                    <h3>An error occurred in function: #local.currentFunction#</h3>
+                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
+                </cfmail>
+                <cfreturn local.decryptedData>
+            </cfcatch>
+        </cftry>
+        <cfreturn local.decryptedData>
     </cffunction>
 </cfcomponent>
