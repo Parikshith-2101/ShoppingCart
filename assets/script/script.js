@@ -4,6 +4,8 @@ function handleAjaxError(xhr, status, error) {
 }
 
 $(document).ready(function () {
+    $('#saveCategory').prop("disabled", true);
+    $('#saveSubCategory').prop("disabled", true);
     // Logout
     $('#logoutCategory').on('click', function () {
         if (confirm("Logout! Are you sure?")) {
@@ -17,6 +19,14 @@ $(document).ready(function () {
             });
         }
     });
+    $('#categoryValue').on('keyup',function () {
+        if($('#categoryValue').val() == "" || $('#categoryValue').val() == $('#categoryValue').attr("defaultValue")){
+            $('#saveCategory').prop("disabled", true);
+        }
+        else{
+            $('#saveCategory').prop("disabled", false);
+        }
+    });
 
     //CategoryModal
     $('#addCategoryBtn').on('click', function () {
@@ -24,6 +34,7 @@ $(document).ready(function () {
         $('#categoryModal').modal('show');
         $('#category-error').text('');
         $('#saveCategory').val('');
+        $('#categoryValue').attr("defaultValue","");
     });
 
     //saveCategory
@@ -49,10 +60,7 @@ $(document).ready(function () {
                 success: function(editCategoryData){
                     const data = JSON.parse(editCategoryData);
                     console.log(data);
-                    if(data.sameId === true){
-                        $('#categoryModal').modal('hide');
-                    }
-                    else if (data.error === "true") {
+                    if (data.error === false) {
                         $('#category-error').text(data.message);
                         $('#category-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
@@ -93,6 +101,14 @@ $(document).ready(function () {
         }
     });
 
+    $('#subCategoryValue').on('keyup',function () {
+        if($('#subCategoryValue').val() == "" || $('#subCategoryValue').val() == $('#subCategoryValue').attr("defaultValue")){
+            $('#saveSubCategory').prop("disabled", true);
+        }
+        else{
+            $('#saveSubCategory').prop("disabled", false);
+        }
+    });
     //SubCategoryModal
     $('#addSubCategoryBtn').on('click', function () {
         $('#subCategoryValue').val('');
@@ -102,6 +118,7 @@ $(document).ready(function () {
         const searchParams = new URLSearchParams(window.location.search);
         const categoryId = searchParams.get('categoryId');
         $('#categoryDropdown').val(categoryId);
+        $('#subCategoryValue').attr("defaultValue","");
     });
 
     //saveSubCategory
@@ -134,7 +151,7 @@ $(document).ready(function () {
                 success: function(response){
                     const data = JSON.parse(response);
                     console.log(data);
-                    if(data.error == "true"){
+                    if(data.error == false){
                         $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
@@ -162,10 +179,7 @@ $(document).ready(function () {
                 success : function(response){
                     const data = JSON.parse(response);
                     console.log(data);
-                    if(data.sameId === true){
-                        $('#subCategoryModal').modal('hide');
-                    }                   
-                    else if(data.error === "true"){
+                    if(data.error === false){
                         $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         setTimeout(function() {
@@ -185,6 +199,7 @@ $(document).ready(function () {
 //view on edit Category
 function editCategory(categoryId){
     $('#category-error').text('');
+    $('#categoryValue').val('').change();
     $.ajax({
         url: "../components/productManagement.cfc?method=getCategory",
         method: "POST",
@@ -193,17 +208,24 @@ function editCategory(categoryId){
         },
         success: function(getCategoryData){
             const data = JSON.parse(getCategoryData);
-            console.log(data[0]);
-            $('#categoryValue').val(data[0].categoryName);
-            $('#categoryModal').modal('show'); 
-            $('#saveCategory').val(data[0].categoryId);
+            console.log(data);
+            if(data.error == true){
+                $('#category-error').text(data.message);
+            }
+            else{
+                $('#categoryValue').val(data.category[0].categoryName);
+                $('#categoryValue').attr("defaultValue",data.category[0].categoryName);
+                $('#categoryModal').modal('show'); 
+                $('#saveCategory').val(data.category[0].categoryId);
+            }
         },
         error: handleAjaxError
     });
 }
 
 //delete Category
-function deleteCategory(categoryId){
+function deleteCategory(categoryId,divId){
+    console.log(categoryId)
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
@@ -212,8 +234,8 @@ function deleteCategory(categoryId){
                 categoryId : categoryId
             },
             success: function() {
-                $('#' + categoryId).remove();
-            },
+                $(`#${divId}`).remove();
+            }
         });
     }     
 }
@@ -230,10 +252,11 @@ function editSubCategory(subCategoryId,categoryId){
         },
         success: function(getSubCategoryData){
             const data = JSON.parse(getSubCategoryData);
-            console.log(data[0]);
-            $('#categoryDropdown').val(data[0].categoryId);
-            $('#subCategoryValue').val(data[0].subCategoryName);
-            $('#saveSubCategory').val(data[0].subCategoryId);
+            console.log(data.subCategory[0]);
+            $('#categoryDropdown').val(data.subCategory[0].categoryId);
+            $('#subCategoryValue').val(data.subCategory[0].subCategoryName);
+            $('#saveSubCategory').val(data.subCategory[0].subCategoryId);
+            $('#subCategoryValue').attr("defaultValue",data.subCategory[0].subCategoryName);
             $('#subCategoryModal').modal('show');
         },
         error: handleAjaxError
@@ -241,7 +264,7 @@ function editSubCategory(subCategoryId,categoryId){
 }
 
 //delete SubCategory
-function deleteSubCategory(subCategoryId,categoryId){
+function deleteSubCategory(subCategoryId,categoryId,divId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
@@ -251,7 +274,7 @@ function deleteSubCategory(subCategoryId,categoryId){
                 categoryId : categoryId
             },
             success: function() {
-                $('#' + subCategoryId).remove();
+                $(`#${divId}`).remove();
             },
             error: handleAjaxError
         });

@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <cfset getCategoryArray =  application.productManagementObj.getCategory()> 
+    <cfset getCategory =  application.productManagementObj.getCategory()> 
     <cfoutput>
         <nav class="navbar fixed-top p-0">
             <a href="##" class="nav-link">
@@ -68,29 +68,31 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfloop array="#getCategoryArray#" item="categoryItem">
-                                <div class="card shadow-lg" id = "#categoryItem.categoryId#">
+                            <cfif getCategory.error EQ true>
+                                <cfdump var="#getCategory#">
+                            </cfif>
+                            <cfloop array="#getCategory.category#" item="categoryItem">
+                                <cfset divId = createUUID()>
+                                <div class="card shadow-lg" id = "#divId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
                                             #categoryItem.categoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editCategory(#categoryItem.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editCategory('#categoryItem.categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteCategory(#categoryItem.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteCategory('#categoryItem.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="subCategories.cfm?categoryId=#categoryItem.categoryId#&categoryName=#categoryItem.categoryName#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="subCategories.cfm?categoryId=#UrlEncodedFormat(categoryItem.categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                            </cfloop>   
-                                                                                                                    
-                        </div>
-                        
+                            </cfloop>                                                                                                           
+                        </div>                 
                     </div>
                 </div>
             </div>

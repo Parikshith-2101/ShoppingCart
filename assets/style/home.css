@@ -117,3 +117,9 @@ input[type="number"] {
     background-color: #f8d7da; 
     color: #dc3545; 
 }
+.card-title{
+    padding-block: 3px;
+}
+div.fw-bold{
+    padding-block: 3px;
+}

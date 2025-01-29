@@ -15,7 +15,6 @@
 <body>
     <cfoutput>
         <cfset local.categoryId = url.categoryId>
-        <cfset local.categoryName = url.categoryName>
         <cfset getCategoryArray = application.productManagementObj.getCategory()>
         <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = local.categoryId)>
         <nav class="navbar fixed-top p-0">
@@ -40,10 +39,10 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="login-title fs-4 px-2">#local.categoryName#</div>
+                            <div class="login-title fs-4 px-2">
+                                #getSubCategoryArray.subCategory[1].categoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
-
                         <div class="modal fade" id="subCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"
                             tabindex="-1" aria-labelledby="subCategoryLabel" aria-hidden="true">
                             <div class="modal-dialog w-50">
@@ -60,7 +59,7 @@
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
-                                                    <cfloop array="#getCategoryArray#" item="categoryItem">
+                                                    <cfloop array="#getCategoryArray.category#" item="categoryItem">
                                                         <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
@@ -83,17 +82,18 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">                          
-                            <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
-                                <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
+                            <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
+                                <cfset divId = createUUID()>
+                                <div class="card shadow-lg" id = "#divId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
                                             #subCategoryItem.subCategoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory(#subCategoryItem.subCategoryId#,#local.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                             <a href="products.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">

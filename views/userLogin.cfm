@@ -60,8 +60,7 @@
                                     <cflocation  url = "categories.cfm">
                                 <cfelse>
                                     <cfif structKeyExists(url, "productId")>    
-                                        <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = url.productId)>
-                                        <cflocation url = "userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">
+                                        <cflocation url = "userProducts.cfm?productId=#url.productId#">
                                     <cfelse>
                                         <cflocation url = "userHome.cfm">
                                     </cfif> 

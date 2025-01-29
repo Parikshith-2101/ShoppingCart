@@ -1,13 +1,13 @@
 <cfcomponent>
     <cffunction name = "userLogin" access = "public" returnType = "struct">
-        <cfargument name = "userName" required = "yes" type = "string">
-        <cfargument name = "password" required = "yes" type = "string">
+        <cfargument name = "userName" required = true type = "string">
+        <cfargument name = "password" required = true type = "string">
         <cfset local.result = {
-            'error' : "false",
+            'error' : true,
             'message' : "Invalid User , Please Signup"
         }>
         <cftry>
-            <cfquery name = "local.qryFetchUserData">
+            <cfquery name = "local.qryFetchUserData" dataSource = "shoppingCart">
                 SELECT 
                     U.fldUser_Id,
                     U.fldRoleId,
@@ -47,11 +47,11 @@
                     <cfset session.roleId = local.qryFetchUserData.fldRoleId>
                     <cfset session.cartQuantity = local.qryFetchUserData.cartQuantity>
                     <cfset local.result['message'] = "Login Successful">
-                    <cfset local.result['error'] = "true">
+                    <cfset local.result['error'] = false>
                 </cfif>
             </cfif>
             <cfcatch>
-                <cfset local.result['error'] = "false">
+                <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "Error : #cfcatch.message#">
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfmail 
@@ -68,11 +68,11 @@
     </cffunction>
 
     <cffunction name = "userSignUp" access = "public" returnType = "struct">
-        <cfargument name = "firstName" required = "yes" type = "string">
-        <cfargument name = "lastName" required = "yes" type = "string">
-        <cfargument name = "email" required = "yes" type = "string">
-        <cfargument name = "phone" required = "yes" type = "string">
-        <cfargument name = "password" required = "yes" type = "string">
+        <cfargument name = "firstName" required = true type = "string">
+        <cfargument name = "lastName" required = true type = "string">
+        <cfargument name = "email" required = true type = "string">
+        <cfargument name = "phone" required = true type = "string">
+        <cfargument name = "password" required = true type = "string">
         <cfset local.result = {
             'error': false,
             'message': ""
