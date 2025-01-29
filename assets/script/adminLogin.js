@@ -28,8 +28,8 @@ function handleAjaxError(xhr, status, error) {
         },
         success: function (loginServerResponse) {
             const data = JSON.parse(loginServerResponse);
-            if (data.errorStatus === "true") {
-                $('#resultMsg').text(data.resultMsg);
+            if (data.error === "true") {
+                $('#resultMsg').text(data.message);
                 $('#resultMsg').css({
                     color: "green",
                     "margin-bottom": "20px"
@@ -38,7 +38,7 @@ function handleAjaxError(xhr, status, error) {
                     window.location.href = "categories.cfm";
                 }, 600);
             } else {
-                $('#resultMsg').text(data.resultMsg);
+                $('#resultMsg').text(data.message);
                 $('#resultMsg').css({
                     color: "red",
                     "margin-bottom": "20px"
