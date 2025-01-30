@@ -13,24 +13,25 @@
 </head>
 
 <body>
-
-    <nav class="navbar fixed-top p-0">
-        <a href="##" class="nav-link">
-            <div class="d-flex nav-brand">
-                <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
-                <span class="fs-4">ShoppingCart</span>
-            </div>
-        </a>
-        <ul class="d-flex list-unstyled my-0">
-            <li class="nav-item">
-                <a class="nav-link" id="logoutCategory">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+    <cfset getCategory =  application.productManagementObj.getCategory()> 
     <cfoutput>
+        <nav class="navbar fixed-top p-0">
+            <a href="##" class="nav-link">
+                <div class="d-flex nav-brand">
+                    <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
+                    <span class="fs-4">ShoppingCart</span>
+                </div>
+            </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
+            <ul class="d-flex list-unstyled my-0">
+                <li class="nav-item">
+                    <a class="nav-link" id="logoutCategory">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
         <div class="container my-5 d-flex flex-column p-0 w-50 bg-white position-relative">
             <div class="d-flex justify-content-center">
                 <div class="border rounded shadow-heavy w-100">
@@ -67,30 +68,31 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
-                            <cfloop query = "qryCategoriesData">
-
-                                <div class="card shadow-lg" id = "#qryCategoriesData.fldCategory_Id#">
+                            <cfif getCategory.error EQ true>
+                                <cfdump var="#getCategory#">
+                            </cfif>
+                            <cfloop array="#getCategory.category#" item="categoryItem">
+                                <cfset divId = createUUID()>
+                                <div class="card shadow-lg" id = "#divId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
-                                            #qryCategoriesData.fldCategoryName#
+                                            #categoryItem.categoryName#
                                         </div>
                                         <div class="d-flex ms-auto">
-                                            <button onclick="editCategory(#qryCategoriesData.fldCategory_Id#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                            <button onclick="editCategory('#categoryItem.categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteCategory(#qryCategoriesData.fldCategory_Id#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteCategory('#categoryItem.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="subCategories.cfm?categoryId=#qryCategoriesData.fldCategory_Id#&categoryName=#qryCategoriesData.fldCategoryName#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="subCategories.cfm?categoryId=#UrlEncodedFormat(categoryItem.categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
-                                
-                            </cfloop>
-                        </div>
+                            </cfloop>                                                                                                           
+                        </div>                 
                     </div>
                 </div>
             </div>
