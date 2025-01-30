@@ -14,29 +14,34 @@
     <header>
         <cfinclude template="userHeader.cfm">
     </header>
-
     <main>
-        <cfset decryptedSubCategoryId = application.productManagementObj.decryptDetails(data = url.subCategoryId)>
-        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = decryptedSubCategoryId)>
+        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
         <cfif structKeyExists(form, "sortBtn")>
             <cfset getProductArray = application.productManagementObj.getProduct(
-                subCategoryId = decryptedSubCategoryId,
+                subCategoryId = url.subCategoryId,
                 sortType = form.sortBtn
             )>
         </cfif>
-        <cfif structKeyExists(form, "priceFilterBtn")>
-             <cfset getProductArray = application.productManagementObj.getProduct(
-                subCategoryId = decryptedSubCategoryId,
+        <cfif structKeyExists(form, "priceFilterBtn")>    
+            <cfset minPrice = form.minPrice>
+            <cfset maxPrice = form.maxPrice>
+            <cfif minPrice EQ "custom">
+                <cfset minPrice = form.minPriceCustom>
+            </cfif>
+            <cfif maxPrice EQ "custom">
+                <cfset maxPrice = form.maxPriceCustom>
+            </cfif>
+            <cfset getProductArray = application.productManagementObj.getProduct(
+                subCategoryId = url.subCategoryId,
                 minPrice = form.minPrice,
-                maxPrice = form.maxPrice,
-                priceRange = (structKeyExists(form, "priceRange")? form.priceRange : "")
+                maxPrice = form.maxPrice
             )>
         </cfif>
         <form method="post">
             <div class="container products-container">
                 <div class="row g-4 mt-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="m-0">#getProductArray[1].subCategoryName#</h3>
+                        <h3 class="m-0">#getProductArray.product[1].subCategoryName#</h3>
                         <div class="d-flex">
                             <div class="d-flex">
                                 <h4 class="m-0">Sort By</h4>
@@ -52,29 +57,35 @@
                                     <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Filter
                                     </button>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <li>
                                             <div class="d-flex px-2 pb-1">
-                                                <input type="number" name="minPrice" id="minPrice" placeholder="Min" class="w-50 form-control p-0">
+                                                <div>
+                                                    <select name="minPrice" id="minPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'minPriceCustom')">
+                                                        <option value="">Min</option>
+                                                        <option value="10000">10,000</option>
+                                                        <option value="20000">20,000</option>
+                                                        <option value="30000">30,000</option>
+                                                        <option value="custom">Custom</option>
+                                                    </select>
+                                                    <input type="number" name="minPriceCustom" id="minPriceCustom" class="form-control p-1 d-none" placeholder="Enter Min">
+                                                </div>
                                                 <div class="mx-2">to</div>
-                                                <input type="number" name="maxPrice" id="maxPrice" placeholder="Max" class="w-50 form-control p-0">
-                                            </div> 
-                                        </li> 
-                                        <li class="d-flex m-2 align-items-center">
-                                            <input type="radio" name="priceRange" value="low" class="dropdown-item priceFilter me-1">
-                                            <i class="fa-solid fa-indian-rupee-sign"></i>10000 - <i class="fa-solid fa-indian-rupee-sign ms-1"></i>20000
-                                        </li>
-                                        <li class="d-flex m-2 align-items-center">
-                                            <input type="radio" name="priceRange" value="mid" class="dropdown-item priceFilter me-1">
-                                            <i class="fa-solid fa-indian-rupee-sign"></i>20000 - <i class="fa-solid fa-indian-rupee-sign ms-1"></i>30000
-                                        </li>
-                                        <li class="d-flex m-2 align-items-center">
-                                            <input type="radio" name="priceRange" value="high" class="dropdown-item priceFilter me-1">
-                                            <i class="fa-solid fa-indian-rupee-sign"></i>30000+
+                                                <div>
+                                                    <select name="maxPrice" id="maxPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'maxPriceCustom')">
+                                                        <option value="">Max</option>
+                                                        <option value="20000">20,000</option>
+                                                        <option value="30000">30,000</option>
+                                                        <option value="40000">40,000</option>
+                                                        <option value="custom">Custom</option>
+                                                    </select>
+                                                    <input type="number" name="maxPriceCustom" id="maxPriceCustom" class="form-control p-1 d-none" placeholder="Enter Max">
+                                                </div>
+                                            </div>
                                         </li>
                                         <li>
                                             <div class="mx-2">
-                                                <button type="submit" name="priceFilterBtn" class="form-control btn btn-success">Filter</button>
+                                                <button type="submit" name="priceFilterBtn" id="filterBtn" class="form-control btn btn-success">Filter</button>
                                             </div>
                                         </li>
                                     </ul>
@@ -82,12 +93,12 @@
                             </div>
                         </div>
                     </div>
-                    <cfloop array="#getProductArray#" item="productItem">
-                        <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = productItem.productId)>
+                    <cfloop array="#getProductArray.product#" item="productItem">
+                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                             <div class="product-card pb-0">
-                                <a href="userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">                                
-                                    <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" alt="Electronics">
+                                <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
+                                    <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                 </a>
                                 <div class="card-body text-start">
                                     <h5 class="card-title text-truncate">#productItem.productName#</h5>

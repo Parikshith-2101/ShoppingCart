@@ -12,14 +12,13 @@
 </head>
 <body>
 <cfoutput>
-    <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = url.productId)>
     <cfif structKeyExists(form, "addToCartBtn")>
         <cfif structKeyExists(session, "userId")>
             <cfset addToCartResult = application.productManagementObj.addCart(
                 productId = form.addToCartBtn
             )>
         <cfelse>
-            <cflocation url="userLogin.cfm?productId=#decryptedProductId#">
+            <cflocation url="userLogin.cfm?productId=#url.productId#">
         </cfif>
     </cfif>
     <header>
@@ -27,18 +26,19 @@
     </header>
 
     <main>
-        <cfset getProductArray = application.productManagementObj.getProduct(productId = decryptedProductId)>
-        <cfset getProductImageArray = application.productManagementObj.getProductImage(productId = decryptedProductId)>
-        <div class="container products-container mt-5">
-            <cfloop array="#getProductArray#" item="productItem">
+        <cfset getSingleProductArray = application.productManagementObj.getSingleProduct(productId = url.productId)>
+        <div class="container products-container mt-5">          
+            <cfloop array="#getSingleProductArray.product#" item="productItem">
+                <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                 <div class="row mt-5">
                     <div class="col-md-6">
                         <div class="main-product-image mb-3">
-                            <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" id="mainImage" alt="Main Product" height="300">
+                            <cfset defaultImage = ListGetAt(getSingleProductArray.product[1].imageFile, 1)>
+                            <img src="../uploads/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">
                         </div>
                         <div class="product-images">
-                            <cfloop array="#getProductImageArray#" item="productImageItem">
-                                <img src="../assets/images/product#productImageItem.productId#/#productImageItem.imageFile#" alt="Product Image 1" onmouseover="updateMainImage(this)">
+                            <cfloop list="#getSingleProductArray.product[1].imageFile#" item="productImageItem">
+                                <img src="../uploads/product#decryptedProductId#/#productImageItem#" alt="Product Image 1" onmouseover="updateMainImage(this)">
                             </cfloop>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
                             </div>
                             <form method="post" class="action-buttons">
                                 <cfif structKeyExists(session, "userId")>
-                                <cfset getCartData = application.productManagementObj.getCart(productId = productItem.productId)>
+                                    <cfset getCartData = application.productManagementObj.getCart(productId = productItem.productId)>
                                     <cfif arrayLen(getCartData)> 
                                         <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                     <cfelse>

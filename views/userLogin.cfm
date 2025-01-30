@@ -54,7 +54,7 @@
                                 userName = form.userName,
                                 password = form.password
                             )>
-                            <cfif loginResult.error EQ true>
+                            <cfif loginResult.error EQ false>
                                 <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
                                 <cfif session.roleId EQ 1>
                                     <cflocation  url = "categories.cfm">

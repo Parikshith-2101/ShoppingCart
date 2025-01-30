@@ -6,15 +6,17 @@
  
     <cffunction name = "onApplicationStart">
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
-        <cfset application.userObj = createObject("component", "components.user")>     
+        <cfset application.userObj = createObject("component", "components.userLogin")>     
         <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
         <cfset application.dataSource = "shoppingCart">
     </cffunction>   
 
     <cffunction name = "onRequestStart" returnType = "boolean">
         <cfargument type = "String" name = "targetPage" required = true>
-         <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
-            <cfset onApplicationStart()>
+        <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
+            <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+                <cfset onApplicationStart()>
+            </cfif>
         </cfif>
         <cfreturn true>
     </cffunction>
@@ -25,7 +27,7 @@
         <cfif structKeyExists(session, "email") OR arrayFindNoCase(local.allowedPages, ListLast(CGI.SCRIPT_NAME,'/'))>        
             <cfinclude template = "#arguments.requestPage#">
         <cfelse> 
-            <cfinclude template = "/ShoppingCart1/views/userLogin.cfm">
+            <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
         </cfif>
     </cffunction>
     

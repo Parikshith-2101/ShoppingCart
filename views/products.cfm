@@ -17,6 +17,7 @@
     <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
     <cfset getBrandArray = application.productManagementObj.getBrand()>
     <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
+
     <cfoutput>
         <nav class="navbar fixed-top p-0">
             <a href="categories.cfm" class="nav-link">
@@ -40,7 +41,7 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">#url.subCategoryName#</div>
+                            <div class="text-uppercase login-title fs-4 px-2">#getProductArray.product[1].subCategoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addProductBtn">Add+</div>
                         </div>
                         <!---modal--->
@@ -59,7 +60,7 @@
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                 
-                                                    <cfloop array="#getCategoryArray#" item="categoryItem">
+                                                    <cfloop array="#getCategoryArray.category#" item="categoryItem">
                                                         <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
@@ -67,7 +68,7 @@
                                             <div class="d-flex flex-column">
                                                 <label for="subCategoryDropdown">SubCategory</label>
                                                 <select id="subCategoryDropdown" name="subCategoryDropdown"> 
-                                                    <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
+                                                    <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                                                         <option value="#subCategoryItem.subCategoryId#">#subCategoryItem.subCategoryName#</option>
                                                     </cfloop>                                         
                                                 </select>
@@ -81,7 +82,7 @@
                                                 <label for="productBrand">Product Brand*</label>
                                                 <select id="productBrand" name="productBrand">                                                  
                                                     <option value="" disabled selected>Select Brand Name</option>                                          
-                                                    <cfloop array="#getBrandArray#" item="brandItem">
+                                                    <cfloop array="#getBrandArray.brand#" item="brandItem">
                                                         <option value="#brandItem.brandId#">#brandItem.brandName#</option>
                                                     </cfloop>                                          
                                                 </select>
@@ -142,19 +143,32 @@
                         </div>
 
                         <cfif structKeyExists(form, "saveProduct")>
-                            <cfset local.addProductResult = application.productManagementObj.addProduct(
-                                categoryId = form.categoryDropdown,
-                                subCategoryId = form.subCategoryDropdown,
-                                productName = form.productName,
-                                productBrandId = form.productBrand,
-                                productDesc = form.productDesc,
-                                productPrice = form.productPrice,
-                                productTax = form.productTax,
-                                productImage = form.productImage,
-                                productId = form.productIdHolder
-                            )>
-                            <cfif local.addProductResult.error EQ "true">
-                                <cflocation url = "products.cfm?subCategoryId=#url.subCategoryId#&subCategoryName=#url.subCategoryName#&categoryId=#url.categoryId#" addToken="No">
+                            <cfif len(trim(form.productIdHolder))>
+                                <cfset local.addProductResult = application.productManagementObj.editProduct(
+                                    categoryId = form.categoryDropdown,
+                                    subCategoryId = form.subCategoryDropdown,
+                                    productName = form.productName,
+                                    productBrandId = form.productBrand,
+                                    productDesc = form.productDesc,
+                                    productPrice = form.productPrice,
+                                    productTax = form.productTax,
+                                    productImage = form.productImage,
+                                    productId = form.productIdHolder
+                                )>
+                            <cfelse>
+                                <cfset local.addProductResult = application.productManagementObj.addProduct(
+                                    categoryId = form.categoryDropdown,
+                                    subCategoryId = form.subCategoryDropdown,
+                                    productName = form.productName,
+                                    productBrandId = form.productBrand,
+                                    productDesc = form.productDesc,
+                                    productPrice = form.productPrice,
+                                    productTax = form.productTax,
+                                    productImage = form.productImage
+                                )>
+                            </cfif>
+                            <cfif local.addProductResult.error EQ false>
+                                <cflocation url = "products.cfm?subCategoryId=#url.subCategoryId#&categoryId=#url.categoryId#" addToken="No">
                                 <div class="text-success fw-bold errorServerSide">#local.addProductResult.message#</div>
                             <cfelse>
                                 <div class="text-danger fw-bold errorServerSide">#local.addProductResult.message#</div>
@@ -164,11 +178,13 @@
 
                         <div class="d-flex flex-column w-100 mt-3">
                             <div class="row g-4">
-                                <cfloop array="#getProductArray#" item="productItem">
-                                    <div class="col-sm-6 col-md-4 col-lg-3" id="product#productItem.productId#">
+                                <cfloop array="#getProductArray.product#" item="productItem">
+                                    <cfset divId = createUUID()>
+                                    <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                    <div class="col-sm-6 col-md-4 col-lg-3" id="#divId#">
                                         <div class="card product-card shadow-sm">
-                                            <div onclick="editImage(#productItem.productId#)">
-                                                <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" 
+                                            <div onclick="editImage('#productItem.productId#','#local.decryptedProductId#')">
+                                                <img src="../uploads/product#local.decryptedProductId#/#productItem.imageFile#" 
                                                     class="card-img-top" alt="#productItem.productName#">
                                             </div>
                                             <div class="card-body">
@@ -186,10 +202,10 @@
                                                     <strong>Tax:</strong> Rs.#productItem.unitTax#
                                                 </p>
                                                 <div class="d-flex justify-content-between">
-                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct(#productItem.productId#,#url.subCategoryId#,#url.categoryId#)">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </button>
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct(#productItem.productId#,#url.subCategoryId#)">
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#','#divId#')">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 </div>

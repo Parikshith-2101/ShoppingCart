@@ -11,8 +11,8 @@
 </head>
 <body>
 <cfoutput>
-    <cfif structKeyExists(form, "searchForProducts") AND len(trim(form.searchForProducts))>
-        <cfset getProductArray = application.productManagementObj.getProduct(searchForProducts = form.searchForProducts)>
+    <cfif structKeyExists(form, "searchKey") AND len(trim(form.searchKey))>
+        <cfset getProductArray = application.productManagementObj.getProduct(searchKey = form.searchKey)>
     <cfelse>
         <cflocation  url="userHome.cfm" addToken="No">
     </cfif>
@@ -23,7 +23,7 @@
     <main>
         <div class="container products-container">
             <div class="row g-4 mt-4">
-                <h3>Showing Results for '#form.searchForProducts#'</h3>
+                <h3>Showing Results for '#form.searchKey#'</h3>
                 <cfloop array="#getProductArray#" item="productItem">
                 <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = productItem.productId)>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">

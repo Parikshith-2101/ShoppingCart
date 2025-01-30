@@ -15,20 +15,19 @@
     </header>
     <main>
         <cfoutput>
-            <cfset decryptedCategoryId = application.productManagementObj.decryptDetails(data = url.categoryId)>
-            <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = decryptedCategoryId)>
+            <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
             <div class="container products-container">
-                <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
+                <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                     <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId)>
-                    <cfif arraylen(getProductArray)>
+                    <cfif arraylen(getProductArray.product)>
                         <div class="row g-4 mt-3">
                             <h3>#subCategoryItem.subCategoryName#</h3>
-                            <cfloop array="#getProductArray#" item="productItem">
-                                <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = productItem.productId)>
+                            <cfloop array="#getProductArray.product#" item="productItem">
+                                <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                     <div class="product-card pb-0">
-                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">
-                                            <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" alt="Electronics">
+                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">
+                                            <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                         </a>
                                         <div class="card-body text-start">
                                             <h5 class="card-title text-truncate">#productItem.productName#</h5>

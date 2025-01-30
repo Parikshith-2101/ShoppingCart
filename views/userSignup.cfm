@@ -74,7 +74,7 @@
                                     phone = form.phoneNumber,
                                     password = form.password
                                 )>
-                                <cfif userSignUpResult.error EQ "false">
+                                <cfif userSignUpResult.error EQ false>
                                     <div id="resultMsg" class="fw-bold text-success">#userSignUpResult.message#</div>
                                     <script type = "text/javascript">
                                         setTimeout(function() {

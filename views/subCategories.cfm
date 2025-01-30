@@ -96,7 +96,7 @@
                                             <button onclick="deleteSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
-                                            <a href="products.cfm?subCategoryId=#subCategoryItem.subCategoryId#&subCategoryName=#subCategoryItem.subCategoryName#&categoryId=#local.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                            <a href="products.cfm?subCategoryId=#UrlEncodedFormat(subCategoryItem.subCategoryId)#&categoryId=#UrlEncodedFormat(local.categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
                                                 <i class="fas fa-arrow-right"></i>
                                             </a>
                                         </div>

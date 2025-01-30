@@ -7,7 +7,7 @@
                 <span class="fs-4 nav-brand">ShoppingCart</span>
             </a> 
             <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
-                <input class="form-control me-2" name="searchForProducts" type="search" placeholder="Search for products..." aria-label="Search">
+                <input class="form-control me-2" name="searchKey" type="search" placeholder="Search for products..." aria-label="Search">
                 <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
             </form>
 
@@ -57,18 +57,17 @@
     <nav class="navbar-expand-sm categories-navbar fixed">
         <div id="categoriesNavbar">
             <ul class="navbar-nav justify-content-evenly w-100">
-                <cfloop array="#getCategoryArray#" item="categoryItem">
-                    <cfset encryptedCategoryId = application.productManagementObj.encryptDetails(data = categoryItem.categoryId)>
+                <cfloop array="#getCategoryArray.category#" item="categoryItem">
+                    <cfset divId = createUUID()>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="userCategories.cfm?categoryId=#urlEncodedFormat(encryptedCategoryId)#" id="#categoryItem.categoryId#" role="button">
+                        <a class="nav-link" href="userCategories.cfm?categoryId=#urlEncodedFormat(categoryItem.categoryId)#" id="#divId#" role="button">
                             #categoryItem.categoryName# 
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="#categoryItem.categoryId#">
+                        <ul class="dropdown-menu" aria-labelledby="#divId#">
                             <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryItem.categoryId)>
-                            <cfloop array="#getSubCategoryArray#" item="subCategoryItem">
-                            <cfset encryptedSubCategoryId = application.productManagementObj.encryptDetails(data = subCategoryItem.subCategoryId)>
+                            <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                                 <li>
-                                    <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(encryptedSubCategoryId)#">
+                                    <a class="dropdown-item" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
                                         #subCategoryItem.subCategoryName#
                                     </a>
                                 </li>

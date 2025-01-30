@@ -95,14 +95,14 @@
                 <cfset local.result['message'] = "Catergory Already Exists">
                 <cfset local.result['error'] = false>
             <cfelse>
-                <cfquery result = "local.categoryId" dataSource = "shoppingCart">
+                <cfquery result = "local.categoryId" datasource = "#application.dataSource#">
                     INSERT INTO tblcategory(
                         fldCategoryName,
                         fldCreatedBy
                     ) 
                     VALUES(
                         <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">,
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "varchar">
+                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "varchar">
                     );
                 </cfquery>
                 <cfset local.result['message'] = "Catergory Created">
@@ -138,12 +138,12 @@
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = true>
             <cfelse>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     UPDATE 
                         tblcategory
                     SET 
                         fldCategoryName = <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">,
-                        fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         fldUpdatedDate = #now()#
                     WHERE
                         fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
@@ -169,12 +169,12 @@
         <cfargument name = "categoryId" required = true type = "string">
         <cfset decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
         <cftry>
-            <cfquery dataSource = "shoppingCart">
+            <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory
                 SET 
                     fldActive = 0,
-                    fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                    fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                     fldUpdatedDate = #now()#
                 WHERE
                     fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
@@ -201,7 +201,7 @@
             'subCategory' : []
         }>
         <cftry>
-            <cfquery name = "local.qrySubCategoryData" dataSource = "shoppingCart">
+            <cfquery name = "local.qrySubCategoryData" datasource = "#application.dataSource#">
                 SELECT 
                     SC.fldSubCategory_Id,
                     SC.fldCategoryId,
@@ -224,7 +224,7 @@
             <cfloop query = "local.qrySubCategoryData">
                 <cfset local.encryptedSubCatId = encryptDetails(data = local.qrySubCategoryData.fldSubCategory_Id)>
                 <cfset local.encryptedCatId = encryptDetails(data = local.qrySubCategoryData.fldCategoryId)>
-                <cfset arrayAppend(local.result.subCategory,{
+                <cfset arrayAppend(local.result['subCategory'],{
                     'subCategoryId' : local.encryptedSubCatId,
                     'categoryId' : local.encryptedCatId,
                     'subCategoryName' : local.qrySubCategoryData.fldSubCategoryName,
@@ -261,7 +261,7 @@
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "SubCatergory Already Exists">
             <cfelse>
-                <cfquery result = "local.subCategoryId" dataSource = "shoppingCart">
+                <cfquery result = "local.subCategoryId" datasource = "#application.dataSource#">
                     INSERT INTO tblsubcategory(
                         fldSubCategoryName,
                         fldCategoryId,
@@ -270,7 +270,7 @@
                     VALUES(
                         <cfqueryparam value = "#arguments.SubCategoryName#" cfsqltype = "varchar">,
                         <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                     );
                 </cfquery>
                 <cfset local.result['error'] = false>
@@ -311,13 +311,13 @@
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = true>
             <cfelse>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     UPDATE 
                         tblsubcategory
                     SET 
                         fldSubCategoryName = <cfqueryparam value = "#arguments.subCategoryName#" cfsqltype = "varchar">,
                         fldCategoryId = <cfqueryparam value = "#local.decryptedNewCategoryId#" cfsqltype = "integer">,
-                        fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         fldUpdatedDate = #now()#
                     WHERE
                         fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
@@ -343,15 +343,15 @@
     <cffunction name = "deleteSubCategory" access = "remote" returnType = "void">
         <cfargument name = "subCategoryId" required = true type = "string">
         <cfargument name = "categoryId" required = true type = "string">
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>     
-        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)>     
+        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)> 
         <cftry>
-            <cfquery dataSource = "shoppingCart">
+            <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblsubcategory
                 SET 
                     fldActive = 0,
-                    fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                    fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                     fldUpdatedDate = "#now()#"
                 WHERE
                     fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
@@ -368,10 +368,13 @@
         </cftry>
     </cffunction>
 
-    <cffunction name = "getBrand" access = "public" returnType = "array">
-        <cfset local.brandData = []>
+    <cffunction name = "getBrand" access = "public" returnType = "struct">
+        <cfset local.result = {
+            'error' : false,
+            'brand': []
+        }>
         <cftry>
-            <cfquery name = "local.qryBrand" dataSource = "shoppingCart">
+            <cfquery name = "local.qryBrand" datasource = "#application.dataSource#">
                 SELECT 
                     fldBrand_Id,
                     fldBrandName
@@ -380,40 +383,119 @@
                 WHERE
                     fldActive = <cfqueryparam value = "1" cfsqltype = "integer">;
             </cfquery>
+            <cfloop query = "local.qryBrand">
+                <cfset local.encryptedBrandId = encryptDetails(data = local.qryBrand.fldBrand_Id)>
+                <cfset arrayAppend(local.result['brand'],{
+                    'brandId' : local.encryptedBrandId,
+                    'brandName' : local.qryBrand.fldBrandName
+                })>
+            </cfloop>
             <cfcatch>
+                <cfset local.result['error'] = true>
                 <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
             </cfcatch>
         </cftry>
-        <cfloop query = "local.qryBrand">
-            <cfset arrayAppend(local.brandData,{
-                'brandId' : local.qryBrand.fldBrand_Id,
-                'brandName' : local.qryBrand.fldBrandName
-            })>
-        </cfloop>
-        <cfreturn local.brandData>
+        <cfreturn local.result>
     </cffunction>
 
-    <cffunction name = "getProduct" access = "remote" returnType = "array" returnFormat = "JSON">
+    <cffunction name = "getSingleProduct" access = "remote" returnType = "struct" returnFormat = "JSON">  
+        <cfargument name = "productId" required = true type = "string"> 
+        <cfargument name = "productImageId" required = false type = "integer"> 
+        <cfset local.result = {
+            'error' : false,
+            'product' : []
+        }>    
+        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
+        <cftry>
+            <cfquery name = "local.qryProduct" datasource = "#application.dataSource#">
+                SELECT 
+                    P.fldProduct_Id,
+                    P.fldProductName,
+                    P.fldSubCategoryId,
+                    SC.fldSubCategoryName,
+                    P.fldBrandId,
+                    B.fldBrandName,
+                    P.fldDescription,
+                    P.fldUnitPrice,
+                    P.fldUnitTax,
+                    C.fldCategory_Id,
+                    C.fldCategoryName,
+                    GROUP_CONCAT(PI.fldProductImage_Id ORDER BY PI.fldDefaultImage DESC) AS productImageId,
+                    GROUP_CONCAT(PI.fldImageFilePath ORDER BY PI.fldDefaultImage DESC) AS imageFiles,
+                    GROUP_CONCAT(PI.fldDefaultImage ORDER BY PI.fldDefaultImage DESC) AS defaultImage
+                FROM
+                    tblproduct P
+                LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldActive = 1
+                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                WHERE
+                    P.fldActive = 1
+                    AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                    <cfif structKeyExists(arguments, "productImageId")>
+                        AND PI.fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
+                    </cfif>
+                GROUP BY 
+                    P.fldProduct_Id, P.fldProductName, P.fldSubCategoryId, SC.fldSubCategoryName, 
+                    P.fldBrandId, B.fldBrandName, P.fldDescription, P.fldUnitPrice, P.fldUnitTax
+            </cfquery>
+            <cfloop query = "local.qryProduct">
+                <cfset local.encryptedProductId = encryptDetails(data = local.qryProduct.fldProduct_Id)>
+                <cfset local.encryptedSubCategoryId = encryptDetails(data = local.qryProduct.fldSubCategoryId)>
+                <cfset local.encryptedBrandId = encryptDetails(data = local.qryProduct.fldBrandId)>
+                <cfset arrayAppend(local.result['product'],{
+                    'productId' : local.encryptedProductId,
+                    'productName' : local.qryProduct.fldProductName,
+                    'subCategoryId' : local.encryptedSubCategoryId,
+                    'subCategoryName' : local.qryProduct.fldSubCategoryName,
+                    'categoryId' : local.qryProduct.fldCategory_Id,
+                    'categoryName' : local.qryProduct.fldCategoryName,
+                    'brandId' : local.encryptedBrandId,
+                    'brandName' : local.qryProduct.fldBrandName,
+                    'description' : local.qryProduct.fldDescription,
+                    'unitPrice' : local.qryProduct.fldUnitPrice,
+                    'unitTax' : local.qryProduct.fldUnitTax,
+                    'productImageId' : local.qryProduct.productImageId,
+                    'imageFile' : local.qryProduct.imageFiles,
+                    'defaultImage' : local.qryProduct.defaultImage
+                })>
+            </cfloop>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = cfcatch.message>
+            </cfcatch>
+        </cftry>
+        <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "getProduct" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "productName" required = false type = "string">
-        <cfargument name = "subCategoryId" required = false type = "integer">     
-        <cfargument name = "productId" required = false type = "integer"> 
+        <cfargument name = "subCategoryId" required = false type = "string">     
+        <cfargument name = "productId" required = false type = "string"> 
         <cfargument name = "limit" required = false type = "integer"> 
         <cfargument name = "sortType" required = false type = "string">
         <cfargument name = "minPrice" required = false type = "string"> 
         <cfargument name = "maxPrice" required = false type = "string"> 
-        <cfargument name = "priceRange" required = false type = "string"> 
-        <cfargument name = "searchForProducts" required = false type = "string"> 
-        <cfset local.productData = []>    
+        <cfargument name = "searchKey" required = false type = "string"> 
+        <cfset local.result = {
+            'error' : false,
+            'product' : []
+        }>    
+        <cfset local.sort = "RAND()">
+        <cfif structKeyExists(arguments, "sortType")>
+            <cfset local.sort = "P.fldUnitPrice #arguments.sortType#,P.fldProductName">
+        </cfif>
         <cftry>
-            <cfquery name = "local.qryProduct" dataSource = "shoppingCart">
+            <cfquery name = "local.qryProduct" datasource = "#application.dataSource#">
                 SELECT 
                     P.fldProduct_Id,
                     P.fldProductName,
@@ -425,389 +507,343 @@
                     P.fldUnitTax,
                     PI.fldImageFilePath,
                     PI.fldDefaultImage,
-                    SC.fldSubCategoryName
+                    SC.fldSubCategoryName,
+                    C.fldCategoryName,
+                    C.fldCategory_Id
                 FROM
                     tblproduct P
                 LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
-                INNER JOIN tblbrand B ON P.fldBrandId = B.fldBrand_Id 
-                INNER JOIN tblsubcategory SC ON P.fldSubCategoryId = SC.fldSubCategory_Id
+                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     P.fldActive = 1
                     <cfif structKeyExists(arguments, "subCategoryId")>
-                        AND P.fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+                        AND P.fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
                         AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
                     </cfif>
                     <cfif structKeyExists(arguments, "productId")>
-                        AND P.fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
+                        AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     </cfif>
-                    <cfif structKeyExists(arguments, "searchForProducts") AND len(trim(arguments.searchForProducts))>
-                        AND (
-                            P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
-                            OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
-                            OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
-                            OR SC.fldSubCategoryName LIKE <cfqueryparam value = "%#arguments.searchForProducts#%" cfsqltype = "varchar">
-                            )
+                    <cfif structKeyExists(arguments, "searchKey") AND len(trim(arguments.searchKey))>
+                        AND 
+                        (
+                            P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                            OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                            OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                            OR SC.fldSubCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                            OR C.fldCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                        )
                     </cfif>
-                    <cfif structKeyExists(arguments, "priceRange") AND len(trim(arguments.priceRange))>
-                        AND
-                        <cfif arguments.priceRange EQ "low">
-                            (P.fldUnitPrice BETWEEN 10000 AND 20000)
-                        <cfelseif arguments.priceRange EQ "mid">
-                            (P.fldUnitPrice BETWEEN 20000 AND 30000)
-                        <cfelseif arguments.priceRange EQ "high"> 
-                            (P.fldUnitPrice > 30000)
-                        </cfif>
-                    <cfelse>
-                        <cfif (structKeyExists(arguments, "minPrice") AND len(trim(arguments.minPrice))) 
-                            AND (structKeyExists(arguments, "maxPrice") AND len(trim(arguments.maxPrice)))>
-                                AND (P.fldUnitPrice BETWEEN <cfqueryparam value = "#arguments.minPrice#"> 
-                                    AND <cfqueryparam value = "#arguments.maxPrice#">)
-                        </cfif>
+                    <cfif (structKeyExists(arguments, "minPrice") AND len(trim(arguments.minPrice))) 
+                        AND (structKeyExists(arguments, "maxPrice") AND len(trim(arguments.maxPrice)))>
+                            AND (P.fldUnitPrice BETWEEN <cfqueryparam value = "#arguments.minPrice#"> 
+                                AND <cfqueryparam value = "#arguments.maxPrice#">)
                     </cfif>
-                <cfif structKeyExists(arguments, "sortType")>   
-                    ORDER BY P.fldUnitPrice #arguments.sortType#
-                <cfelse>
-                    ORDER BY RAND()
-                </cfif>
+                ORDER BY #local.sort#
                 <cfif structKeyExists(arguments, "limit")>
                     LIMIT <cfqueryparam value = "#arguments.limit#" cfsqltype = "integer">   
                 </cfif>
             </cfquery>
+            <cfloop query = "local.qryProduct">
+                <cfset local.encryptedProductId = encryptDetails(data = local.qryProduct.fldProduct_Id)>
+                <cfset local.encryptedSubCategoryId = encryptDetails(data = local.qryProduct.fldSubCategoryId)>
+                <cfset local.encryptedBrandId = encryptDetails(data = local.qryProduct.fldBrandId)>
+                <cfset arrayAppend(local.result['product'],{
+                    'productId' : local.encryptedProductId,
+                    'productName' : local.qryProduct.fldProductName,
+                    'subCategoryId' : local.encryptedSubCategoryId,
+                    'subCategoryName' : local.qryProduct.fldSubCategoryName,
+                    'brandId' : local.encryptedBrandId,
+                    'brandName' : local.qryProduct.fldBrandName,
+                    'description' : local.qryProduct.fldDescription,
+                    'unitPrice' : local.qryProduct.fldUnitPrice,
+                    'unitTax' : local.qryProduct.fldUnitTax,
+                    'imageFile' : local.qryProduct.fldImageFilePath,
+                    'defaultImage' : local.qryProduct.fldDefaultImage
+                })>
+            </cfloop>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+                <cfset local.result['error'] = true>
             </cfcatch>
         </cftry>
-        <cfloop query = "local.qryProduct">
-            <cfset arrayAppend(local.productData,{
-                'productId' : local.qryProduct.fldProduct_Id,
-                'productName' : local.qryProduct.fldProductName,
-                'subCategoryId' : local.qryProduct.fldSubCategoryId,
-                'subCategoryName' : local.qryProduct.fldSubCategoryName,
-                'brandId' : local.qryProduct.fldBrandId,
-                'brandName' : local.qryProduct.fldBrandName,
-                'description' : local.qryProduct.fldDescription,
-                'unitPrice' : local.qryProduct.fldUnitPrice,
-                'unitTax' : local.qryProduct.fldUnitTax,
-                'imageFile' : local.qryProduct.fldImageFilePath,
-                'defaultImage' : local.qryProduct.fldDefaultImage
-            })>
-        </cfloop>
-        <cfreturn local.productData>
+        <cfreturn local.result>
     </cffunction>
 
     <cffunction name = "addProduct" access = "public" returnType = "struct">
-        <cfargument name = "categoryId" required = true type = "integer">
-        <cfargument name = "subCategoryId" required = true type = "integer">
+        <cfargument name = "categoryId" required = true type = "string">
+        <cfargument name = "subCategoryId" required = true type = "string">
         <cfargument name = "productName" required = true type = "string">
-        <cfargument name = "productBrandId" required = true type = "integer">
+        <cfargument name = "productBrandId" required = true type = "string">
         <cfargument name = "productDesc" required = true type = "string">
         <cfargument name = "productPrice" required = true type = "numeric">
         <cfargument name = "productTax" required = true type = "numeric">
-        <cfargument name = "productImage" required = true type = "string">
-        <cfargument name = "productId" required = false>
-        <cfif len(trim(arguments.productId))>
+        <cfargument name = "productImage" required = true type = "string">  
+        <cfset local.result = {
+            'error' : false,
+            'message' : ""
+        }>
+        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+        <cfset local.decryptedBrandId = decryptDetails(data = arguments.productBrandId)>
+        <cftry>           
             <cfset local.FetchProduct = getProduct(
                 productName = arguments.productName,
                 subCategoryId = arguments.subCategoryId
             )>
-            <cftry>
-                <cfif arrayLen(local.FetchProduct) 
-                    AND (local.FetchProduct[1].productId NEQ arguments.productId)>
-                    <cfset local.result['error'] = false>
-                    <cfset local.result['message'] = "ProductName Already Exists">
-                <cfelse>
-                    <!---edit--->
-                    <cfquery dataSource = "shoppingCart">  
-                        UPDATE 
-                            tblproduct
-                        SET
-                            fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">,
-                            fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">,
-                            fldBrandId = <cfqueryparam value = "#arguments.productBrandId#" cfsqltype = "integer">,
-                            fldDescription = <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
-                            fldUnitPrice = <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
-                            fldUnitTax = <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
-                            fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
-                            fldUpdatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
-                        WHERE
-                            fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                            AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
-                            AND fldActive = 1
-                    </cfquery>
-                    <cfif len(trim(arguments.productImage))>                    
-                        <cffile
-                            action = "uploadall"
-                            destination = "#expandPath('../assets/images/product#arguments.productId#')#"
-                            nameconflict = "MakeUnique"
-                            strict = true
-                            result = "local.imageUploadedResult"
-                        >
-                        <cfquery dataSource = "shoppingCart">
-                            INSERT INTO tblproductimages(
-                                fldProductId,
-                                fldImageFilePath,
-                                fldCreatedBy
-                            )
-                            VALUES
-                            <cfloop array = "#local.imageUploadedResult#" item = "imagesArr" index = "imageIndex">               
-                                (
-                                    <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
-                                    <cfqueryparam value = "#imagesArr.SERVERFILE#" cfsqltype = "varchar">,
-                                    <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
-                                )
-                                <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
-                            </cfloop>;
-                        </cfquery>
-                    </cfif>
-                    <cfset local.result['error'] = true>
-                    <cfset local.result['message'] = "ProductName Edited Succesfully">
-                </cfif>
-                <cfcatch>
-                    <cfset local.currentFunction = getFunctionCalledName()>
-                    <cfset local.result['error'] = false>
-                    <cfset local.result['message'] = "Error updating product: #cfcatch.message#">
-                    <cfmail 
-                        from = "parikshith2101@gmail.com" 
-                        to = "parikshith2k23@gmail.com" 
-                        subject = "Error in Function: #local.currentFunction#"
-                    >
-                        <h3>An error occurred in function: #local.currentFunction#</h3>
-                        <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                    </cfmail>
-                </cfcatch>
-            </cftry>
-        <cfelse>
-            <!---create--->
-            <cftry>           
-                <cfset local.FetchProduct = getProduct(
-                    productName = arguments.productName,
-                    subCategoryId = arguments.subCategoryId
-                )>
-                <cfif arrayLen(local.FetchProduct)>
-                    <cfset local.result['error'] = false>
-                    <cfset local.result['message'] = "ProductName Already Exists">
-                <cfelse>
-                    <cfquery result = "local.resultProductId" dataSource = "shoppingCart">
-                        INSERT INTO tblproduct(
-                            fldSubCategoryId,
-                            fldProductName,
-                            fldBrandId,
-                            fldDescription,
-                            fldUnitPrice,
-                            fldUnitTax,
-                            fldCreatedBy
+            <cfif arrayLen(local.FetchProduct.product)>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "ProductName Already Exists">
+            <cfelse>
+                <cfquery result = "local.resultProductId" datasource = "#application.dataSource#">
+                    INSERT INTO tblproduct(
+                        fldSubCategoryId,
+                        fldProductName,
+                        fldBrandId,
+                        fldDescription,
+                        fldUnitPrice,
+                        fldUnitTax,
+                        fldCreatedBy
+                    )
+                    VALUES(
+                        <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">,
+                        <cfqueryparam value = "#local.decryptedBrandId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
+                        <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                    );
+                </cfquery>
+                <cfset local.encryptedProductId = encryptDetails(data = local.resultProductId.generatedkey)>
+                <cfdirectory action = "create" directory = "#expandPath('../uploads/product#local.resultProductId.generatedkey#')#">
+                <cffile
+                    action = "uploadall"
+                    destination = "#expandPath('../uploads/product#local.resultProductId.generatedkey#')#"
+                    nameconflict = "MakeUnique"
+                    strict = true
+                    result = "local.imageUploadedResult"
+                >
+                <cfquery datasource = "#application.dataSource#">
+                    INSERT INTO tblproductimages(
+                        fldProductId,
+                        fldImageFilePath,
+                        fldDefaultImage,
+                        fldCreatedBy
+                    )
+                    VALUES
+                    <cfloop array = "#local.imageUploadedResult#" item = "imagesArr" index = "imageIndex">               
+                        (
+                            <cfqueryparam value = "#local.resultProductId.generatedkey#" cfsqltype = "integer">,
+                            <cfqueryparam value = "#imagesArr.SERVERFILE#" cfsqltype = "varchar">,
+                            <cfif imageIndex EQ 1>
+                                <cfqueryparam value = 1 cfsqltype = "integer">
+                            <cfelse>
+                                <cfqueryparam value = 0 cfsqltype = "integer">
+                            </cfif>,
+                            <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                         )
-                        VALUES(
-                            <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">,
-                            <cfqueryparam value = "#arguments.productBrandId#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
-                            <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
-                        );
-                    </cfquery>
-                    <cfdirectory action = "create" directory = "#expandPath('../assets/images/product#local.resultProductId.generatedkey#')#">
+                        <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
+                    </cfloop>;
+                </cfquery>
+                <cfset local.result['error'] = false>
+                <cfset local.result['message'] = "ProductName Added Succesfully">
+            </cfif>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>        
+        <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "editProduct" access = "public" returnType = "struct">
+        <cfargument name = "categoryId" required = true type = "string">
+        <cfargument name = "subCategoryId" required = true type = "string">
+        <cfargument name = "productName" required = true type = "string">
+        <cfargument name = "productBrandId" required = true type = "string">
+        <cfargument name = "productDesc" required = true type = "string">
+        <cfargument name = "productPrice" required = true type = "numeric">
+        <cfargument name = "productTax" required = true type = "numeric">
+        <cfargument name = "productImage" required = true type = "string">
+        <cfargument name = "productId" required = true type = "string">
+        <cfset local.result = {
+            'error' : false,
+            'message' : ""
+        }>
+        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+        <cfset local.decryptedBrandId = decryptDetails(data = arguments.productBrandId)>
+        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
+        <cfset local.FetchProduct = getProduct(
+            productName = arguments.productName,
+            subCategoryId = arguments.subCategoryId
+        )>
+        <cftry>
+            <cfif arrayLen(local.FetchProduct.product) 
+                AND (local.FetchProduct.product[1].productId NEQ arguments.productId)>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "ProductName Already Exists">
+            <cfelse>
+                <cfquery datasource = "#application.dataSource#">  
+                    UPDATE 
+                        tblproduct
+                    SET
+                        fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">,
+                        fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">,
+                        fldBrandId = <cfqueryparam value = "#local.decryptedBrandId#" cfsqltype = "integer">,
+                        fldDescription = <cfqueryparam value = "#arguments.productDesc#" cfsqltype = "varchar">,
+                        fldUnitPrice = <cfqueryparam value = "#arguments.productPrice#" cfsqltype = "integer">,
+                        fldUnitTax = <cfqueryparam value = "#arguments.productTax#" cfsqltype = "integer">,
+                        fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                        fldUpdatedDate = #now()#
+                    WHERE
+                        fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                        AND fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
+                        AND fldActive = 1
+                </cfquery>
+                <cfif len(trim(arguments.productImage))>                    
                     <cffile
                         action = "uploadall"
-                        destination = "#expandPath('../assets/images/product#local.resultProductId.generatedkey#')#"
+                        destination = "#expandPath('../uploads/product#local.decryptedProductId#')#"
                         nameconflict = "MakeUnique"
                         strict = true
                         result = "local.imageUploadedResult"
                     >
-                    <cfquery dataSource = "shoppingCart">
+                    <cfquery datasource = "#application.dataSource#">
                         INSERT INTO tblproductimages(
                             fldProductId,
                             fldImageFilePath,
-                            fldDefaultImage,
                             fldCreatedBy
                         )
                         VALUES
                         <cfloop array = "#local.imageUploadedResult#" item = "imagesArr" index = "imageIndex">               
                             (
-                                <cfqueryparam value = "#local.resultProductId.generatedkey#" cfsqltype = "integer">,
+                                <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">,
                                 <cfqueryparam value = "#imagesArr.SERVERFILE#" cfsqltype = "varchar">,
-                                <cfif imageIndex EQ 1>
-                                    <cfqueryparam value = 1 cfsqltype = "integer">
-                                <cfelse>
-                                    <cfqueryparam value = 0 cfsqltype = "integer">
-                                </cfif>,
-                                <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                                <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                             )
                             <cfif imageIndex LT arrayLen(local.imageUploadedResult)>,</cfif>
                         </cfloop>;
                     </cfquery>
-                    <cfset local.result['error'] = true>
-                    <cfset local.result['message'] = "ProductName Added Succesfully">
                 </cfif>
-                <cfcatch>
-                    <cfset local.result['error'] = false>
-                    <cfset local.result['message'] = "Error adding images: #cfcatch.message#">
-                    <cfset local.currentFunction = getFunctionCalledName()>
-                    <cfmail 
-                        from = "parikshith2101@gmail.com" 
-                        to = "parikshith2k23@gmail.com" 
-                        subject = "Error in Function: #local.currentFunction#"
-                    >
-                        <h3>An error occurred in function: #local.currentFunction#</h3>
-                        <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                    </cfmail>
-                </cfcatch>
-            </cftry>        
-        </cfif>
+                <cfset local.result['error'] = false>
+                <cfset local.result['message'] = "ProductName Edited Succesfully">
+            </cfif>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>       
         <cfreturn local.result>
     </cffunction>
 
     <cffunction name = "deleteProduct" access = "remote" returnType = "void">
-        <cfargument name = "productId" required = true type = "integer">
-        <cfargument name = "subCategoryId" required = true type = "integer">
+        <cfargument name = "productId" required = true type = "string">
+        <cfargument name = "subCategoryId" required = true type = "string">
+        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
+        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
         <cftry>
-            <cfquery dataSource = "shoppingCart"> 
+            <cfquery datasource = "#application.dataSource#"> 
                 UPDATE  
                     tblproduct
                 SET
                     fldActive = 0,
-                    fldUpdatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
-                    fldUpdatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
+                    fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    fldUpdatedDate = #now()#
                 WHERE
-                    fldProduct_Id = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                    AND fldSubCategoryId = <cfqueryparam value = "#arguments.subCategoryId#" cfsqltype = "integer">
+                    fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                    AND fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
             </cfcatch>
         </cftry>
-    </cffunction>
-
-    <cffunction name = "getProductImage" access = "remote" returnFormat = "JSON" returnType = "array">
-        <cfargument name = "productId" required = true type = "integer">
-        <cfargument name = "productImageId" required = false type = "integer">
-        <cfset local.productImages = []>
-        <cftry>
-            <cfquery name = "local.qryProductImage" dataSource = "shoppingCart">
-                SELECT
-                    fldProductImage_Id,
-                    fldProductId,
-                    fldImageFilePath,
-                    fldDefaultImage
-                FROM
-                    tblproductimages
-                WHERE
-                    fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                    AND fldActive = 1
-                    <cfif structKeyExists(arguments, "productImageId")>
-                        AND fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
-                    </cfif>;
-            </cfquery>
-            <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
-            </cfcatch>
-        </cftry>
-        <cfloop query = "local.qryProductImage">
-            <cfset arrayAppend(local.productImages,{
-                'productImageId' : local.qryProductImage.fldProductImage_Id,
-                'productId' : local.qryProductImage.fldProductId,
-                'imageFile' : local.qryProductImage.fldImageFilePath,
-                'defaultImage' : local.qryProductImage.fldDefaultImage
-            })>
-        </cfloop>
-        <cfreturn local.productImages>
     </cffunction>
 
     <cffunction name = "setDefaultProductImage" access = "remote" returnType = "void">
         <cfargument name = "productImageId" required = true type = "integer">
-        <cfargument name = "productId" required = true type = "integer">
+        <cfargument name = "productId" required = true type = "string">
+        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
         <cftry>
-            <cfquery dataSource = "shoppingCart">
+            <cfquery datasource = "#application.dataSource#">
                 UPDATE
                     tblproductimages
                 SET
                     fldDefaultImage = 0
                 WHERE
-                    fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
-            <cfquery dataSource = "shoppingCart">
+            <cfquery datasource = "#application.dataSource#">
                 UPDATE
                     tblproductimages
                 SET
                     fldDefaultImage = 1
                 WHERE
                     fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
-                    AND fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
+                    AND fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
             </cfcatch>
         </cftry>
     </cffunction>
 
     <cffunction name = "deleteProductImage" access = "remote">
         <cfargument name = "productImageId" required = true type = "integer">
-        <cfargument name = "productId" required = true type = "integer">
-        <cfset productImageData = getProductImage(
+        <cfargument name = "productId" required = true type = "string">
+        <cfset productImageData = getSingleProduct(
             productId = arguments.productId,
             productImageId = arguments.productImageId
         )>
-        <cffile action = "delete" file = "#expandPath('../assets/images/product#productImageData[1].productId#/#productImageData[1].imageFile#')#">>    
+        <cfset local.decryptedProductId = decryptDetails(data = productImageData.product[1].productId)>
         <cftry>
-            <cfquery dataSource = "shoppingCart">
+            <cfquery datasource = "#application.dataSource#">
                 UPDATE
                     tblproductimages
                 SET
                     fldActive = 0,
-                    fldDeactivatedBy = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
-                    fldDeactivatedDate = <cfqueryparam value = "#now()#" cfsqltype = "timestamp">
+                    fldDeactivatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    fldDeactivatedDate = #now()#
                 WHERE
                     fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
+            <cffile action = "delete" file = "#expandPath('../uploads/product#local.decryptedProductId#/#productImageData.product[1].imageFile#')#">   
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
-                <cfmail 
-                    from = "parikshith2101@gmail.com" 
-                    to = "parikshith2k23@gmail.com" 
-                    subject = "Error in Function: #local.currentFunction#"
-                >
-                    <h3>An error occurred in function: #local.currentFunction#</h3>
-                    <p><strong>Error Message:</strong> #cfcatch.message#</p>
-                </cfmail>
+               <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
             </cfcatch>
         </cftry>
     </cffunction>
@@ -815,7 +851,7 @@
     <cffunction name = "getCart" access = "public" returnType = "array">
         <cfargument name = "productId" required = false type = "integer"> 
         <cfset local.getCart = []>
-        <cfquery name = "local.qryCart" dataSource = "shoppingCart">
+        <cfquery name = "local.qryCart" datasource = "#application.dataSource#">
             SELECT 
                 C.fldCart_Id,
                 C.fldUserId,
@@ -833,7 +869,7 @@
             LEFT JOIN tblproduct P ON P.fldProduct_Id = C.fldProductId
             LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
             WHERE 
-                C.fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                 <cfif structKeyExists(arguments,"productId")>
                     AND C.fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer"> 
                 </cfif>
@@ -865,26 +901,26 @@
         <cftry>  
             <cfif arrayLen(local.cartData)>
                 <cfset local.quantityCount = local.cartData[1].quantity + 1>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     UPDATE
                         tblcart
                     SET
                         fldQuantity = #local.quantityCount#  
                     WHERE 
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                 </cfquery>
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "Edited">
             <cfelse>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     INSERT INTO tblcart(
                         fldUserId,
                         fldProductId,
                         fldQuantity       
                     )
                     VALUES(
-                        <cfqueryparam value = "#session.userId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">,
                         1
                     );
@@ -917,7 +953,7 @@
             'cartQuantity' : "",
             'getCartData' : {}
         }>
-        <cfquery dataSource = "shoppingCart">
+        <cfquery datasource = "#application.dataSource#">
             DELETE FROM tblcart
             WHERE
                 fldCart_Id = <cfqueryparam value = "#arguments.cartId#" cfsqltype = "integer">
@@ -941,25 +977,25 @@
             <cfset local.getCartData = getCart(productId = arguments.productId)>
             <cfif arguments.modifyStatus EQ "add">
                 <cfset local.quantityCount = local.getCartData[1].quantity + 1>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     UPDATE
                         tblcart
                     SET
                         fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer"> 
                     WHERE 
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                 </cfquery>
             <cfelseif (arguments.modifyStatus EQ "remove") AND (local.getCartData[1].quantity GT 1)>
                 <cfset local.quantityCount = local.getCartData[1].quantity - 1>
-                <cfquery dataSource = "shoppingCart">
+                <cfquery datasource = "#application.dataSource#">
                     UPDATE
                         tblcart
                     SET
                         fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer">
                     WHERE 
                         fldProductId = <cfqueryparam value = "#arguments.productId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.userId#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                 </cfquery>
             <cfelse>
                 <cfset local.result['error'] = false>

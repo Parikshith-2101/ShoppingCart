@@ -81,7 +81,7 @@ function userSignUpValidation(){
 $('#logoutBtn').click(function(){
     if (confirm("Logout! Are you sure?")) {
         $.ajax({
-            url: "../components/user.cfc?method=logout",
+            url: "../components/userLogin?method=logout",
             method: "POST",
             success: function () {
                 window.location.reload();
@@ -99,4 +99,23 @@ $('#eyeIcon').click(function () {
         passfield.attr("type","password");
         $('#eyeIcon').html(`<i class="fa-solid fa-eye"></i>`);
     }
+});
+
+function toggleCustomInput(selectElement, inputId) {
+    let inputElement = $("#" + inputId);
+    
+    if ($(selectElement).val() === "custom") {
+        inputElement.removeClass("d-none").focus();
+    } else {
+        inputElement.addClass("d-none");
+    }
+}
+
+$('#filterBtn').on('click', function() {
+    let minPrice = $('#minPrice').val();
+    let maxPrice = $('#maxPrice').val();
+    let minPriceCustom = $('#minPriceCustom').val();
+    let maxPriceCustom = $('#maxPriceCustom').val();
+    console.log(`Min Price: ${minPrice === 'custom' ? minPriceCustom : minPrice}`);
+    console.log(`Max Price: ${maxPrice === 'custom' ? maxPriceCustom : maxPrice}`);
 });
