@@ -13,18 +13,20 @@
 </head>
 
 <body>
-    <cfset qryCategoryData =  application.productManagementObj.qryCategoryData()>
-    <cfset qrySubCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
-    <cfset qryBrandData = application.productManagementObj.qryBrandData()>
-    <cfset qryProductData = application.productManagementObj.qryProductData(subCategoryId = url.subCategoryId)>
+    <cfset getCategoryArray = application.productManagementObj.getCategory()>
+    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
+    <cfset getBrandArray = application.productManagementObj.getBrand()>
+    <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
+
     <cfoutput>
         <nav class="navbar fixed-top p-0">
-            <a href="##" class="nav-link">
+            <a href="categories.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
             <ul class="d-flex list-unstyled my-0">
                 <li class="nav-item">
                     <a class="nav-link" id="logoutCategory">
@@ -39,10 +41,10 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">#url.subCategoryName#</div>
+                            <div class="text-uppercase login-title fs-4 px-2">#getProductArray.product[1].subCategoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addProductBtn">Add+</div>
                         </div>
-<!---modal--->
+                        <!---modal--->
                         <div class="modal fade" id="productModal" data-bs-backdrop="static" data-bs-keyboard="false"
                             tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
                             <div class="modal-dialog w-50">
@@ -58,17 +60,17 @@
                                             <div class="d-flex flex-column">
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                 
-                                                    <cfloop query="qryCategoryData">
-                                                        <option value="#qryCategoryData.fldCategory_Id#">#qryCategoryData.fldCategoryName#</option>
+                                                    <cfloop array="#getCategoryArray.category#" item="categoryItem">
+                                                        <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
                                             <div class="d-flex flex-column">
                                                 <label for="subCategoryDropdown">SubCategory</label>
-                                                <select id="subCategoryDropdown" name="subCategoryDropdown">
-                                                    <cfloop query="qrySubCategoryData">
-                                                        <option value="#qrySubCategoryData.fldSubCategory_Id#">#qrySubCategoryData.fldSubCategoryName#</option>
-                                                    </cfloop>                                          
+                                                <select id="subCategoryDropdown" name="subCategoryDropdown"> 
+                                                    <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
+                                                        <option value="#subCategoryItem.subCategoryId#">#subCategoryItem.subCategoryName#</option>
+                                                    </cfloop>                                         
                                                 </select>
                                             </div>
                                             <div>     
@@ -79,9 +81,9 @@
                                             <div>
                                                 <label for="productBrand">Product Brand*</label>
                                                 <select id="productBrand" name="productBrand">                                                  
-                                                    <option value="" disabled selected>Select Brand Name</option>
-                                                    <cfloop query="qryBrandData">
-                                                        <option value="#qryBrandData.fldBrand_Id#">#qryBrandData.fldBrandName#</option>
+                                                    <option value="" disabled selected>Select Brand Name</option>                                          
+                                                    <cfloop array="#getBrandArray.brand#" item="brandItem">
+                                                        <option value="#brandItem.brandId#">#brandItem.brandName#</option>
                                                     </cfloop>                                          
                                                 </select>
                                                 <div id="productBrand-error" class="fw-bold text-danger"></div>
@@ -141,53 +143,78 @@
                         </div>
 
                         <cfif structKeyExists(form, "saveProduct")>
-                            <cfset local.addProductResult = application.productManagementObj.addProduct(
-                                categoryId = form.categoryDropdown,
-                                subCategoryId = form.subCategoryDropdown,
-                                productName = form.productName,
-                                productBrandId = form.productBrand,
-                                productDesc = form.productDesc,
-                                productPrice = form.productPrice,
-                                productTax = form.productTax,
-                                productImage = form.productImage,
-                                productId = form.productIdHolder
-                            )>
-                            <cfif local.addProductResult.errorStatus EQ "true">
-                                <cflocation url = "products.cfm?subCategoryId=#url.subCategoryId#&subCategoryName=#url.subCategoryName#&categoryId=#url.categoryId#" addToken="No">
-                                <div class="text-success fw-bold errorServerSide">#local.addProductResult.resultMsg#</div>
+                            <cfif len(trim(form.productIdHolder))>
+                                <cfset local.addProductResult = application.productManagementObj.editProduct(
+                                    categoryId = form.categoryDropdown,
+                                    subCategoryId = form.subCategoryDropdown,
+                                    productName = form.productName,
+                                    productBrandId = form.productBrand,
+                                    productDesc = form.productDesc,
+                                    productPrice = form.productPrice,
+                                    productTax = form.productTax,
+                                    productImage = form.productImage,
+                                    productId = form.productIdHolder
+                                )>
                             <cfelse>
-                                <div class="text-danger fw-bold errorServerSide">#local.addProductResult.resultMsg#</div>
+                                <cfset local.addProductResult = application.productManagementObj.addProduct(
+                                    categoryId = form.categoryDropdown,
+                                    subCategoryId = form.subCategoryDropdown,
+                                    productName = form.productName,
+                                    productBrandId = form.productBrand,
+                                    productDesc = form.productDesc,
+                                    productPrice = form.productPrice,
+                                    productTax = form.productTax,
+                                    productImage = form.productImage
+                                )>
+                            </cfif>
+                            <cfif local.addProductResult.error EQ false>
+                                <cflocation url = "products.cfm?subCategoryId=#url.subCategoryId#&categoryId=#url.categoryId#" addToken="No">
+                                <div class="text-success fw-bold errorServerSide">#local.addProductResult.message#</div>
+                            <cfelse>
+                                <div class="text-danger fw-bold errorServerSide">#local.addProductResult.message#</div>
                             </cfif>
                                 
                         </cfif>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            <cfloop query="qryProductData">
-                                <div class="card shadow-lg mb-3" id="#qryProductData.fldProduct_Id#">
-                                    <div class="d-flex align-items-center p-3">
-                                        <div class="me-4 d-flex flex-column align-items-center cursor-pointer" onclick="editImage(#qryProductData.fldProduct_Id#)">
-                                            <img src="../assets/images/productImages/#qryProductData.fldImageFilePath#" width="80" class="rounded">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h3 class="card-title mb-1">#qryProductData.fldProductName#</h3>
-                                            <p class="card-text mb-1"><span class="fldName">Brand</span>: #qryProductData.fldBrandName#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Description</span>: #qryProductData.fldDescription#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Price</span>: Rs.#qryProductData.fldUnitPrice#</p>
-                                            <p class="card-text mb-1"><span class="fldName">Tax</span>: Rs.#qryProductData.fldUnitTax#</p>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <button onclick="editProduct(#qryProductData.fldProduct_Id#,#url.subCategoryId#,#url.categoryId#)" class="btn btn-outline-info mx-1" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button onclick="deleteProduct(#qryProductData.fldProduct_Id#,#url.subCategoryId#)" class="btn btn-outline-danger mx-1" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                            <div class="row g-4">
+                                <cfloop array="#getProductArray.product#" item="productItem">
+                                    <cfset divId = createUUID()>
+                                    <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                    <div class="col-sm-6 col-md-4 col-lg-3" id="#divId#">
+                                        <div class="card product-card shadow-sm">
+                                            <div onclick="editImage('#productItem.productId#','#local.decryptedProductId#')">
+                                                <img src="../uploads/product#local.decryptedProductId#/#productItem.imageFile#" 
+                                                    class="card-img-top" alt="#productItem.productName#">
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                                <p class="card-text text-muted small mb-1">
+                                                    <strong>Brand:</strong> #productItem.brandName#
+                                                </p>
+                                                <p class="card-text product-desc text-muted small mb-1">
+                                                    <strong>Description:</strong> #productItem.description#
+                                                </p>
+                                                <p class="card-text text-muted small mb-1">
+                                                    <strong>Price:</strong> Rs.#productItem.unitPrice#
+                                                </p>
+                                                <p class="card-text text-muted small mb-3">
+                                                    <strong>Tax:</strong> Rs.#productItem.unitTax#
+                                                </p>
+                                                <div class="d-flex justify-content-between">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
+                                                        <i class="fas fa-edit"></i> Edit
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#','#divId#')">
+                                                        <i class="fas fa-trash"></i> Delete
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </cfloop>
+                                </cfloop>
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
