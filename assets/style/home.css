@@ -9,7 +9,7 @@
     color: rgb(88, 211, 241);
 }
 .products-container {
-    margin-top: 90px;
+    margin-top: 100px;
     padding: 20px;
 }
 .product-card {
@@ -122,4 +122,7 @@ input[type="number"] {
 }
 div.fw-bold{
     padding-block: 3px;
+}
+#minPrice, #minPriceCustom, #maxPrice, #maxPriceCustom {
+    width: 70px;
 }

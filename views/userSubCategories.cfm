@@ -33,15 +33,16 @@
             </cfif>
             <cfset getProductArray = application.productManagementObj.getProduct(
                 subCategoryId = url.subCategoryId,
-                minPrice = form.minPrice,
-                maxPrice = form.maxPrice
+                minPrice = minPrice,
+                maxPrice = maxPrice
             )>
         </cfif>
         <form method="post">
             <div class="container products-container">
                 <div class="row g-4 mt-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="m-0">#getProductArray.product[1].subCategoryName#</h3>
+                        <cfset subCatName = application.productManagementObj.getSubCategory(subCategoryId = url.subCategoryId)>
+                        <h3 class="m-0">#subCatName.subCategory[1].subCategoryName#</h3>
                         <div class="d-flex">
                             <div class="d-flex">
                                 <h4 class="m-0">Sort By</h4>
@@ -68,9 +69,9 @@
                                                         <option value="30000">30,000</option>
                                                         <option value="custom">Custom</option>
                                                     </select>
-                                                    <input type="number" name="minPriceCustom" id="minPriceCustom" class="form-control p-1 d-none" placeholder="Enter Min">
+                                                    <input type="number" name="minPriceCustom" id="minPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Min">
                                                 </div>
-                                                <div class="mx-2">to</div>
+                                                <div class="mx-2 text-muted">to</div>
                                                 <div>
                                                     <select name="maxPrice" id="maxPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'maxPriceCustom')">
                                                         <option value="">Max</option>
@@ -79,7 +80,7 @@
                                                         <option value="40000">40,000</option>
                                                         <option value="custom">Custom</option>
                                                     </select>
-                                                    <input type="number" name="maxPriceCustom" id="maxPriceCustom" class="form-control p-1 d-none" placeholder="Enter Max">
+                                                    <input type="number" name="maxPriceCustom" id="maxPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Max">
                                                 </div>
                                             </div>
                                         </li>
@@ -93,26 +94,32 @@
                             </div>
                         </div>
                     </div>
-                    <cfloop array="#getProductArray.product#" item="productItem">
-                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
-                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                            <div class="product-card pb-0">
-                                <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
-                                    <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                </a>
-                                <div class="card-body text-start">
-                                    <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                    <p class="card-text text-muted small mb-1">
-                                        <strong>Brand:</strong> #productItem.brandName#
-                                    </p>
-                                    <p class="card-text product-desc text-muted small mb-1">
-                                        <strong>Description:</strong> #productItem.description#
-                                    </p>                                   
-                                    <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                    <cfif arraylen(getProductArray.product)>
+                        <cfloop array="#getProductArray.product#" item="productItem">
+                            <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <div class="product-card pb-0">
+                                    <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
+                                        <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                    </a>
+                                    <div class="card-body text-start">
+                                        <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                        <p class="card-text text-muted small mb-1">
+                                            <strong>Brand:</strong> #productItem.brandName#
+                                        </p>
+                                        <p class="card-text product-desc text-muted small mb-1">
+                                            <strong>Description:</strong> #productItem.description#
+                                        </p>                                   
+                                        <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                                    </div>
                                 </div>
                             </div>
+                        </cfloop> 
+                    <cfelse>
+                        <div class="col-12 text-center">
+                            <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75 h-75">
                         </div>
-                    </cfloop> 
+                    </cfif>
                 </div>
             </div>
         </form>

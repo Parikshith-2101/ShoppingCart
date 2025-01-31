@@ -14,9 +14,10 @@
     <cffunction name = "onRequestStart" returnType = "boolean">
         <cfargument type = "String" name = "targetPage" required = true>
         <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
-            <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+<!---             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfset onApplicationStart()>
-            </cfif>
+            </cfif> --->
+            <cfset onApplicationStart()>
         </cfif>
         <cfreturn true>
     </cffunction>
@@ -31,7 +32,7 @@
         </cfif>
     </cffunction>
     
-    <cffunction name = "onError">
+<!---     <cffunction name = "onError">
         <cfargument name = "Exception" required = true>
         <cfargument type = "String" name = "EventName" required = true>
         <cflog file = "#This.Name#" type = "error" text = "Event Name: #arguments.Eventname#">
@@ -45,7 +46,7 @@
             <cfdump var = #arguments.Exception#></p>
             </cfoutput>
         </cfif>
-    </cffunction>
+    </cffunction> --->
 
     <cffunction name = "onMissingTemplate">
         <cfargument name = "targetPage" type = "string" required = true>

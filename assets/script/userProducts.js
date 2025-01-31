@@ -17,7 +17,7 @@ function deleteCartItem(cartId){
             success: function(response) {
                 const Data = JSON.parse(response);
                 console.log(Data)
-                $('#' + cartId).remove();
+                document.getElementById(`${cartId}`).remove();
                 let totalPrice = 0;
                 let totalTax = 0;
                 let totalAmount = 0;
@@ -35,8 +35,9 @@ function deleteCartItem(cartId){
     }
 }
 
-function modifyQuantity(productId,modifyStatus){
-    $(`#removeBtn${productId}`).prop("disabled", false);
+function modifyQuantity(productId,modifyStatus){ 
+    const removebtn = document.getElementById(`removeBtn${productId}`);
+    removebtn.disabled = false;
     $.ajax({
         url: "../components/productManagement.cfc?method=modifyQuantity",
         method: "POST",
@@ -47,8 +48,8 @@ function modifyQuantity(productId,modifyStatus){
         success: function(response) {
             const Data = JSON.parse(response);
             console.log(Data);
-            if (Data.error === "false") {
-                $(`#removeBtn${productId}`).prop("disabled", true);
+            if (Data.error === true) {
+                removebtn.disabled = true;
             }
             let totalPrice = 0;
             let totalTax = 0;
@@ -57,7 +58,8 @@ function modifyQuantity(productId,modifyStatus){
                 totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
                 totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
                 totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
-                $(`#quantity${Data.getCartData[i].productId}`).val(Data.getCartData[i].quantity);
+                document.getElementById(`quantity${Data.getCartData[i].productId}`).value = Data.getCartData[i].quantity;
+                document.getElementById(`price${Data.getCartData[i].productId}`).textContent = Data.getCartData[i].quantity*(Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax);
             }
             $('.totalPriceDiv').text(totalPrice);
             $('.totalTaxDiv').text(totalTax);

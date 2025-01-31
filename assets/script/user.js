@@ -81,7 +81,7 @@ function userSignUpValidation(){
 $('#logoutBtn').click(function(){
     if (confirm("Logout! Are you sure?")) {
         $.ajax({
-            url: "../components/userLogin?method=logout",
+            url: "../components/userLogin.cfc?method=logout",
             method: "POST",
             success: function () {
                 window.location.reload();

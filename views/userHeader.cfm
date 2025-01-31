@@ -15,9 +15,10 @@
                 <li class="nav-item me-3">
                     <a class="nav-link" href="userCart.cfm">
                         <i class="fa-solid fa-cart-shopping position-relative">
-                            <cfif structKeyExists(session, "cartQuantity")>
+                            <cfif structKeyExists(session, "loginUserId")>
+                                <cfset local.cartArray = application.productManagementObj.getCart()>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-quantity">
-                                    #session.cartQuantity#
+                                    #arrayLen(local.cartArray.cart)#
                                 </span>
                             </cfif>
                         </i>
@@ -33,7 +34,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li>
-                                    <a class="dropdown-item d-flex align-items-center text-primary" href="##">
+                                    <a class="dropdown-item d-flex align-items-center text-primary" href="userProfile.cfm">
                                         <i class="fa-solid fa-user-circle me-2"></i>
                                         <span>Profile</span>
                                     </a>
