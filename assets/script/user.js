@@ -119,3 +119,22 @@ $('#filterBtn').on('click', function() {
     console.log(`Min Price: ${minPrice === 'custom' ? minPriceCustom : minPrice}`);
     console.log(`Max Price: ${maxPrice === 'custom' ? maxPriceCustom : maxPrice}`);
 });
+
+$(document).on("click", function(){
+    $(".errorServerSide").hide();
+});
+
+function deleteAddress(addressId){
+    if(confirm("Remove! Are you sure?")){
+        $.ajax({
+            url: "../components/productManagement.cfc?method=deleteAddress",
+            method: "POST",
+            data: {
+                addressId : addressId
+            },
+            success: function() {
+                document.getElementById(`${addressId}`).remove();
+            }
+        })
+    }
+}

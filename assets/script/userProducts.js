@@ -9,7 +9,7 @@ function updateMainImage(imageElement) {
 function deleteCartItem(cartId){
     if(confirm("Remove! Are you sure?")){
         $.ajax({
-            url: "../components/productManagement.cfc?method=deleteCart",
+            url: "../components/cart.cfc?method=deleteCart",
             method: "POST",
             data: {
                 cartId : cartId
@@ -39,7 +39,7 @@ function modifyQuantity(productId,modifyStatus){
     const removebtn = document.getElementById(`removeBtn${productId}`);
     removebtn.disabled = false;
     $.ajax({
-        url: "../components/productManagement.cfc?method=modifyQuantity",
+        url: "../components/cart.cfc?method=modifyQuantity",
         method: "POST",
         data: {
             productId : productId,

@@ -224,7 +224,7 @@ function editCategory(categoryId){
 }
 
 //delete Category
-function deleteCategory(categoryId,divId){
+function deleteCategory(categoryId){
     console.log(categoryId)
     if(confirm("Delete! Are you sure?")){
         $.ajax({
@@ -234,7 +234,7 @@ function deleteCategory(categoryId,divId){
                 categoryId : categoryId
             },
             success: function() {
-                $(`#${divId}`).remove();
+                document.getElementById(`${categoryId}`).remove();
             }
         });
     }     
@@ -264,7 +264,7 @@ function editSubCategory(subCategoryId,categoryId){
 }
 
 //delete SubCategory
-function deleteSubCategory(subCategoryId,categoryId,divId){
+function deleteSubCategory(subCategoryId,categoryId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
@@ -274,7 +274,7 @@ function deleteSubCategory(subCategoryId,categoryId,divId){
                 categoryId : categoryId
             },
             success: function() {
-                $(`#${divId}`).remove();
+                document.getElementById(`${subCategoryId}`).remove();
             },
             error: handleAjaxError
         });

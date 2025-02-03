@@ -90,7 +90,7 @@ function editProduct(productId,subCategoryId,categoryId){
 }
 
 //delete Product
-function deleteProduct(productId,subCategoryId,divId){
+function deleteProduct(productId,subCategoryId){
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             url: "../components/productManagement.cfc?method=deleteProduct",
@@ -100,7 +100,7 @@ function deleteProduct(productId,subCategoryId,divId){
                 productId : productId
             },
             success: function() {
-                $(`#${divId}`).remove();
+                document.getElementById(`${productId}`).remove();
             }
         });
     }     

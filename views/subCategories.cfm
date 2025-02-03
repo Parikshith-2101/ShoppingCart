@@ -83,8 +83,7 @@
 
                         <div class="d-flex flex-column w-100 mt-3">                          
                             <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
-                                <cfset divId = createUUID()>
-                                <div class="card shadow-lg" id = "#divId#">
+                                <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
                                             #subCategoryItem.subCategoryName#
@@ -93,7 +92,7 @@
                                             <button onclick="editSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteSubCategory('#subCategoryItem.subCategoryId#','#local.categoryId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                             <a href="products.cfm?subCategoryId=#UrlEncodedFormat(subCategoryItem.subCategoryId)#&categoryId=#UrlEncodedFormat(local.categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">

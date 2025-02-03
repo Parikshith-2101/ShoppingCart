@@ -179,9 +179,8 @@
                         <div class="d-flex flex-column w-100 mt-3">
                             <div class="row g-4">
                                 <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfset divId = createUUID()>
                                     <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
-                                    <div class="col-sm-6 col-md-4 col-lg-3" id="#divId#">
+                                    <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                         <div class="card product-card shadow-sm">
                                             <div onclick="editImage('#productItem.productId#','#local.decryptedProductId#')">
                                                 <img src="../uploads/product#local.decryptedProductId#/#productItem.imageFile#" 
@@ -205,7 +204,7 @@
                                                     <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </button>
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#','#divId#')">
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#')">
                                                         <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 </div>

@@ -16,7 +16,7 @@
                     <a class="nav-link" href="userCart.cfm">
                         <i class="fa-solid fa-cart-shopping position-relative">
                             <cfif structKeyExists(session, "loginUserId")>
-                                <cfset local.cartArray = application.productManagementObj.getCart()>
+                                <cfset local.cartArray = application.cartObj.getCart()>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-quantity">
                                     #arrayLen(local.cartArray.cart)#
                                 </span>

@@ -14,7 +14,7 @@
 <cfoutput>
     <cfif structKeyExists(form, "addToCartBtn")>
         <cfif structKeyExists(session, "loginUserId")>
-            <cfset addToCartResult = application.productManagementObj.addCart(
+            <cfset addToCartResult = application.cartObj.addCart(
                 productId = form.addToCartBtn
             )>
         <cfelse>
@@ -51,7 +51,7 @@
                             </div>
                             <form method="post" class="action-buttons">
                                 <cfif structKeyExists(session, "loginUserId")>
-                                    <cfset getCartData = application.productManagementObj.getCart(productId = productItem.productId)>
+                                    <cfset getCartData = application.cartObj.getCart(productId = productItem.productId)>
                                     <cfif arrayLen(getCartData.cart)> 
                                         <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                     <cfelse>
@@ -60,7 +60,7 @@
                                 <cfelse>
                                     <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
                                 </cfif>
-                                <button class="btn btn-success">Buy Now</button>
+                                <a href="userOrder.cfm" class="btn btn-success">Buy Now</a>
                             </form>
                         </div>
                     </div>

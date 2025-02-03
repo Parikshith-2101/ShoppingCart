@@ -1,27 +1,18 @@
 <cfcomponent>
-    <cffunction name = "sendErrorEmail">
-        <cfargument name = "subject" required = true type = "string">
-        <cfargument name = "errorMessage">
-        <cfset local.emailFrom = "parikshith2101@gmail.com">
-        <cfset local.emailTo = "parikshith2k23@gmail.com">       
-        <cfmail 
-            from="#local.emailFrom#"
-            to="#local.emailTo#"
-            subject="Error in #arguments.subject#"
-        >
-            <p><strong>Error Message:</strong> #arguments.errorMessage#</p>
-        </cfmail>
-    </cffunction>
-
-    <cffunction name = "userLogin" access = "public" returnType = "struct">
-        <cfargument name = "userName" required = true type = "string">
-        <cfargument name = "password" required = true type = "string">
+    <cffunction name = "getUser" access = "public" returnType = "struct">
+        <cfargument name = "userName" required = false type = "string">
+        <cfargument name = "email" required = false type = "string">
+        <cfargument name = "phone" required = false type = "string">
+        <cfif NOT structKeyExists(arguments, "email") AND NOT structKeyExists(arguments, "phone")>
+            <cfset arguments.email = arguments.userName>
+            <cfset arguments.phone = arguments.userName>
+        </cfif>
         <cfset local.result = {
-            'error' : true,
-            'message' : "Invalid User , Please Signup"
+            'error' : false,
+            'user' : []
         }>
         <cftry>
-            <cfquery name = "local.qryFetchUserData" datasource = "#application.dataSource#">
+             <cfquery name = "local.qryUser" datasource = "#application.dataSource#">
                 SELECT 
                     fldUser_Id,
                     fldRoleId,
@@ -35,18 +26,52 @@
                     tbluser 
                 WHERE
                     fldActive = 1
-                    AND (fldEmail = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">
-                        OR fldPhone = <cfqueryparam value = "#arguments.userName#" cfsqltype = "varchar">);
-            </cfquery>     
-            <cfif local.qryFetchUserData.RecordCount>
-                <cfset local.saltString = local.qryFetchUserData.fldUserSaltString>
+                    AND (fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">
+                        OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "varchar">);
+            </cfquery> 
+            <cfloop query = "local.qryUser">
+                <cfset arrayAppend(local.result['user'],{
+                    'userId' : local.qryUser.fldUser_Id,
+                    'roleId' : local.qryUser.fldRoleId,
+                    'firstName' : local.qryUser.fldFirstName,
+                    'lastName' : local.qryUser.fldLastName,
+                    'email' : local.qryUser.fldEmail,
+                    'phone' : local.qryUser.fldPhone,
+                    'hashedPassword' : local.qryUser.fldHashedPassword,
+                    'saltString' : local.qryUser.fldUserSaltString
+                })>
+            </cfloop>  
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
+                <cfset application.productManagementObj.sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>
+        <cfreturn local.result>
+    </cffunction>
+
+    <cffunction name = "userLogin" access = "public" returnType = "struct">
+        <cfargument name = "userName" required = true type = "string">
+        <cfargument name = "password" required = true type = "string">
+        <cfset local.result = {
+            'error' : true,
+            'message' : "Invalid User , Please Signup"
+        }>
+        <cftry>
+            <cfset local.getUser = getUser(userName = arguments.userName)>
+            <cfif arrayLen(local.getUser.user)>
+                <cfset local.saltString = local.getUser.user[1].saltString>
                 <cfset local.hashedPassword = hmac(arguments.password, local.saltString, 'hmacSHA256')>
-                <cfif local.qryFetchUserData.fldHashedPassword EQ local.hashedPassword>
-                    <cfset session.loginUserId = local.qryFetchUserData.fldUser_Id>
-                    <cfset session.email = local.qryFetchUserData.fldEmail>
-                    <cfset session.firstName = local.qryFetchUserData.fldFirstName>
-                    <cfset session.lastName = local.qryFetchUserData.fldLastName>
-                    <cfset session.roleId = local.qryFetchUserData.fldRoleId>
+                <cfif local.getUser.user[1].hashedPassword EQ local.hashedPassword>
+                    <cfset session.loginUserId = local.getUser.user[1].userId>
+                    <cfset session.email = local.getUser.user[1].email>
+                    <cfset session.firstName = local.getUser.user[1].firstName>
+                    <cfset session.lastName = local.getUser.user[1].lastName>
+                    <cfset session.roleId = local.getUser.user[1].roleId>
                     <cfset local.result['message'] = "Login Successful">
                     <cfset local.result['error'] = false>
                 </cfif>
@@ -55,7 +80,7 @@
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
-                <cfset sendErrorEmail(
+                <cfset application.productManagementObj.sendErrorEmail(
                     subject = local.currentFunction,
                     errorMessage = cfcatch.message
                 )>
@@ -75,19 +100,11 @@
             'message': ""
         }>
         <cftry>
-            <cfquery name = "local.qryFetchUserData" datasource = "#application.dataSource#">
-                SELECT 
-                    fldUser_Id
-                FROM
-                    tbluser
-                WHERE
-                    fldActive = 1
-                    AND (
-                        fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">
-                        OR fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "varchar">
-                    );
-            </cfquery>
-            <cfif local.qryFetchUserData.RecordCount>
+            <cfset local.getUser = getUser(
+                email = arguments.email,
+                phone = arguments.phone
+            )>
+            <cfif arrayLen(local.getUser.user)>
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "User already exists.">
             <cfelse>
@@ -119,7 +136,7 @@
             <cfset local.currentFunction = getFunctionCalledName()>
             <cfset local.result['error'] = true>
             <cfset local.result['message'] = "Error in #local.currentFunction#: #cfcatch.message#">
-            <cfset sendErrorEmail(
+            <cfset application.productManagementObj.sendErrorEmail(
                 subject = local.currentFunction,
                 errorMessage = cfcatch.message
             )>

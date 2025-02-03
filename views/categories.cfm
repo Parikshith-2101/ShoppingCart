@@ -72,8 +72,7 @@
                                 <cfdump var="#getCategory#">
                             </cfif>
                             <cfloop array="#getCategory.category#" item="categoryItem">
-                                <cfset divId = createUUID()>
-                                <div class="card shadow-lg" id = "#divId#">
+                                <div class="card shadow-lg" id = "#categoryItem.categoryId#">
                                     <div class="d-flex align-items-center">
                                         <div class="categoryName">
                                             #categoryItem.categoryName#
@@ -82,7 +81,7 @@
                                             <button onclick="editCategory('#categoryItem.categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button onclick="deleteCategory('#categoryItem.categoryId#','#divId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                            <button onclick="deleteCategory('#categoryItem.categoryId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                             <a href="subCategories.cfm?categoryId=#UrlEncodedFormat(categoryItem.categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">

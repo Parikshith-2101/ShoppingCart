@@ -126,3 +126,12 @@ div.fw-bold{
 #minPrice, #minPriceCustom, #maxPrice, #maxPriceCustom {
     width: 70px;
 }
+.errorServerSide{
+    position: absolute;
+    bottom: 5%;
+    left: 17%;
+    z-index: 4;
+}
+.card.p-4.text-center{
+    position: relative;
+}

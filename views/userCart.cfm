@@ -20,7 +20,7 @@
     </header>
     <main> 
         <cfoutput>
-            <cfset getCartArray=application.productManagementObj.getCart()> 
+            <cfset getCartArray=application.cartObj.getCart()> 
             <div class="main-container d-flex">
                 <cfif arrayLen(getCartArray.cart)>     
                     <div class="container-left">

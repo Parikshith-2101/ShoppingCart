@@ -24,12 +24,13 @@
         <div class="container products-container">
             <div class="row g-4 mt-4">
                 <h3>Showing Results for '#form.searchKey#'</h3>
-                <cfloop array="#getProductArray#" item="productItem">
+                <cfloop array="#getProductArray.product#" item="productItem">
                 <cfset encryptedProductId = application.productManagementObj.encryptDetails(data = productItem.productId)>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                         <div class="product-card pb-0">
                             <a href="userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">
-                                <img src="../assets/images/product#productItem.productId#/#productItem.imageFile#" alt="Electronics">
+                                <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">
                             </a>
                             <div class="card-body text-start">
                                 <h5 class="card-title text-truncate">#productItem.productName#</h5>
