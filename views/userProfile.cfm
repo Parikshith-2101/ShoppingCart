@@ -20,16 +20,16 @@
                     <div class="col-md-4">
                         <div class="card p-4 text-center">
                             <cfif structKeyExists(form, "saveProfileBtn")>
-                                <cfset local.editUserResult = application.productManagementObj.editUser(
+                                <cfset editUserResult = application.productManagementObj.editUser(
                                     firstName = form.userFirstName,
                                     lastName = form.userLastName,
                                     email = form.userEmail
                                 )>
                                 <div class="errorServerSide">
-                                    <cfif local.editUserResult.error EQ true>
-                                        <span class="text-danger fw-bold">#local.editUserResult.message#</span>
+                                    <cfif editUserResult.error EQ true>
+                                        <span class="text-danger fw-bold">#editUserResult.message#</span>
                                     <cfelse>
-                                        <span class="text-success fw-bold">#local.editUserResult.message#</span>
+                                        <span class="text-success fw-bold">#editUserResult.message#</span>
                                     </cfif>
                                 </div>
                             </cfif>
@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <cfif structKeyExists(form, "saveAddressBtn")>
-                        <cfset local.addressResult = application.productManagementObj.addAddress(
+                        <cfset addressResult = application.productManagementObj.addAddress(
                             firstName = form.firstName,
                             lastName = form.lastName,
                             addressLine1 = form.addressLine1,
@@ -52,7 +52,9 @@
                             pincode = form.pincode,
                             phone = form.phone
                         )>
-                        <cfdump  var="#local.addressResult#">
+                        <cfif addressResult.error EQ true>
+                            <cfdump var="#addressResult#">
+                        </cfif>
                     </cfif>
                     <div class="col-md-8">
                         <div class="card p-4">
@@ -64,8 +66,8 @@
                             </div>
         
                             <ul class="p-0 m-0 mt-3">
-                                <cfset local.getAddressArray = application.productManagementObj.getAddress()>
-                                <cfloop array="#local.getAddressArray.address#" item="addressItem">
+                                <cfset getAddressArray = application.productManagementObj.getAddress()>
+                                <cfloop array="#getAddressArray.address#" item="addressItem">
                                    <li class="card flex-row justify-content-between align-items-center p-3 my-3 shadow-sm">
                                         <div class="d-flex flex-column">
                                             <h6 class="font-weight-bold mb-1">

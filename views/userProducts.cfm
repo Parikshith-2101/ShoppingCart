@@ -18,7 +18,7 @@
                 productId = form.addToCartBtn
             )>
         <cfelse>
-            <cflocation url="userLogin.cfm?productId=#url.productId#">
+            <cflocation url="userLogin.cfm?productId=#urlEncodedFormat(url.productId)#">
         </cfif>
     </cfif>
     <header>
@@ -27,11 +27,12 @@
 
     <main>
         <cfset getSingleProductArray = application.productManagementObj.getSingleProduct(productId = url.productId)>
-        <div class="container products-container mt-5">          
+        <div class="container products-container mt-5">         
             <cfloop array="#getSingleProductArray.product#" item="productItem">
                 <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                 <div class="row mt-5">
                     <div class="col-md-6">
+                        <a href="">#getSingleProductArray.product[1].categoryName#></a> <a href="">#getSingleProductArray.product[1].subCategoryName#</a>
                         <div class="main-product-image mb-3">
                             <cfset defaultImage = ListGetAt(getSingleProductArray.product[1].imageFile, 1)>
                             <img src="../uploads/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">
@@ -60,7 +61,7 @@
                                 <cfelse>
                                     <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
                                 </cfif>
-                                <a href="userOrder.cfm" class="btn btn-success">Buy Now</a>
+                                <a href="userOrder.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="btn btn-success">Buy Now</a>
                             </form>
                         </div>
                     </div>

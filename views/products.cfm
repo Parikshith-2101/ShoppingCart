@@ -144,7 +144,7 @@
 
                         <cfif structKeyExists(form, "saveProduct")>
                             <cfif len(trim(form.productIdHolder))>
-                                <cfset local.addProductResult = application.productManagementObj.editProduct(
+                                <cfset addProductResult = application.productManagementObj.editProduct(
                                     categoryId = form.categoryDropdown,
                                     subCategoryId = form.subCategoryDropdown,
                                     productName = form.productName,
@@ -156,7 +156,7 @@
                                     productId = form.productIdHolder
                                 )>
                             <cfelse>
-                                <cfset local.addProductResult = application.productManagementObj.addProduct(
+                                <cfset addProductResult = application.productManagementObj.addProduct(
                                     categoryId = form.categoryDropdown,
                                     subCategoryId = form.subCategoryDropdown,
                                     productName = form.productName,
@@ -167,11 +167,11 @@
                                     productImage = form.productImage
                                 )>
                             </cfif>
-                            <cfif local.addProductResult.error EQ false>
-                                <cflocation url = "products.cfm?subCategoryId=#url.subCategoryId#&categoryId=#url.categoryId#" addToken="No">
-                                <div class="text-success fw-bold errorServerSide">#local.addProductResult.message#</div>
+                            <cfif addProductResult.error EQ false>
+                                <cflocation url = "products.cfm?subCategoryId=#urlEncodedFormat(url.subCategoryId)#&categoryId=#urlEncodedFormat(url.categoryId)#" addToken="No">
+                                <div class="text-success fw-bold errorServerSide">#addProductResult.message#</div>
                             <cfelse>
-                                <div class="text-danger fw-bold errorServerSide">#local.addProductResult.message#</div>
+                                <div class="text-danger fw-bold errorServerSide">#addProductResult.message#</div>
                             </cfif>
                                 
                         </cfif>
@@ -179,11 +179,11 @@
                         <div class="d-flex flex-column w-100 mt-3">
                             <div class="row g-4">
                                 <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                    <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                                     <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                         <div class="card product-card shadow-sm">
-                                            <div onclick="editImage('#productItem.productId#','#local.decryptedProductId#')">
-                                                <img src="../uploads/product#local.decryptedProductId#/#productItem.imageFile#" 
+                                            <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">
+                                                <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" 
                                                     class="card-img-top" alt="#productItem.productName#">
                                             </div>
                                             <div class="card-body">

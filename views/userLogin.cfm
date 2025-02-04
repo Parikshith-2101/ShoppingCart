@@ -60,7 +60,7 @@
                                     <cflocation  url = "categories.cfm">
                                 <cfelse>
                                     <cfif structKeyExists(url, "productId")>    
-                                        <cflocation url = "userProducts.cfm?productId=#url.productId#">
+                                        <cflocation url = "userProducts.cfm?productId=#urlEncodedFormat(url.productId)#">
                                     <cfelse>
                                         <cflocation url = "userHome.cfm">
                                     </cfif> 

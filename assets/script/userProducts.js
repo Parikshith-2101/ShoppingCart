@@ -55,11 +55,15 @@ function modifyQuantity(productId,modifyStatus){
             let totalTax = 0;
             let totalAmount = 0;
             for(let i = 0; i < Data.getCartData.length ; i++){
-                totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
-                totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
-                totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
-                document.getElementById(`quantity${Data.getCartData[i].productId}`).value = Data.getCartData[i].quantity;
-                document.getElementById(`price${Data.getCartData[i].productId}`).textContent = Data.getCartData[i].quantity*(Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax);
+                if(document.getElementById(`quantity${Data.getCartData[i].productId}`)){
+                    totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
+                    totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
+                    totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
+                    document.getElementById(`quantity${Data.getCartData[i].productId}`).value = Data.getCartData[i].quantity;
+                }
+                if(document.getElementById(`price${Data.getCartData[i].productId}`)){
+                    document.getElementById(`price${Data.getCartData[i].productId}`).textContent = Data.getCartData[i].quantity*(Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax);
+                }
             }
             $('.totalPriceDiv').text(totalPrice);
             $('.totalTaxDiv').text(totalTax);

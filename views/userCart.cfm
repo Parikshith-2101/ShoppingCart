@@ -30,9 +30,9 @@
                                 <button>Enter Delivery Pincode</button>
                             </div>
                         </div>
-                        <cfset local.totalAmount = 0>
-                        <cfset local.totalPrice = 0>
-                        <cfset local.totalTax = 0>
+                        <cfset totalAmount = 0>
+                        <cfset totalPrice = 0>
+                        <cfset totalTax = 0>
                         <cfloop array="#getCartArray.cart#" item="cartItem">
                             <div class="card-product" id="#cartItem.cartId#">
                                 <div class="product d-flex">
@@ -66,13 +66,13 @@
                                     <a href="##" class="tit" onclick="deleteCartItem('#cartItem.cartId#')">REMOVE</a>
                                 </div>
                             </div>
-                            <cfset local.totalPrice += (cartItem.unitPrice * cartItem.quantity)>
-                            <cfset local.totalTax += (cartItem.unitTax * cartItem.quantity)>
-                            <cfset local.totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>
+                            <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>
+                            <cfset totalTax += (cartItem.unitTax * cartItem.quantity)>
+                            <cfset totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>
                         </cfloop>
 
                         <div class="card-order">
-                            <div class="button"><button>PLACE ORDER</button></div>
+                            <div class="button"><a href = "userOrder.cfm">PLACE ORDER</a></div>
                         </div>
                     </div>
                     <div class="container-right">
@@ -83,7 +83,7 @@
                                     <p class="price">Price </p>
                                     <p class="number">
                                         <i class="fa-solid fa-indian-rupee-sign"></i> 
-                                        <span class="totalPriceDiv">#local.totalPrice#</span>
+                                        <span class="totalPriceDiv">#totalPrice#</span>
                                     </p>
                                 </div>
                                 <div class="checkout">
@@ -91,7 +91,7 @@
                                     <p class="number">
                                         <span class="green">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                                            <span class="totalTaxDiv">#local.totalTax#</span>
+                                            <span class="totalTaxDiv">#totalTax#</span>
                                         </span>
                                     </p>
                                 </div>
@@ -99,7 +99,7 @@
                                     <p class="bold">Total Amount</p>
                                     <p class="number">
                                         <i class="fa-solid fa-indian-rupee-sign"></i>
-                                        <span class="totalAmountDiv">#local.totalAmount#</span>
+                                        <span class="totalAmountDiv">#totalAmount#</span>
                                     </p>
                                 </div>
                             </div>

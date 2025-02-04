@@ -189,4 +189,124 @@
         <cfset local.result['getCartData'] = local.getCart.cart>
         <cfreturn local.result>
     </cffunction>
+
+    <cffunction name = "placeOrder" access = "public" returnType = "struct">
+        <cfargument name = "addressId" required = true type = "string">
+        <cfargument name = "cardNumber" required = true type = "string">
+        <cfargument name = "cvv" required = true type = "integer">
+        <cfargument name = "totalPrice" required = true type = "string">
+        <cfargument name = "totalTax" required = true type = "string">
+        <cfargument name = "productId" required = true type = "string">
+        <cfargument name = "quantity" required = true type = "string">
+        <cfargument name = "unitPrice" required = true type = "string">
+        <cfargument name = "unitTax" required = true type = "string">
+        <cfset local.result = {
+            'error' : false,
+            'message' : ""
+        }>
+        <cfset local.cardNumber = replace(arguments.cardNumber, " ", "", "all")>
+        <cfif local.cardNumber EQ 111111111111 AND arguments.cvv EQ 111>
+            <cfset local.decryptedAddressId = application.productManagementObj.decryptDetails(data = arguments.addressId)>
+            <cfset local.productIdArray = ListToArray(arguments.productId)>
+            <cfset local.quantityArray = ListToArray(arguments.quantity)>
+            <cfset local.unitPriceArray = ListToArray(arguments.unitPrice)>
+            <cfset local.unitTaxArray = ListToArray(arguments.unitTax)>
+            <cftry>
+                <cfset local.orderId = createUUID()>
+                <cfquery datasource = "#application.dataSource#" result = "local.orderResult">
+                    INSERT INTO tblorder(
+                        fldOrder_Id,
+                        fldUserId,
+                        fldAddressId, 
+                        fldCardNumber, 
+                        fldTotalPrice, 
+                        fldTotalTax
+                    )VALUES(
+                        <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,
+                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#local.decryptedAddressId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#local.cardNumber#" cfsqltype = "varchar">,
+                        <cfqueryparam value = "#arguments.totalPrice#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#arguments.totalTax#" cfsqltype = "integer">
+                    );
+                </cfquery>
+                <cfquery datasource = "#application.dataSource#">
+                    INSERT INTO tblorderitems(
+                        fldOrderId, 
+                        fldProductId, 
+                        fldQuantity, 
+                        fldUnitPrice, 
+                        fldUnitTax
+                    )VALUES
+                    <cfloop from = "1" to = "#arrayLen(local.productIdArray)#" index = "i">
+                        <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = local.productIdArray[i])>
+                        (
+                            <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,
+                            <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">,
+                            <cfqueryparam value = "#local.quantityArray[i]#" cfsqltype = "integer">,
+                            <cfqueryparam value = "#local.unitPriceArray[i]#" cfsqltype = "decimal">,
+                            <cfqueryparam value = "#local.unitTaxArray[i]#" cfsqltype = "decimal">
+                        )<cfif i LT arrayLen(local.productIdArray)>,</cfif>
+                    </cfloop>
+                </cfquery>
+                <cfquery datasource = "#application.dataSource#">
+                    DELETE FROM tblcart
+                    WHERE fldProductId IN (
+                        <cfloop from = "1" to = "#arrayLen(local.productIdArray)#" index = "i">
+                            <cfset local.decryptedProductId = application.productManagementObj.decryptDetails(data = local.productIdArray[i])>
+                            <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                            <cfif i LT arrayLen(local.productIdArray)>,</cfif>
+                        </cfloop>
+                    )  
+                    AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">                
+                </cfquery>
+                <cfset local.result['error'] = false>
+                <cfset local.result['message'] = "Order Placed Successfully">
+                 <cfcatch>
+                    <cfset local.currentFunction = getFunctionCalledName()>
+                    <cfset local.result['error'] = true>
+                    <cfset local.result['message'] = "error in #local.currentFunction# : #cfcatch.message#">
+                    <cfset application.productManagementObj.sendErrorEmail(
+                        subject = local.currentFunction,
+                        errorMessage = cfcatch.message
+                    )>
+                </cfcatch>
+            </cftry>
+        <cfelse>
+            <cfset local.result['error'] = true>
+            <cfset local.result['message'] = "Card Details Doesn't Match">
+        </cfif>
+        <cfreturn local.result>
+    </cffunction>
+
+<!---     <cffunction name = "getOrder">
+        <cfquery>
+            SELECT  
+                fldOrder_Id,
+                fldUserId,
+                fldAddressId, 
+                fldCardNumber, 
+                fldTotalPrice, 
+                fldTotalTax, 
+                fldOrderDate
+            FROM
+                tblorder
+            WHERE
+                fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+        </cfquery>
+    </cffunction>
+
+    <cffunction name = "getOrderItems">
+        <cfquery>
+            SELECT  
+                fldOrderItem_Id, 
+                fldOrderId, 
+                fldProductId, 
+                fldQuantity, 
+                fldUnitPrice, 
+                fldUnitTax
+            FROM
+                tblorderitems             
+        </cfquery>
+    </cffunction> --->
 </cfcomponent>

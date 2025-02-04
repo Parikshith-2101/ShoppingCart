@@ -21,7 +21,9 @@
                     <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId)>
                     <cfif arraylen(getProductArray.product)>
                         <div class="row g-4 mt-3">
-                            <h3>#subCategoryItem.subCategoryName#</h3>
+                            <a class="h3 text-decoration-none text-dark" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
+                                #subCategoryItem.subCategoryName#
+                            </a>
                             <cfloop array="#getProductArray.product#" item="productItem">
                                 <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
