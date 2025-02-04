@@ -18,13 +18,6 @@ body {
 .nav-link:hover , .nav-brand:hover{
     color: rgb(88, 211, 241);
 }
-.container{
-    top : 40px;
-    max-width: 600px;
-    background: white;
-    border-radius: 15px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 4px 12px;
-}
 
 .shadow-heavy{
     box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
@@ -112,7 +105,6 @@ select:focus {
     height: 15vh;
 }
 .carousel-imageDiv{
-    /* height: 50vh; */
     width: 9vw;
     margin-bottom: 15px;
     margin-inline: 12px;
@@ -123,4 +115,23 @@ select:focus {
 }
 .fs-12px{
     font-size: 12px;
+}
+.product-card {
+    transition: transform 0.2s ease-in-out;
+}
+.product-card:hover {
+    transform: scale(1.03);
+}
+.product-card img {
+    height: 200px;
+    object-fit: cover;
+}
+.category-title {
+    font-size: 1.5rem;
+    color: #343a40;
+}
+.product-desc{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
