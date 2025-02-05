@@ -13,52 +13,60 @@
     <header>
         <cfinclude template="userHeader.cfm">
     </header>
-    <main>
-        <div class="container mt-5">
-            <div class="card p-4 shadow-sm">
-                <h4 class="mb-3">Order Summary</h4>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <p class="mb-1"><strong>Order ID:</strong> #orderItem.orderId#</p>
-                        <p class="mb-1"><strong>Date:</strong> #orderItem.orderDate#</p>
-                        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">#orderItem.orderStatus#</span></p>
-                    </div>
-                    <button class="btn btn-outline-primary">Track Order</button>
-                </div>
-                <ul class="list-group mb-3">
-
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
-                            <img src="#product.image#" alt="Product" class="rounded me-3" style="width: 50px; height: 50px;">
-                            <div>
-                                <h6 class="mb-1">#product.name#</h6>
-                                <p class="mb-0 text-muted">Qty: #product.quantity# | Price: ₹#product.price#</p>
-                            </div>
+    <cfoutput>
+        <cfset orderDetails = application.cartObj.getOrderDetails()>
+        <main>
+            <div class="container products-container">
+                <cfloop array="#orderDetails.order#" item="orderItem">
+                    <div class="card p-4 mb-4 shadow-sm">
+                        <h4 class="mb-3">Order Summary</h4>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <p class="mb-1"><strong>Order ID:</strong> #orderItem.orderId#</p>
+                            <p class="mb-1"><strong>Date:</strong> #dateTimeFormat(orderItem.orderDate.toString())#</p>
+                            <p class="mb-1"><strong>Ordered By:</strong> <span class="">#orderItem.firstName# #orderItem.lastName#</span></p>
                         </div>
-                        <span class="text-success fw-bold">₹#(product.price * product.quantity)#</span>
-                    </li>
-
-                </ul>
-                <div class="d-flex justify-content-between">
-                    <p class="mb-1">Subtotal:</p>
-                    <p class="mb-1">₹#orderItem.subtotal#</p>
-                </div>
-                <div class="d-flex justify-content-between">
-                    <p class="mb-1">Shipping:</p>
-                    <p class="mb-1">₹#orderItem.shipping#</p>
-                </div>
-                <div class="d-flex justify-content-between fw-bold">
-                    <p class="mb-1">Total:</p>
-                    <p class="mb-1 text-success">₹#orderItem.total#</p>
-                </div>
-                <div class="d-flex justify-content-end mt-3">
-                    <button class="btn btn-danger me-2" onclick="cancelOrder('#orderItem.orderId#')">Cancel Order</button>
-                    <button class="btn btn-primary">Download Invoice</button>
-                </div>
+                        <ul class="list-group mb-3">
+                            <cfset productIdArray = listToArray(orderItem.productId)>
+                            <cfset productImageArray = listToArray(orderItem.productImage)>
+                            <cfset productNameArray = listToArray(orderItem.productName)>
+                            <cfset quantityArray = listToArray(orderItem.quantity)>
+                            <cfset unitPriceArray = listToArray(orderItem.unitPrice)>
+                            <cfset unitTaxArray = listToArray(orderItem.unitTax)>
+                            <cfloop from="1" to="#arrayLen(productIdArray)#" index="i">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <img src="../uploads/product#productIdArray[i]#/#productImageArray[i]#" alt="Product" class="rounded me-3" width="50" height="50">
+                                        <div>
+                                            <h6 class="mb-1">#productNameArray[i]#</h6>
+                                            <p class="mb-0 text-muted">Qty: #quantityArray[i]# | Price: ₹#unitPriceArray[i]# | Tax: ₹#unitTaxArray[i]#</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-success fw-bold">₹#((unitPriceArray[i] + unitTaxArray[i]) * quantityArray[i])#</span>
+                                </li>
+                            </cfloop>
+                        </ul>
+                        <div class="d-flex justify-content-between">
+                            <p class="mb-1">Total Price:</p>
+                            <p class="mb-1">₹#orderItem.totalPrice#</p>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <p class="mb-1">Total Tax:</p>
+                            <p class="mb-1">₹#orderItem.totalTax#</p>
+                        </div>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <p class="mb-1">Total:</p>
+                            <p class="mb-1 text-success">₹#(orderItem.totalTax + orderItem.totalPrice)#</p>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 align-items-center">
+                            <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
+                            <button class="btn btn-primary">Download Invoice</button>
+                        </div>
+                    </div>
+                </cfloop>
             </div>
-        </div>
-        
-    </main>
+            
+        </main>
+    </cfoutput>
     <footer class="mt-5 w-100">
         
     </footer>

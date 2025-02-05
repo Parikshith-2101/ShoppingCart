@@ -34,19 +34,19 @@
                         <div class="accordion container-left" id="checkoutAccordion">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingAddress">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="##collapseAddress" aria-expanded="false" aria-controls="collapseAddress">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="##collapseAddress" aria-expanded="false" aria-controls="collapseAddress">
                                         📍 Shipping Address
                                     </button>
                                 </h2>
-                                <div id="collapseAddress" class="accordion-collapse collapse" aria-labelledby="headingAddress" data-bs-parent="##checkoutAccordion">
+                                <div id="collapseAddress" class="accordion-collapse collapse show" aria-labelledby="headingAddress" data-bs-parent="##checkoutAccordion">
                                     <cfloop array="#addressArray.address#" index="i" item="addressItem">
-                                        <div class="d-flex">
+                                        <div class="d-flex addressDiv border" onclick="this.querySelector('input[type=radio]').checked = true">
                                             <cfif i EQ 1>
                                                 <cfset checked = "checked">
                                             <cfelse>
                                                 <cfset checked = "">
                                             </cfif>
-                                            <input type="radio" class="ms-2" name="addressRadio" value="#addressItem.addressId#" #checked#>
+                                            <input type="radio" class="ms-3" name="addressRadio" value="#addressItem.addressId#" #checked#>
                                             <div class="accordion-body">
                                                 <h6 class="fw-bold">#addressItem.firstName# #addressItem.lastName#</h6>
                                                 <p class="mb-1">#addressItem.addressLine1#, #addressItem.addressLine2#</p>
@@ -55,18 +55,21 @@
                                             </div>
                                         </div>
                                     </cfloop>
+                                    <div class="d-flex">
+                                        <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">Next</button>
+                                    </div>
                                 </div>
                             </div>
                         
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOrder">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">
                                         🛒 Order Summary
                                     </button>
                                 </h2>
-                                <div id="collapseOrder" class="accordion-collapse collapse show" aria-labelledby="headingOrder" data-bs-parent="##checkoutAccordion">
-                                    <div class="accordion-body">
-                                        <ul class="list-group mb-3">
+                                <div id="collapseOrder" class="accordion-collapse collapse" aria-labelledby="headingOrder" data-bs-parent="##checkoutAccordion">
+                                    <div class="accordion-body pb-0">
+                                        <ul class="list-group">
                                             <cfset totalPrice = 0>
                                             <cfset totalTax = 0>
                                             <cfset totalAmount = 0>
@@ -98,51 +101,67 @@
                                             <input type="hidden" value="#totalPrice#" name="totalPrice">         
                                             <input type="hidden" value="#totalTax#" name="totalTax">         
                                         </ul>
+                                        <div class="d-flex">
+                                            <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">Next</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingPrice">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">
                                         💰 Payment Methods
                                     </button>
                                 </h2>
-                                <div id="collapsePrice" class="accordion-collapse collapse show" aria-labelledby="headingPrice" data-bs-parent="##checkoutAccordion">
+                                <div id="collapsePrice" class="accordion-collapse collapse" aria-labelledby="headingPrice" data-bs-parent="##checkoutAccordion">
                                     <div class="accordion-body">
                                         <div class="d-flex flex-column">
-                                            
-                                            <label for="cardName" class="form-label">Cardholder Name:</label>
-                                            <input type="text" id="cardName" name="cardName" class="form-control mb-2" required 
-                                                oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
-                                                placeholder="Andrew Paulson">
-
-                                            <label for="cardNumber" class="form-label">Card Number:</label>
-                                            <input type="tel" id="cardNumber" name="cardNumber" class="form-control mb-2" maxlength="14" 
-                                                pattern="[0-9\s]{13,15}" required
-                                                oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim(); 
-                                                    if (this.value.endsWith(' ')) { this.value = this.value.slice(0, -1); } 
-                                                    this.value = this.value.slice(0, 15);"
-                                                placeholder="1234 5678 9012">
-
-                                            <label for="expiryDate" class="form-label">Expiry Date (MM/YY):</label>
-                                            <input type="text" id="expiryDate" name="expiryDate" class="form-control mb-2" required 
-                                                pattern="(0[1-9]|1[0-2])\/([0-9]{2})"
-                                                oninput="this.value = this.value.replace(/[^0-9\/]/g, '').replace(/^(\d{2})(\d)/, '$1/$2').slice(0,5)"
-                                                placeholder="MM/YY">
-
-                                            <label for="cvv" class="form-label">CVV:</label>
-                                            <input type="tel" id="cvv" name="cvv" class="form-control mb-2" maxlength="3" required 
-                                                pattern="[0-9]{3,4}"
-                                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                placeholder="123">
+                                            <div class="mb-2">                                                
+                                                <label for="cardName" class="form-label">Cardholder Name:</label>
+                                                <input type="text" id="cardName" name="cardName" class="form-control" required 
+                                                    oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                                                    placeholder="Andrew Paulson">
+                                            </div> 
+                                            <div class="mb-2">
+                                                <label for="cardNumber" class="form-label">Card Number:</label>
+                                                <input type="tel" id="cardNumber" name="cardNumber" class="form-control" maxlength="14" 
+                                                    pattern="[0-9\s]{13,15}" required
+                                                    oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim(); 
+                                                        if (this.value.endsWith(' ')) { this.value = this.value.slice(0, -1); } 
+                                                        this.value = this.value.slice(0, 15);"
+                                                    placeholder="1234 5678 9012">
+                                            </div>   
+                                            <div class="d-flex align-items-center my-2">
+                                                <div id="expiryDateDiv" class="w-50">
+                                                    <div class="d-flex align-items-center me-3">
+                                                        <label for="expiryDate" class="form-label text-nowrap me-2">Expiry Date (MM/YY):</label>
+                                                        <input type="text" id="expiryDate" name="expiryDate" class="form-control mb-2" required 
+                                                            pattern="(0[1-9]|1[0-2])\/([0-9]{2})"
+                                                            oninput="this.value = this.value.replace(/[^0-9\/]/g, '').replace(/^(\d{2})(\d)/, '$1/$2').slice(0,5)"
+                                                            placeholder="MM/YY">
+                                                    </div>
+                                                </div>
+                                                <div id="cvvDiv" class="w-50">
+                                                    <div class="d-flex align-items-center">
+                                                        <label for="cvv" class="form-label me-2">CVV:</label>
+                                                        <input type="tel" id="cvv" name="cvv" class="form-control mb-2" maxlength="3" required 
+                                                            pattern="[0-9]{3,4}"
+                                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                            placeholder="123">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="confirmPaymentDiv">
+                                            <button class="mx-auto btn btn-info" id="confirmPayment" type="button">Confirm To Pay ₹ #totalAmount#</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="card-order">
-                                <div class="button"><button type="submit" name="placeOrderBtn" class="btn btn-success w-100">✅ Place Order</button></div>
+                                <div class="button"><button type="submit" name="placeOrderBtn" class="btn btn-success w-100 placeOrderBtn" disabled>✅ Place Order</button></div>
                             </div>
                         </div>
                         <div class="container-right">
@@ -196,7 +215,7 @@
                 unitTax = form.unitTax
             )>
             <cfif placeOrderResult.error EQ false>
-                <div id="orderSuccessMessage" class="alert alert-success" style="text-align: center;">
+                <div id="orderSuccessMessage" class="alert alert-success success-dialog fade show">
                     <div class="checkmark-circle">
                         <div class="checkmark"></div>
                     </div>

@@ -41,7 +41,8 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">#getProductArray.product[1].subCategoryName#</div>
+                            <cfset getSubCategoryName = application.productManagementObj.getSubCategory(subCategoryId = url.subCategoryId)>
+                            <div class="text-uppercase login-title fs-4 px-2">#getSubCategoryName.subcategory[1].subCategoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addProductBtn">Add+</div>
                         </div>
                         <!---modal--->
@@ -178,40 +179,48 @@
 
                         <div class="d-flex flex-column w-100 mt-3">
                             <div class="row g-4">
-                                <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
-                                    <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
-                                        <div class="card product-card shadow-sm">
-                                            <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">
-                                                <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" 
-                                                    class="card-img-top" alt="#productItem.productName#">
-                                            </div>
-                                            <div class="card-body">
-                                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                                <p class="card-text text-muted small mb-1">
-                                                    <strong>Brand:</strong> #productItem.brandName#
-                                                </p>
-                                                <p class="card-text product-desc text-muted small mb-1">
-                                                    <strong>Description:</strong> #productItem.description#
-                                                </p>
-                                                <p class="card-text text-muted small mb-1">
-                                                    <strong>Price:</strong> Rs.#productItem.unitPrice#
-                                                </p>
-                                                <p class="card-text text-muted small mb-3">
-                                                    <strong>Tax:</strong> Rs.#productItem.unitTax#
-                                                </p>
-                                                <div class="d-flex justify-content-between">
-                                                    <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
-                                                        <i class="fas fa-edit"></i> Edit
-                                                    </button>
-                                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#')">
-                                                        <i class="fas fa-trash"></i> Delete
-                                                    </button>
+                                <cfif arrayLen(getProductArray.product)>                               
+                                    <cfloop array="#getProductArray.product#" item="productItem">
+                                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                        <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
+                                            <div class="card product-card shadow-sm">
+                                                <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">
+                                                    <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" 
+                                                        class="card-img-top" alt="#productItem.productName#">
+                                                </div>
+                                                <div class="card-body">
+                                                    <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                                    <p class="card-text text-muted small mb-1">
+                                                        <strong>Brand:</strong> #productItem.brandName#
+                                                    </p>
+                                                    <p class="card-text product-desc text-muted small mb-1">
+                                                        <strong>Description:</strong> #productItem.description#
+                                                    </p>
+                                                    <p class="card-text text-muted small mb-1">
+                                                        <strong>Price:</strong> Rs.#productItem.unitPrice#
+                                                    </p>
+                                                    <p class="card-text text-muted small mb-3">
+                                                        <strong>Tax:</strong> Rs.#productItem.unitTax#
+                                                    </p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </button>
+                                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#')">
+                                                            <i class="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </cfloop>
+                                <cfelse>
+                                    <div class="mt-5 w-100 text-center">
+                                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
+                                        <h4 class="mt-3 text-muted">Your Product Page is Empty</h4>
+                                        <p class="text-muted">ADD SOME PRODUCTS HERE!</p>
                                     </div>
-                                </cfloop>
+                                </cfif>
                             </div>
                         </div>
                     </div>

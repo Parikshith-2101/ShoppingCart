@@ -239,7 +239,7 @@ footer{
     color:#2874f0;
 }
 
-/* Checkmark Circle */
+
 .checkmark-circle {
     width: 50px;
     height: 50px;
@@ -256,13 +256,12 @@ footer{
     border: solid #4caf50;
     border-width: 0 4px 4px 0;
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 12px;
     transform: rotate(45deg);
     animation: drawCheckmark 0.5s ease-in-out 0.5s forwards;
 }
 
-/* Animation for scaling the circle */
 @keyframes scaleUp {
     0% {
         transform: scale(0);
@@ -272,7 +271,6 @@ footer{
     }
 }
 
-/* Animation for drawing the checkmark */
 @keyframes drawCheckmark {
     0% {
         width: 0;
@@ -282,4 +280,24 @@ footer{
         width: 15px;
         height: 30px;
     }
+}
+.success-dialog{
+    position: fixed;
+    top: 35%;
+    left: 35%;
+    z-index: 1060;
+    display: block;
+    width: 34%;
+    height: 22%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    outline: 0;
+    text-align: center;
+}
+
+.addressDiv{
+    cursor: pointer;
+}
+.addressDiv:hover{
+    background-color: #f0f3f8;
 }

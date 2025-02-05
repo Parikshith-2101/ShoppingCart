@@ -279,34 +279,92 @@
         <cfreturn local.result>
     </cffunction>
 
-<!---     <cffunction name = "getOrder">
-        <cfquery>
-            SELECT  
-                fldOrder_Id,
-                fldUserId,
-                fldAddressId, 
-                fldCardNumber, 
-                fldTotalPrice, 
-                fldTotalTax, 
-                fldOrderDate
-            FROM
-                tblorder
-            WHERE
-                fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
-        </cfquery>
+    <cffunction name = "getOrderDetails" access = "public" returnType = "struct">
+        <cfset local.result = {
+            'error' : true,
+            'order' : []
+        }>
+        <cftry>
+            <cfquery name = "local.qryOrder" datasource = "#application.dataSource#">
+                SELECT  
+                    O.fldOrder_Id,  
+                    O.fldTotalPrice, 
+                    O.fldTotalTax, 
+                    O.fldOrderDate, 
+                    A.fldFirstName, 
+                    A.fldLastName, 
+                    A.fldAddressLine1, 
+                    A.fldAddressLine2, 
+                    A.fldCity, 
+                    A.fldState, 
+                    A.fldPincode, 
+                    A.fldPhone,
+                    GROUP_CONCAT(OI.fldProductId ORDER BY OI.fldUnitPrice DESC) AS productId, 
+                    GROUP_CONCAT(OI.fldQuantity ORDER BY OI.fldUnitPrice DESC) AS productQuantity,
+                    GROUP_CONCAT(OI.fldUnitPrice ORDER BY OI.fldUnitPrice DESC) AS unitPrice, 
+                    GROUP_CONCAT(OI.fldUnitTax ORDER BY OI.fldUnitPrice DESC) AS unitTax,  
+                    GROUP_CONCAT(P.fldProductName ORDER BY OI.fldUnitPrice DESC) AS productName, 
+                    GROUP_CONCAT(PI.fldImageFilePath ORDER BY OI.fldUnitPrice DESC) AS productImage,
+                    GROUP_CONCAT(B.fldBrandName ORDER BY OI.fldUnitPrice DESC) AS brandName
+                FROM
+                    tblorder O
+                INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
+                INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
+                INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
+                LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
+                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                WHERE
+                    O.fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer"> 
+                    AND A.fldActive = 1
+                    AND P.fldActive = 1
+                GROUP BY
+                    O.fldOrder_Id,  
+                    O.fldTotalPrice, 
+                    O.fldTotalTax, 
+                    O.fldOrderDate, 
+                    A.fldFirstName, 
+                    A.fldLastName, 
+                    A.fldAddressLine1, 
+                    A.fldAddressLine2, 
+                    A.fldCity, 
+                    A.fldState, 
+                    A.fldPincode, 
+                    A.fldPhone
+                ORDER BY O.fldOrderDate DESC;
+            </cfquery>
+            <cfloop query = "local.qryOrder">
+                <cfset arrayAppend(local.result['order'], {
+                    'orderId' : local.qryOrder.fldOrder_Id,
+                    'totalPrice' : local.qryOrder.fldTotalPrice, 
+                    'totalTax' : local.qryOrder.fldTotalTax, 
+                    'orderDate' : local.qryOrder.fldOrderDate, 
+                    'firstName' : local.qryOrder.fldFirstName, 
+                    'lastName' : local.qryOrder.fldLastName, 
+                    'addressLine1' : local.qryOrder.fldAddressLine1, 
+                    'addressLine2' : local.qryOrder.fldAddressLine2, 
+                    'city' : local.qryOrder.fldCity, 
+                    'state' : local.qryOrder.fldState, 
+                    'pincode' : local.qryOrder.fldPincode, 
+                    'productId' : local.qryOrder.productId, 
+                    'quantity' : local.qryOrder.productQuantity,
+                    'unitPrice' : local.qryOrder.unitPrice, 
+                    'unitTax' : local.qryOrder.unitTax,  
+                    'productName' : local.qryOrder.productName, 
+                    'productImage' : local.qryOrder.productImage,
+                    'brandName' : local.qryOrder.brandName
+                })>
+            </cfloop>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "error in #local.currentFunction# : #cfcatch.message#">
+                <cfset application.productManagementObj.sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>
+        <cfreturn local.result>
     </cffunction>
 
-    <cffunction name = "getOrderItems">
-        <cfquery>
-            SELECT  
-                fldOrderItem_Id, 
-                fldOrderId, 
-                fldProductId, 
-                fldQuantity, 
-                fldUnitPrice, 
-                fldUnitTax
-            FROM
-                tblorderitems             
-        </cfquery>
-    </cffunction> --->
 </cfcomponent>

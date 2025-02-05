@@ -40,6 +40,9 @@
                                 <i class="fa fa-edit"></i> Edit Profile
                             </button><br>
                         </div>
+                        <div class="card mt-3 p-4 text-center">
+                            <a href="userOrderDetails.cfm" class="btn btn-primary">My Order History</a>
+                        </div>
                     </div>
                     <cfif structKeyExists(form, "saveAddressBtn")>
                         <cfset addressResult = application.productManagementObj.addAddress(

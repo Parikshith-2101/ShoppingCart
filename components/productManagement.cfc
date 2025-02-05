@@ -354,7 +354,7 @@
                 SET 
                     fldActive = 0,
                     fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                    fldUpdatedDate = "#now()#"
+                    fldUpdatedDate = #now()#
                 WHERE
                     fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     AND fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
