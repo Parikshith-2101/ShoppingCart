@@ -29,7 +29,7 @@
         <cfset getSingleProductArray = application.productManagementObj.getSingleProduct(productId = url.productId)>
         <div class="container products-container mt-5">         
             <cfloop array="#getSingleProductArray.product#" item="productItem">
-                <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                 <div class="row mt-5">
                     <div class="col-md-6">
                         <a href="">#getSingleProductArray.product[1].categoryName#></a> <a href="">#getSingleProductArray.product[1].subCategoryName#</a>
@@ -52,7 +52,7 @@
                             </div>
                             <form method="post" class="action-buttons">
                                 <cfif structKeyExists(session, "loginUserId")>
-                                    <cfset getCartData = application.cartObj.getCart(productId = productItem.productId)>
+                                    <cfset getCartData = application.cartObj.getCartDetails(productId = productItem.productId)>
                                     <cfif arrayLen(getCartData.cart)> 
                                         <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                     <cfelse>

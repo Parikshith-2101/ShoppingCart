@@ -17,15 +17,15 @@
     <cfoutput>
         <cfset addressArray = application.productManagementObj.getAddress()>
         <cfif structKeyExists(url, "productId")>
-            <cfset cartArray = application.cartObj.getCart(productId = url.productId)>
+            <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             <cfif arrayIsEmpty(cartArray.cart)>
                 <cfset addToCartResult = application.cartObj.addCart(
                     productId = url.productId
                 )>
-                <cfset cartArray = application.cartObj.getCart(productId = url.productId)>
+                <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             </cfif>
         <cfelse>    
-            <cfset cartArray = application.cartObj.getCart()>
+            <cfset cartArray = application.cartObj.getCartDetails()>
         </cfif>
         <form method="post">
             <main>
@@ -77,7 +77,7 @@
                                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                                     <div class="d-flex align-items-center">
                                                         <input type="hidden" name="productId" value="#cartItem.productId#">
-                                                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = cartItem.productId)>
+                                                        <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
                                                         <img src="../uploads/product#decryptedProductId#/#cartItem.imageFile#" alt="Product" class="rounded me-3" width="50" height="50">
                                                         <div>
                                                             <h6 class="mb-2">#cartItem.ProductName#</h6>

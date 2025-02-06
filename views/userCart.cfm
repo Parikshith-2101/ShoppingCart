@@ -20,7 +20,7 @@
     </header>
     <main> 
         <cfoutput>
-            <cfset getCartArray=application.cartObj.getCart()> 
+            <cfset getCartArray=application.cartObj.getCartDetails()> 
             <div class="main-container d-flex">
                 <cfif arrayLen(getCartArray.cart)>     
                     <div class="container-left">
@@ -34,10 +34,10 @@
                         <cfset totalPrice = 0>
                         <cfset totalTax = 0>
                         <cfloop array="#getCartArray.cart#" item="cartItem">
-                            <div class="card-product" id="#cartItem.cartId#">
+                            <div class="card-product" id="#cartItem.productId#">
                                 <div class="product d-flex">
                                     <div class="product-image d-flex">
-                                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = cartItem.productId)>
+                                        <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
                                         <img src="../uploads/product#decryptedProductId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
                                     </div>
                                     <div class="product-details d-flex flex-column">
@@ -63,7 +63,7 @@
                                         <div class="rectangle"><input type="text" id="quantity#cartItem.productId#" value="#cartItem.quantity#" align="center"></div>
                                         <div class="rounded"><button onclick="modifyQuantity('#cartItem.productId#','add')">+</button></div>
                                     </div>
-                                    <a href="##" class="tit" onclick="deleteCartItem('#cartItem.cartId#')">REMOVE</a>
+                                    <a href="##" class="tit" onclick="deleteCartItem('#cartItem.productId#')">REMOVE</a>
                                 </div>
                             </div>
                             <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>

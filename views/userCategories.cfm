@@ -26,7 +26,7 @@
                                     #subCategoryItem.subCategoryName#
                                 </a>
                                 <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                    <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                         <div class="product-card pb-0">
                                             <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">

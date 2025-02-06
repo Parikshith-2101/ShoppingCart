@@ -13,13 +13,13 @@
         </cfmail>
     </cffunction>
 
-    <cffunction name = "encryptDetails" access="public" returnType = "string">
+    <cffunction name = "encryptData" access="public" returnType = "string">
         <cfargument name = "data" required = true type = "string">
         <cfset local.encryptedData = encrypt(arguments.data, application.key,"AES","base64")>
         <cfreturn local.encryptedData>
     </cffunction>
 
-    <cffunction name = "decryptDetails" access="public" returnType = "string">
+    <cffunction name = "decryptData" access="public" returnType = "string">
         <cfargument name = "data" required = true type = "string">
         <cfset local.decryptedData = "">
         <cftry>
@@ -44,7 +44,11 @@
             'error' : false,
             'category' : []
         }>
+        <cfset local.decryptedCategoryId = "">
         <cftry>
+            <cfif structKeyExists(arguments, "categoryId")>
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+            </cfif>
             <cfquery name = "local.qryCategoryData" dataSource = "#application.dataSource#">
                 SELECT 
                     fldCategory_Id,
@@ -53,25 +57,22 @@
                     tblcategory
                 WHERE
                     fldActive = 1
-                    <cfif structKeyExists(arguments, "categoryId")>
-                        <cfset decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
-                        AND fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
+                    <cfif len(trim(local.decryptedCategoryId))>
+                        AND fldCategory_Id = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "categoryName") AND len(trim(arguments.categoryName))>
                         AND fldCategoryName = <cfqueryparam value = "#arguments.categoryName#" cfsqltype = "varchar">
                     </cfif>;
             </cfquery>
             <cfloop query = "local.qryCategoryData">
-                <cfset local.encryptedCategoryId = encryptDetails(data = local.qryCategoryData.fldCategory_Id)>
                 <cfset arrayAppend(local.result['category'], {
-                    'categoryId' : local.encryptedCategoryId,
+                    'categoryId' : encryptData(data = local.qryCategoryData.fldCategory_Id),
                     'categoryName' : local.qryCategoryData.fldCategoryName
                 })>
             </cfloop>
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
-                    subject = local.currentFunction,
+                    subject = getFunctionCalledName(),
                     errorMessage = cfcatch.message
                 )>
                 <cfset local.result['error'] = true>
@@ -81,11 +82,11 @@
         <cfreturn local.result>
     </cffunction>
 
-        <cffunction name = "addCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
+    <cffunction name = "addCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryName" required = true type = "string">
         <cfset local.result = {
-            'message' : "",
-            'error' : false
+            'error' : false,
+            'message' : ""
         }>
         <cftry>                
             <cfset local.fetchCategoryData = getCategory(
@@ -93,7 +94,7 @@
             )>
             <cfif arrayLen(local.fetchCategoryData.category)>
                 <cfset local.result['message'] = "Catergory Already Exists">
-                <cfset local.result['error'] = false>
+                <cfset local.result['error'] = true>
             <cfelse>
                 <cfquery result = "local.categoryId" datasource = "#application.dataSource#">
                     INSERT INTO tblcategory(
@@ -106,12 +107,11 @@
                     );
                 </cfquery>
                 <cfset local.result['message'] = "Catergory Created">
-                <cfset local.result['error'] = true>
+                <cfset local.result['error'] = false>
             </cfif>
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
-                    subject = local.currentFunction,
+                    subject = getFunctionCalledName(),
                     errorMessage = cfcatch.message
                 )>
                 <cfset local.result['error'] = true>
@@ -124,12 +124,12 @@
     <cffunction name = "editCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "categoryId" required = true type = "string"> 
         <cfargument name = "categoryName" required = true type = "string"> 
-        <cfset decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
         <cfset local.result = {
-            'message' : "",
-            'error' : false
+            'error' : false,
+            'message' : ""
         }>
         <cftry> 
+            <cfset decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>  
@@ -153,9 +153,8 @@
                 <cfset local.result['error'] = false>
             </cfif>
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
-                    subject = local.currentFunction,
+                    subject = getFunctionCalledName(),
                     errorMessage = cfcatch.message
                 )>
                 <cfset local.result['error'] = true>
@@ -167,8 +166,8 @@
 
     <cffunction name = "deleteCategory" access = "remote" returnType = "void">
         <cfargument name = "categoryId" required = true type = "string">
-        <cfset decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
         <cftry>
+            <cfset decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory
@@ -181,9 +180,8 @@
                     AND fldActive = 1;
             </cfquery>
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
-                    subject = local.currentFunction,
+                    subject = getFunctionCalledName(),
                     errorMessage = cfcatch.message
                 )>
             </cfcatch>
@@ -199,7 +197,15 @@
             'error' : false,
             'subCategory' : []
         }>
+        <cfset local.decryptedCategoryId = "">
+        <cfset local.decryptedSubCategoryId = "">
         <cftry>
+            <cfif structKeyExists(arguments, "categoryId")>
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+            </cfif>
+            <cfif structKeyExists(arguments, "subCategoryId")>
+                <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
+            </cfif>
             <cfquery name = "local.qrySubCategoryData" datasource = "#application.dataSource#">
                 SELECT 
                     SC.fldSubCategory_Id,
@@ -207,16 +213,13 @@
                     SC.fldSubCategoryName,
                     C.fldCategoryName
                 FROM
-                    tblsubcategory SC
-                INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    tblsubcategory SC INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     SC.fldActive = 1
-                    <cfif structKeyExists(arguments, "categoryId")>
-                        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
+                    <cfif len(trim(local.decryptedCategoryId))>
                         AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                     </cfif>
-                    <cfif structKeyExists(arguments, "subCategoryId")>
-                        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+                    <cfif len(trim(local.decryptedSubCategoryId))>
                         AND SC.fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "subCategoryName") AND len(trim(arguments.subCategoryName))>
@@ -224,19 +227,16 @@
                     </cfif>;
             </cfquery>
             <cfloop query = "local.qrySubCategoryData">
-                <cfset local.encryptedSubCatId = encryptDetails(data = local.qrySubCategoryData.fldSubCategory_Id)>
-                <cfset local.encryptedCatId = encryptDetails(data = local.qrySubCategoryData.fldCategoryId)>
                 <cfset arrayAppend(local.result['subCategory'],{
-                    'subCategoryId' : local.encryptedSubCatId,
-                    'categoryId' : local.encryptedCatId,
+                    'subCategoryId' : encryptData(data = local.qrySubCategoryData.fldSubCategory_Id),
+                    'categoryId' : encryptData(data = local.qrySubCategoryData.fldCategoryId),
                     'subCategoryName' : local.qrySubCategoryData.fldSubCategoryName,
                     'categoryName' :  local.qrySubCategoryData.fldCategoryName
                 })>
             </cfloop>
             <cfcatch>
-                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
-                    subject = local.currentFunction,
+                    subject = getFunctionCalledName(),
                     errorMessage = cfcatch.message
                 )>
                 <cfset local.result['error'] = true>
@@ -249,12 +249,12 @@
     <cffunction name = "addSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "subCategoryName" required = true type = "string">
         <cfargument name = "categoryId" required = true type = "string">
-        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
         <cfset local.result = {
-            'message' : "",
-            'error' : false
+            'error' : false,
+            'message' : ""
         }>
         <cftry>
+            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.categoryId
@@ -297,13 +297,13 @@
         <cfargument name = "categoryId" required = true type = "string">
         <cfargument name = "newCategoryId" required = true type = "string">
         <cfset local.result = {
-            'message' : "",
-            'error' : false
+            'error' : false,
+            'message' : ""
         }>
-        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)>
-        <cfset local.decryptedNewCategoryId = decryptDetails(data = arguments.newCategoryId)>
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
         <cftry>
+            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+            <cfset local.decryptedNewCategoryId = decryptData(data = arguments.newCategoryId)>
+            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
             <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.newCategoryId
@@ -345,9 +345,9 @@
     <cffunction name = "deleteSubCategory" access = "remote" returnType = "void">
         <cfargument name = "subCategoryId" required = true type = "string">
         <cfargument name = "categoryId" required = true type = "string">
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
-        <cfset local.decryptedCategoryId = decryptDetails(data = arguments.categoryId)> 
         <cftry>
+            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
+            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)> 
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblsubcategory
@@ -386,9 +386,8 @@
                     fldActive = <cfqueryparam value = "1" cfsqltype = "integer">;
             </cfquery>
             <cfloop query = "local.qryBrand">
-                <cfset local.encryptedBrandId = encryptDetails(data = local.qryBrand.fldBrand_Id)>
                 <cfset arrayAppend(local.result['brand'],{
-                    'brandId' : local.encryptedBrandId,
+                    'brandId' : encryptData(data = local.qryBrand.fldBrand_Id),
                     'brandName' : local.qryBrand.fldBrandName
                 })>
             </cfloop>
@@ -411,8 +410,8 @@
             'error' : false,
             'product' : []
         }>    
-        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
         <cftry>
+            <cfset local.decryptedProductId = decryptData(data = arguments.productId)>
             <cfquery name = "local.qryProduct" datasource = "#application.dataSource#">
                 SELECT 
                     P.fldProduct_Id,
@@ -430,11 +429,10 @@
                     GROUP_CONCAT(PI.fldImageFilePath ORDER BY PI.fldDefaultImage DESC) AS imageFiles,
                     GROUP_CONCAT(PI.fldDefaultImage ORDER BY PI.fldDefaultImage DESC) AS defaultImage
                 FROM
-                    tblproduct P
-                LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldActive = 1
-                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
-                INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
-                INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    tblproduct P LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldActive = 1
+                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                    INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                    INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     P.fldActive = 1
                     AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
@@ -446,9 +444,9 @@
                     P.fldBrandId, B.fldBrandName, P.fldDescription, P.fldUnitPrice, P.fldUnitTax
             </cfquery>
             <cfloop query = "local.qryProduct">
-                <cfset local.encryptedProductId = encryptDetails(data = local.qryProduct.fldProduct_Id)>
-                <cfset local.encryptedSubCategoryId = encryptDetails(data = local.qryProduct.fldSubCategoryId)>
-                <cfset local.encryptedBrandId = encryptDetails(data = local.qryProduct.fldBrandId)>
+                <cfset local.encryptedProductId = encryptData(data = local.qryProduct.fldProduct_Id)>
+                <cfset local.encryptedSubCategoryId = encryptData(data = local.qryProduct.fldSubCategoryId)>
+                <cfset local.encryptedBrandId = encryptData(data = local.qryProduct.fldBrandId)>
                 <cfset arrayAppend(local.result['product'],{
                     'productId' : local.encryptedProductId,
                     'productName' : local.qryProduct.fldProductName,
@@ -492,11 +490,19 @@
             'error' : false,
             'product' : []
         }>    
+        <cfset local.decryptedSubCategoryId = "">
+        <cfset local.decryptedProductId = "">
         <cfset local.sort = "RAND()">
         <cfif structKeyExists(arguments, "sortType")>
             <cfset local.sort = "P.fldUnitPrice #arguments.sortType#,P.fldProductName">
         </cfif>
         <cftry>
+            <cfif structKeyExists(arguments, "subCategoryId")>
+                <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
+            </cfif>
+            <cfif structKeyExists(arguments, "productId")>
+                <cfset local.decryptedProductId = decryptData(data = arguments.productId)>
+            </cfif>
             <cfquery name = "local.qryProduct" datasource = "#application.dataSource#">
                 SELECT 
                     P.fldProduct_Id,
@@ -520,15 +526,13 @@
                 INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     P.fldActive = 1
-                    <cfif structKeyExists(arguments, "subCategoryId")>
-                        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
+                    <cfif len(trim(local.decryptedSubCategoryId))>
                         AND P.fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
                         AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
                     </cfif>
-                    <cfif structKeyExists(arguments, "productId")>
-                        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
+                    <cfif len(trim(local.decryptedProductId))>
                         AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "searchKey") AND len(trim(arguments.searchKey))>
@@ -552,15 +556,12 @@
                 </cfif>
             </cfquery>
             <cfloop query = "local.qryProduct">
-                <cfset local.encryptedProductId = encryptDetails(data = local.qryProduct.fldProduct_Id)>
-                <cfset local.encryptedSubCategoryId = encryptDetails(data = local.qryProduct.fldSubCategoryId)>
-                <cfset local.encryptedBrandId = encryptDetails(data = local.qryProduct.fldBrandId)>
                 <cfset arrayAppend(local.result['product'],{
-                    'productId' : local.encryptedProductId,
+                    'productId' : encryptData(data = local.qryProduct.fldProduct_Id),
                     'productName' : local.qryProduct.fldProductName,
-                    'subCategoryId' : local.encryptedSubCategoryId,
+                    'subCategoryId' : encryptData(data = local.qryProduct.fldSubCategoryId),
                     'subCategoryName' : local.qryProduct.fldSubCategoryName,
-                    'brandId' : local.encryptedBrandId,
+                    'brandId' : encryptData(data = local.qryProduct.fldBrandId),
                     'brandName' : local.qryProduct.fldBrandName,
                     'description' : local.qryProduct.fldDescription,
                     'unitPrice' : local.qryProduct.fldUnitPrice,
@@ -594,9 +595,9 @@
             'error' : false,
             'message' : ""
         }>
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
-        <cfset local.decryptedBrandId = decryptDetails(data = arguments.productBrandId)>
         <cftry>           
+            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
+            <cfset local.decryptedBrandId = decryptData(data = arguments.productBrandId)>
             <cfset local.FetchProduct = getProduct(
                 productName = arguments.productName,
                 subCategoryId = arguments.subCategoryId
@@ -625,7 +626,7 @@
                         <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                     );
                 </cfquery>
-                <cfset local.encryptedProductId = encryptDetails(data = local.resultProductId.generatedkey)>
+                <cfset local.encryptedProductId = encryptData(data = local.resultProductId.generatedkey)>
                 <cfdirectory action = "create" directory = "#expandPath('../uploads/product#local.resultProductId.generatedkey#')#">
                 <cffile
                     action = "uploadall"
@@ -686,14 +687,14 @@
             'error' : false,
             'message' : ""
         }>
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
-        <cfset local.decryptedBrandId = decryptDetails(data = arguments.productBrandId)>
-        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
-        <cfset local.FetchProduct = getProduct(
-            productName = arguments.productName,
-            subCategoryId = arguments.subCategoryId
-        )>
         <cftry>
+            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
+            <cfset local.decryptedBrandId = decryptData(data = arguments.productBrandId)>
+            <cfset local.decryptedProductId = decryptData(data = arguments.productId)>
+            <cfset local.FetchProduct = getProduct(
+                productName = arguments.productName,
+                subCategoryId = arguments.subCategoryId
+            )>
             <cfif arrayLen(local.FetchProduct.product) 
                 AND (local.FetchProduct.product[1].productId NEQ arguments.productId)>
                 <cfset local.result['error'] = true>
@@ -760,9 +761,9 @@
     <cffunction name = "deleteProduct" access = "remote" returnType = "void">
         <cfargument name = "productId" required = true type = "string">
         <cfargument name = "subCategoryId" required = true type = "string">
-        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
-        <cfset local.decryptedSubCategoryId = decryptDetails(data = arguments.subCategoryId)>
         <cftry>
+            <cfset local.decryptedProductId = decryptData(data = arguments.productId)>
+            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
             <cfquery datasource = "#application.dataSource#"> 
                 UPDATE  
                     tblproduct
@@ -788,8 +789,8 @@
     <cffunction name = "setDefaultProductImage" access = "remote" returnType = "void">
         <cfargument name = "productImageId" required = true type = "integer">
         <cfargument name = "productId" required = true type = "string">
-        <cfset local.decryptedProductId = decryptDetails(data = arguments.productId)>
         <cftry>
+            <cfset local.decryptedProductId = decryptData(data = arguments.productId)>
             <cfquery datasource = "#application.dataSource#">
                 UPDATE
                     tblproductimages
@@ -828,8 +829,8 @@
             productId = arguments.productId,
             productImageId = arguments.productImageId
         )>
-        <cfset local.decryptedProductId = decryptDetails(data = productImageData.product[1].productId)>
         <cftry>
+            <cfset local.decryptedProductId = decryptData(data = productImageData.product[1].productId)>
             <cfquery datasource = "#application.dataSource#">
                 UPDATE
                     tblproductimages
@@ -857,7 +858,7 @@
         <cfargument name = "lastName" required = true type = "string">
         <cfargument name = "email" required = true type = "string">
         <cfset local.result = {
-            'error' : true,
+            'error' : false,
             'message' : ""
         }>   
         <cftry>
@@ -922,9 +923,8 @@
                     AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
             </cfquery>
             <cfloop query="local.qryAddress">   
-                <cfset local.encryptedAddressId = encryptDetails(data = local.qryAddress.fldAddress_Id)>
                 <cfset arrayAppend(local.result['address'], {
-                    'addressId' : local.encryptedAddressId ,
+                    'addressId' : encryptData(data = local.qryAddress.fldAddress_Id),
                     'firstName' : local.qryAddress.fldFirstName,
                     'lastName' : local.qryAddress.fldLastName,
                     'addressLine1' : local.qryAddress.fldAddressLine1,
@@ -1001,8 +1001,8 @@
 
     <cffunction name = "deleteAddress" access = "remote" returnType = "void">
         <cfargument name = "addressId" required = true type = "string">
-        <cfset local.decryptedAddressId = decryptDetails(data = arguments.addressId)>
         <cftry>
+            <cfset local.decryptedAddressId = decryptData(data = arguments.addressId)>
             <cfquery dataSource = "#application.dataSource#">  
                 UPDATE 
                     tbladdress

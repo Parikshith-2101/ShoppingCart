@@ -6,28 +6,34 @@ function updateMainImage(imageElement) {
     $(imageElement).addClass('active'); 
     mainImage.attr('src', $(imageElement).attr('src'));
 }
-function deleteCartItem(cartId){
+function deleteCartItem(productId){
     if(confirm("Remove! Are you sure?")){
         $.ajax({
             url: "../components/cart.cfc?method=deleteCart",
             method: "POST",
             data: {
-                cartId : cartId
+                productId : productId
             },
-            success: function(response) {
-                const Data = JSON.parse(response);
-                console.log(Data)
-                document.getElementById(cartId).remove();
-                let totalPrice = 0, totalTax = 0, totalAmount = 0;
-                for(let i = 0; i < Data.getCartData.length ; i++){
-                    totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
-                    totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
-                    totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
-                }
-                $('.cart-quantity').text(Data.cartQuantity);
-                $('.totalPriceDiv').text(totalPrice.toFixed(2));
-                $('.totalTaxDiv').text(totalTax.toFixed(2));
-                $('.totalAmountDiv').text(totalAmount.toFixed(2));
+            success: function() {
+                document.getElementById(productId).remove();
+                $.ajax({
+                    url: "../components/cart.cfc?method=getCartDetails",
+                    method: "POST",
+                    success: function(response) {
+                        const getCart = JSON.parse(response);
+                        console.log(getCart)
+                        let totalPrice = 0, totalTax = 0, totalAmount = 0;
+                        for(let i = 0; i < getCart.cart.length ; i++){
+                            totalPrice += getCart.cart[i].unitPrice * getCart.cart[i].quantity;
+                            totalTax += getCart.cart[i].unitTax * getCart.cart[i].quantity;
+                            totalAmount += (getCart.cart[i].unitPrice + getCart.cart[i].unitTax) * getCart.cart[i].quantity;
+                        }
+                        $('.cart-quantity').text(getCart.cart.length);
+                        $('.totalPriceDiv').text(totalPrice.toFixed(2));
+                        $('.totalTaxDiv').text(totalTax.toFixed(2));
+                        $('.totalAmountDiv').text(totalAmount.toFixed(2));
+                    }
+                })
             }
         });
     }
@@ -63,9 +69,9 @@ function modifyQuantity(productId,modifyStatus){
                     document.getElementById(`price${Data.getCartData[i].productId}`).textContent = (Data.getCartData[i].quantity*(Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax)).toFixed(2);
                 }
             }
-            $('.totalPriceDiv').text(totalPrice);
-            $('.totalTaxDiv').text(totalTax);
-            $('.totalAmountDiv').text(totalAmount);
+            $('.totalPriceDiv').text(totalPrice.toFixed(2));
+            $('.totalTaxDiv').text(totalTax.toFixed(2));
+            $('.totalAmountDiv').text(totalAmount.toFixed(2));
         }
     });
 }

@@ -181,7 +181,7 @@
                             <div class="row g-4">
                                 <cfif arrayLen(getProductArray.product)>                               
                                     <cfloop array="#getProductArray.product#" item="productItem">
-                                        <cfset decryptedProductId = application.productManagementObj.decryptDetails(data = productItem.productId)>
+                                        <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                         <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                             <div class="card product-card shadow-sm">
                                                 <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">

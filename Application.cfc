@@ -3,13 +3,13 @@
     <cfset this.sessionManagement = true>
     <cfset this.sessionTimeout = createTimeSpan(0, 0, 30, 0)>
     <cfset this.applicationTimeout = createTimeSpan(1, 0, 0, 0)>
+    <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
+    <cfset application.dataSource = "shoppingCart">
  
     <cffunction name = "onApplicationStart">
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
         <cfset application.userObj = createObject("component", "components.userLogin")>     
         <cfset application.cartObj = createObject("component", "components.cart")>     
-        <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
-        <cfset application.dataSource = "shoppingCart">
     </cffunction>   
 
     <cffunction name = "onRequestStart" returnType = "boolean">

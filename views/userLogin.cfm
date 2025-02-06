@@ -60,7 +60,10 @@
                                     <cflocation  url = "categories.cfm">
                                 <cfelse>
                                     <cfif structKeyExists(url, "productId")>    
-                                        <cflocation url = "userProducts.cfm?productId=#urlEncodedFormat(url.productId)#">
+                                        <cfset addToCartResult = application.cartObj.addCart(
+                                            productId = url.productId
+                                        )>
+                                        <cflocation url = "userCart.cfm?">
                                     <cfelse>
                                         <cflocation url = "userHome.cfm">
                                     </cfif> 
