@@ -41,7 +41,7 @@
                                             <p class="mb-0 text-muted">Qty: #quantityArray[i]# | Price: ₹#unitPriceArray[i]# | Tax: ₹#unitTaxArray[i]#</p>
                                         </div>
                                     </div>
-                                    <span class="text-success fw-bold">₹#((unitPriceArray[i] + unitTaxArray[i]) * quantityArray[i])#</span>
+                                    <span class="text-dark fw-bold">₹#((unitPriceArray[i] + unitTaxArray[i]) * quantityArray[i])#</span>
                                 </li>
                             </cfloop>
                         </ul>
@@ -53,9 +53,9 @@
                             <p class="mb-1">Total Tax:</p>
                             <p class="mb-1">₹#orderItem.totalTax#</p>
                         </div>
-                        <div class="d-flex justify-content-between fw-bold">
-                            <p class="mb-1">Total:</p>
-                            <p class="mb-1 text-success">₹#(orderItem.totalTax + orderItem.totalPrice)#</p>
+                        <div class="d-flex justify-content-between fw-bold mt-2">
+                            <h5 class="mb-1">Total:</h5>
+                            <h5 class="mb-1 text-success">₹#numberFormat(orderItem.totalTax + orderItem.totalPrice, "0.00")#</h5>
                         </div>
                         <div class="d-flex justify-content-between mt-3 align-items-center">
                             <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
