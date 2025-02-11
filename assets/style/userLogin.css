@@ -68,7 +68,6 @@ input:focus {
     padding: 8px;
 }
 
-
 .card {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
@@ -115,5 +114,9 @@ select {
     transition: all 0.3s ease;
 }
 .nav-link{
+    cursor: pointer;
+}
+#eyeIcon{
+    left: 90%;
     cursor: pointer;
 }

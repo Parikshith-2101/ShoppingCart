@@ -14,15 +14,17 @@
 
 <body>
     <cfoutput>
-        <cfset subCategoryData =  application.productManagementObj.qrySubCategoryData(categoryId = url.categoryId)>
-        <cfset qryCategoriesData =  application.productManagementObj.qryCategoryData()>
+        <cfset categoryId = url.categoryId>
+        <cfset getCategoryArray = application.productManagementObj.getCategory()>
+        <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryId)>
         <nav class="navbar fixed-top p-0">
-            <a href="##" class="nav-link">
+            <a href="userHome.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
+            <div class="nav-brand">Wellcome <strong>#session.firstName# #session.lastName#</strong></div>
             <ul class="d-flex list-unstyled my-0">
                 <li class="nav-item">
                     <a class="nav-link" id="logoutCategory">
@@ -37,10 +39,11 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <div class="text-uppercase login-title fs-4 px-2">#url.categoryName#</div>
+                            <cfset getCategoryName = application.productManagementObj.getCategory(categoryId = categoryId)>
+                            <div class="login-title fs-4 px-2">
+                                #getCategoryName.category[1].categoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
-
                         <div class="modal fade" id="subCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"
                             tabindex="-1" aria-labelledby="subCategoryLabel" aria-hidden="true">
                             <div class="modal-dialog w-50">
@@ -57,8 +60,8 @@
                                                 <label for="categoryDropdown">Category</label>
                                                 <select id="categoryDropdown" name="categoryDropdown">                                                   
                                                     <option value="" disabled selected>Select a category</option>
-                                                    <cfloop query="qryCategoriesData">
-                                                        <option value="#qryCategoriesData.fldCategory_Id#">#qryCategoriesData.fldCategoryName#</option>
+                                                    <cfloop array="#getCategoryArray.category#" item="categoryItem">
+                                                        <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
                                             </div>
@@ -80,29 +83,34 @@
                         </div>
 
                         <div class="d-flex flex-column w-100 mt-3">
-                            
-                            <cfloop query = "subCategoryData">
-
-                                <div class="card shadow-lg" id = "#subCategoryData.fldSubCategory_Id#">
-                                    <div class="d-flex align-items-center">
-                                        <div class="categoryName">
-                                            #subCategoryData.fldSubCategoryName#
+                            <cfif arrayLen(getSubCategoryArray.subCategory)>                                                   
+                                <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
+                                    <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
+                                        <div class="d-flex align-items-center">
+                                            <div class="categoryName">
+                                                #subCategoryItem.subCategoryName#
+                                            </div>
+                                            <div class="d-flex ms-auto">
+                                                <button onclick="editSubCategory('#subCategoryItem.subCategoryId#','#categoryId#')" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button onclick="deleteSubCategory('#subCategoryItem.subCategoryId#','#categoryId#')" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                <a href="products.cfm?subCategoryId=#UrlEncodedFormat(subCategoryItem.subCategoryId)#&categoryId=#UrlEncodedFormat(categoryId)#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
+                                                    <i class="fas fa-arrow-right"></i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="d-flex ms-auto">
-                                            <button onclick="editSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-info mx-1 d-flex align-items-center justify-content-center" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button onclick="deleteSubCategory(#subCategoryData.fldSubCategory_Id#,#url.categoryId#)" class="btn btn-outline-danger mx-1 d-flex align-items-center justify-content-center" title="Delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                            <a href="products.cfm?subCategoryId=#subCategoryData.fldSubCategory_Id#&subCategoryName=#subCategoryData.fldSubCategoryName#&categoryId=#url.categoryId#" class="btn btn-outline-success mx-1 d-flex align-items-center justify-content-center" title="Go to Category">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                                    </div>                           
+                                </cfloop> 
+                            <cfelse>
+                                <div class="mt-5 w-100 text-center">
+                                    <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
+                                    <h4 class="mt-3 text-muted">Your SubCategory Page is Empty</h4>
+                                    <p class="text-muted">ADD YOUR SUBCATEGORIES HERE!</p>
                                 </div>
-                                
-                            </cfloop>
+                            </cfif> 
                         </div>
                     </div>
                 </div>
