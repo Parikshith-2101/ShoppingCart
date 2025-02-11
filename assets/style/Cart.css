@@ -239,62 +239,6 @@ footer{
     color:#2874f0;
 }
 
-
-.checkmark-circle {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #4caf50;
-    border-radius: 50%;
-    display: inline-block;
-    position: relative;
-    animation: scaleUp 1s ease-in-out;
-}
-
-.checkmark {
-    width: 15px;
-    height: 30px;
-    border: solid #4caf50;
-    border-width: 0 4px 4px 0;
-    position: absolute;
-    top: 5px;
-    left: 12px;
-    transform: rotate(45deg);
-    animation: drawCheckmark 0.5s ease-in-out 0.5s forwards;
-}
-
-@keyframes scaleUp {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes drawCheckmark {
-    0% {
-        width: 0;
-        height: 0;
-    }
-    100% {
-        width: 15px;
-        height: 30px;
-    }
-}
-.success-dialog{
-    position: fixed;
-    top: 35%;
-    left: 35%;
-    z-index: 1060;
-    display: block;
-    width: 34%;
-    height: 22%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    outline: 0;
-    text-align: center;
-}
-
 .addressDiv{
     cursor: pointer;
 }

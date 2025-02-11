@@ -79,7 +79,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <input type="hidden" name="productId" value="#cartItem.productId#">
                                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
-                                                        <img src="../uploads/product#decryptedProductId#/#cartItem.imageFile#" alt="Product" class="rounded me-3" width="50" height="50">
+                                                        <img src="../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" alt="Product" class="rounded me-3" width="50" height="50">
                                                         <div>
                                                             <h6 class="mb-2">#cartItem.ProductName#</h6>
                                                             <div class="d-flex align-items-center w-50">
@@ -217,12 +217,9 @@
             )>
             <cfdump  var="#placeOrderResult#">
             <cfif placeOrderResult.error EQ false>
-                <div id="orderSuccessMessage" class="alert alert-success success-dialog fade show">
-                    <div class="checkmark-circle">
-                        <div class="checkmark"></div>
-                    </div>
-                    <p><strong>Success!</strong> Your order has been placed successfully.</p>
-                </div>
+                <div id="orderSuccessMessage"></div>
+            <cfelse>
+                <div id="orderErrorMessage"></div>
             </cfif>
         </cfif>
     </cfoutput>
@@ -232,5 +229,6 @@
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/user.js"></script>
     <script src="../assets/script/userProducts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

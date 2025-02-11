@@ -39,11 +39,11 @@
                         <a href="">#getSingleProductArray.product[1].categoryName#></a> <a href="">#getSingleProductArray.product[1].subCategoryName#</a>
                         <div class="main-product-image mb-3">
                             <cfset defaultImage = ListGetAt(getSingleProductArray.product[1].imageFile, 1)>
-                            <img src="../uploads/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">
+                            <img src="../uploads/products/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">
                         </div>
                         <div class="product-images">
                             <cfloop list="#getSingleProductArray.product[1].imageFile#" item="productImageItem">
-                                <img src="../uploads/product#decryptedProductId#/#productImageItem#" alt="Product Image 1" onmouseover="updateMainImage(this)">
+                                <img src="../uploads/products/product#decryptedProductId#/#productImageItem#" alt="Product Image 1" onmouseover="updateMainImage(this)">
                             </cfloop>
                         </div>
                     </div>

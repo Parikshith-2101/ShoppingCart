@@ -150,3 +150,14 @@ $('#searchOrder').on('input', function () {
         }
     });
 });
+
+function toggleView() {
+    let container = $("#product-container");
+    if (container.css("max-height") === "360px") {
+        container.css("max-height", "none");
+        $(this).text("View Less");
+    } else {
+        container.css("max-height", "360px");
+        $(this).text("View More");
+    }
+}

@@ -627,10 +627,10 @@
                     );
                 </cfquery>
                 <cfset local.encryptedProductId = encryptData(data = local.resultProductId.generatedkey)>
-                <cfdirectory action = "create" directory = "#expandPath('../uploads/product#local.resultProductId.generatedkey#')#">
+                <cfdirectory action = "create" directory = "#expandPath('../uploads/products/product#local.resultProductId.generatedkey#')#">
                 <cffile
                     action = "uploadall"
-                    destination = "#expandPath('../uploads/product#local.resultProductId.generatedkey#')#"
+                    destination = "#expandPath('../uploads/products/product#local.resultProductId.generatedkey#')#"
                     nameconflict = "MakeUnique"
                     strict = true
                     result = "local.imageUploadedResult"
@@ -720,7 +720,7 @@
                 <cfif len(trim(arguments.productImage))>                    
                     <cffile
                         action = "uploadall"
-                        destination = "#expandPath('../uploads/product#local.decryptedProductId#')#"
+                        destination = "#expandPath('../uploads/products/product#local.decryptedProductId#')#"
                         nameconflict = "MakeUnique"
                         strict = true
                         result = "local.imageUploadedResult"
@@ -842,7 +842,7 @@
                     fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
                     AND fldActive = 1;
             </cfquery>
-            <cffile action = "delete" file = "#expandPath('../uploads/product#local.decryptedProductId#/#productImageData.product[1].imageFile#')#">   
+            <cffile action = "delete" file = "#expandPath('../uploads/products/product#local.decryptedProductId#/#productImageData.product[1].imageFile#')#">   
             <cfcatch>
                <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(

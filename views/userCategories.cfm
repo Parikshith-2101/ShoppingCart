@@ -30,7 +30,7 @@
                                     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                         <div class="product-card pb-0">
                                             <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">
-                                                <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                             </a>
                                             <div class="card-body text-start">
                                                 <h5 class="card-title text-truncate">#productItem.productName#</h5>

@@ -38,7 +38,7 @@
                                 <div class="product d-flex">
                                     <div class="product-image d-flex">
                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
-                                        <img src="../uploads/product#decryptedProductId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
+                                        <img src="../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
                                     </div>
                                     <div class="product-details d-flex flex-column">
                                         <p class="product-name">#cartItem.productName#</p>
@@ -124,6 +124,7 @@
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/user.js"></script>
     <script src="../assets/script/userProducts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

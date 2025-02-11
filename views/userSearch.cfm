@@ -30,7 +30,7 @@
                         <div class="product-card pb-0">
                             <a href="userProducts.cfm?productId=#urlEncodedFormat(encryptedProductId)#">
                                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">
+                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">
                             </a>
                             <div class="card-body text-start">
                                 <h5 class="card-title text-truncate">#productItem.productName#</h5>

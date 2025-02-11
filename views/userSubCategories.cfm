@@ -95,30 +95,75 @@
                         </div>
                     </div>
                     <cfif arraylen(getProductArray.product)>
-                        <cfloop array="#getProductArray.product#" item="productItem">
-                            <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                <div class="product-card pb-0">
-                                    <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
-                                        <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                    </a>
-                                    <div class="card-body text-start">
-                                        <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                        <p class="card-text text-muted small mb-1">
-                                            <strong>Brand:</strong> #productItem.brandName#
-                                        </p>
-                                        <p class="card-text product-desc text-muted small mb-1">
-                                            <strong>Description:</strong> #productItem.description#
-                                        </p>                                   
-                                        <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                        <div class="row g-4" id="product-container">
+                            <cfloop array="#getProductArray.product#" item="productItem">
+                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="product-card pb-0">
+                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
+                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                        </a>
+                                        <div class="card-body text-start">
+                                            <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                            <p class="card-text text-muted small mb-1">
+                                                <strong>Brand:</strong> #productItem.brandName#
+                                            </p>
+                                            <p class="card-text product-desc text-muted small mb-1">
+                                                <strong>Description:</strong> #productItem.description#
+                                            </p>                                   
+                                            <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </cfloop> 
+                            </cfloop>  
+                            <cfloop array="#getProductArray.product#" item="productItem">
+                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="product-card pb-0">
+                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
+                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                        </a>
+                                        <div class="card-body text-start">
+                                            <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                            <p class="card-text text-muted small mb-1">
+                                                <strong>Brand:</strong> #productItem.brandName#
+                                            </p>
+                                            <p class="card-text product-desc text-muted small mb-1">
+                                                <strong>Description:</strong> #productItem.description#
+                                            </p>                                   
+                                            <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                                        </div>
+                                    </div>
+                                </div>
+                            </cfloop>  
+                            <cfloop array="#getProductArray.product#" item="productItem">
+                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <div class="product-card pb-0">
+                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
+                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                        </a>
+                                        <div class="card-body text-start">
+                                            <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                            <p class="card-text text-muted small mb-1">
+                                                <strong>Brand:</strong> #productItem.brandName#
+                                            </p>
+                                            <p class="card-text product-desc text-muted small mb-1">
+                                                <strong>Description:</strong> #productItem.description#
+                                            </p>                                   
+                                            <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
+                                        </div>
+                                    </div>
+                                </div>
+                            </cfloop>  
+                        </div>
+                        <cfif arraylen(getProductArray.product) GT 4>
+                            <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="toggleView()">View More</button>
+                        </cfif>
                     <cfelse>
                         <div class="col-12 text-center">
                             <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75 h-75">
-                        </div>
+                        </div> 
                     </cfif>
                 </div>
             </div>

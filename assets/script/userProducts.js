@@ -6,40 +6,60 @@ function updateMainImage(imageElement) {
     $(imageElement).addClass('active'); 
     mainImage.attr('src', $(imageElement).attr('src'));
 }
-function deleteCartItem(productId){
-    if(confirm("Remove! Are you sure?")){
-        $.ajax({
-            url: "../components/cart.cfc?method=deleteCart",
-            method: "POST",
-            data: {
-                productId : productId
-            },
-            success: function() {
-                document.getElementById(productId).remove();
-                $.ajax({
-                    url: "../components/cart.cfc?method=getCartDetails",
-                    method: "POST",
-                    success: function(response) {
-                        const getCart = JSON.parse(response);
-                        console.log(getCart)
-                        if(getCart.cart.length == 0){
-                            window.location.reload();
+
+function deleteCartItem(productId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../components/cart.cfc?method=deleteCart",
+                method: "POST",
+                data: { productId: productId },
+                success: function () {
+                    document.getElementById(productId).remove();
+                    $.ajax({
+                        url: "../components/cart.cfc?method=getCartDetails",
+                        method: "POST",
+                        success: function (response) {
+                            const getCart = JSON.parse(response);
+
+                            if (getCart.cart.length === 0) {
+                                window.location.reload();
+                                return;
+                            }
+
+                            let totalPrice = 0,
+                                totalTax = 0,
+                                totalAmount = 0;
+
+                            getCart.cart.forEach(item => {
+                                totalPrice += item.unitPrice * item.quantity;
+                                totalTax += item.unitTax * item.quantity;
+                                totalAmount += (item.unitPrice + item.unitTax) * item.quantity;
+                            });
+
+                            $(".cart-quantity").text(getCart.cart.length);
+                            $(".totalPriceDiv").text(totalPrice.toFixed(2));
+                            $(".totalTaxDiv").text(totalTax.toFixed(2));
+                            $(".totalAmountDiv").text(totalAmount.toFixed(2));
+                            Swal.fire({
+                                title: "Deleted!",
+                                text: "Your item has been deleted.",
+                                icon: "success"
+                            });
                         }
-                        let totalPrice = 0, totalTax = 0, totalAmount = 0;
-                        for(let i = 0; i < getCart.cart.length ; i++){
-                            totalPrice += getCart.cart[i].unitPrice * getCart.cart[i].quantity;
-                            totalTax += getCart.cart[i].unitTax * getCart.cart[i].quantity;
-                            totalAmount += (getCart.cart[i].unitPrice + getCart.cart[i].unitTax) * getCart.cart[i].quantity;
-                        }
-                        $('.cart-quantity').text(getCart.cart.length);
-                        $('.totalPriceDiv').text(totalPrice.toFixed(2));
-                        $('.totalTaxDiv').text(totalTax.toFixed(2));
-                        $('.totalAmountDiv').text(totalAmount.toFixed(2));
-                    }
-                })
-            }
-        });
-    }
+                    });
+                },
+            });
+        }
+    });
 }
 
 function modifyQuantity(productId,modifyStatus){ 
@@ -86,15 +106,23 @@ function modifyQuantity(productId,modifyStatus){
 }
 
 $(document).ready(function () {
-    const successMessage = $("#orderSuccessMessage");
-    if (successMessage.length) {
-        $("body").append('<div class="modal-backdrop fade show"></div>');
-        setTimeout(function() {
-            $(".modal-backdrop").remove();
-            successMessage.hide();
-            window.location.href = "userOrderDetails.cfm";
-        }, 3000);
+    if ($("#orderSuccessMessage").length) {
+        Swal.fire({
+            title: "Good job!",
+            text: "You order placed successfully!",
+            icon: "success",
+            showConfirmButton: false,
+            footer: '<a href="userOrderDetails.cfm" class="btn btn-outline-primary">See Your Order History</a>'
+        });
     }
+    if($("#orderErrorMessage").length){
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Something went wrong!"
+        });
+    }
+
     $('#confirmPayment').click(function () {
         const cardName = $('#cardName').val();
         const cardNumber = $('#cardNumber').val().replace(/\s+/g, '');
@@ -128,5 +156,4 @@ $(document).ready(function () {
             $('#confirmPaymentDiv').hide();
         }
     });
-     
 });

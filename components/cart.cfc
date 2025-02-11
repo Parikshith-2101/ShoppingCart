@@ -153,7 +153,7 @@
         </cftry>        
     </cffunction>
 
-    <cffunction name = "placeOrder" access = "public" returnType = "struct">
+    <cffunction name = "placeOrder" access = "public">
         <cfargument name = "addressId" required = true type = "string">
         <cfargument name = "cardNumber" required = true type = "string">
         <cfargument name = "cvv" required = true type = "integer">
@@ -167,63 +167,26 @@
             'error' : false,
             'message' : ""
         }>
+        <cfset local.orderId = createUUID()>
+        <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
         <cfset local.cardNumber = replace(arguments.cardNumber, " ", "", "all")>
-        <cfif local.cardNumber EQ 111111111111 AND arguments.cvv EQ 111>
-            <cfset local.productIdArray = ListToArray(arguments.productId)>
-            <cfset local.quantityArray = ListToArray(arguments.quantity)>
-            <cfset local.unitPriceArray = ListToArray(arguments.unitPrice)>
-            <cfset local.unitTaxArray = ListToArray(arguments.unitTax)>
-            <cftry>
-                <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
-                <cfset local.orderId = createUUID()>
-                <cfquery datasource = "#application.dataSource#" result = "local.orderResult">
-                    INSERT INTO tblorder(
-                        fldOrder_Id,
-                        fldUserId,
-                        fldAddressId, 
-                        fldCardNumber, 
-                        fldTotalPrice, 
-                        fldTotalTax
-                    )VALUES(
-                        <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,
+        <cftry>
+            <cfif local.cardNumber EQ 111111111111 AND arguments.cvv EQ 111>
+                <cfif listLen(arguments.productId) GT 1>
+                    <cfset local.decryptedProductId = 0>
+                <cfelse>
+                    <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = arguments.productId)>
+                </cfif>
+                <cfquery datasource = "#application.dataSource#">
+                    CALL sp_placeOrder(
                         <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#local.decryptedAddressId#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#local.cardNumber#" cfsqltype = "varchar">,
-                        <cfqueryparam value = "#arguments.totalPrice#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#arguments.totalTax#" cfsqltype = "integer">
+                        <cfqueryparam value = "#right(arguments.cardNumber, 4)#" cfsqltype = "varchar">, 
+                        <cfqueryparam value = "#arguments.totalPrice#" cfsqltype = "decimal">,   
+                        <cfqueryparam value = "#arguments.totalTax#" cfsqltype = "decimal">,
+                        <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,  
+                        <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer"> 
                     );
-                </cfquery>
-                <cfquery datasource = "#application.dataSource#">
-                    INSERT INTO tblorderitems(
-                        fldOrderId, 
-                        fldProductId, 
-                        fldQuantity, 
-                        fldUnitPrice, 
-                        fldUnitTax
-                    )VALUES
-                    <cfloop from = "1" to = "#arrayLen(local.productIdArray)#" index = "i">
-                        <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = local.productIdArray[i])>
-                        (
-                            <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,
-                            <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#local.quantityArray[i]#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#local.unitPriceArray[i]#" cfsqltype = "decimal">,
-                            <cfqueryparam value = "#local.unitTaxArray[i]#" cfsqltype = "decimal">
-                        )<cfif i LT arrayLen(local.productIdArray)>,</cfif>
-                    </cfloop>
-                </cfquery>
-                <cfquery datasource = "#application.dataSource#">
-                    DELETE FROM 
-                        tblcart
-                    WHERE 
-                        fldProductId IN (
-                        <cfloop from = "1" to = "#arrayLen(local.productIdArray)#" index = "i">
-                            <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = local.productIdArray[i])>
-                            <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
-                            <cfif i LT arrayLen(local.productIdArray)>,</cfif>
-                        </cfloop>
-                    )  
-                    AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">                
                 </cfquery>
                 <cfset local.result['error'] = false>
                 <cfset local.result['message'] = "Order Placed Successfully">
@@ -232,23 +195,23 @@
                     orderID = local.orderId,
                     totalPrice = arguments.totalPrice,
                     totalTax = arguments.totalTax
+                )>       
+            <cfelse>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "Card Details Doesn't Match">
+            </cfif>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "error in #local.currentFunction# : #cfcatch.message#">
+                <cfset application.productManagementObj.sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
                 )>
-                 <cfcatch>
-                    <cfset local.currentFunction = getFunctionCalledName()>
-                    <cfset local.result['error'] = true>
-                    <cfset local.result['message'] = "error in #local.currentFunction# : #cfcatch.message#">
-                    <cfset application.productManagementObj.sendErrorEmail(
-                        subject = local.currentFunction,
-                        errorMessage = cfcatch.message
-                    )>
-                </cfcatch>
-            </cftry>
-        <cfelse>
-            <cfset local.result['error'] = true>
-            <cfset local.result['message'] = "Card Details Doesn't Match">
-        </cfif>
+            </cfcatch>
+        </cftry>
         <cfreturn local.result>
-    </cffunction>
+    </cffunction>   
 
     <cffunction name = "getOrderDetails" access = "public" returnType = "struct">
         <cfargument name = "orderId" required = false type = "string">
@@ -340,9 +303,6 @@
         }>
         <cftry>
             <cfset local.getOrderDetails = getOrderDetails(orderId = arguments.orderId)>
-            <cfset local.FileName = "order_#arguments.orderId#.pdf">
-            
-<!---             <cfdocument format = "PDF" filename = "#expandPath('../uploads/invoice/#local.FileName#')#" name = "outputDocument" orientation = "landscape" overwrite = "yes">   --->
             <cfdocument format = "PDF" orientation = "landscape" overwrite = "yes">  
                 <cfoutput>
                     <style>

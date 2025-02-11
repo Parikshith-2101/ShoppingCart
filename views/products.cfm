@@ -185,7 +185,7 @@
                                         <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                             <div class="card product-card shadow-sm">
                                                 <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">
-                                                    <img src="../uploads/product#decryptedProductId#/#productItem.imageFile#" 
+                                                    <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" 
                                                         class="card-img-top" alt="#productItem.productName#">
                                                 </div>
                                                 <div class="card-body">

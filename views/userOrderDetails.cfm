@@ -40,7 +40,7 @@
                                 <cfloop from="1" to="#arrayLen(productIdArray)#" index="i">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <img src="../uploads/product#productIdArray[i]#/#productImageArray[i]#" alt="Product" class="rounded me-3" width="50" height="50">
+                                            <img src="../uploads/products/product#productIdArray[i]#/#productImageArray[i]#" alt="Product" class="rounded me-3" width="50" height="50">
                                             <div>
                                                 <h6 class="mb-1">#productNameArray[i]#</h6>
                                                 <p class="mb-0 text-muted">Qty: #quantityArray[i]# | Price: ₹#unitPriceArray[i]# | Tax: ₹#unitTaxArray[i]#</p>

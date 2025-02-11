@@ -197,7 +197,7 @@ function editImage(thisProductId,decryptedProductId){
                 }
                 const carouselItem = `
                     <div class="${active} carousel-imageDiv" id="${imageIdArray[i]}">
-                        <img src="../uploads/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                        <img src="../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
                 `;
