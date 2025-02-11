@@ -26,7 +26,7 @@
                     <div class="container-left">
                         <div class="card-head d-flex">
                             <div class="headDiv d-flex">
-                                <p>From Saved Addresses</p>
+                                <p class="m-0">From Saved Addresses</p>
                                 <button>Enter Delivery Pincode</button>
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                                             <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "0.00")#</span>
                                         </div>
                                     </div>
-                                    <div class="product-delivery">
+                                    <div class="product-delivery ms-auto">
                                         <p>Delivery by Tue Oct 8 |
                                     </div>
                                 </div>                    

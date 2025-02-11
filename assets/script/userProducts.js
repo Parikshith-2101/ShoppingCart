@@ -22,6 +22,9 @@ function deleteCartItem(productId){
                     success: function(response) {
                         const getCart = JSON.parse(response);
                         console.log(getCart)
+                        if(getCart.cart.length == 0){
+                            window.location.reload();
+                        }
                         let totalPrice = 0, totalTax = 0, totalAmount = 0;
                         for(let i = 0; i < getCart.cart.length ; i++){
                             totalPrice += getCart.cart[i].unitPrice * getCart.cart[i].quantity;
@@ -43,7 +46,7 @@ function modifyQuantity(productId,modifyStatus){
     const removebtn = document.getElementById(`removeBtn${productId}`);
     removebtn.disabled = false;
     $.ajax({
-        url: "../components/cart.cfc?method=modifyQuantity",
+        url: "../components/cart.cfc?method=manageCart",
         method: "POST",
         data: {
             productId : productId,
@@ -55,23 +58,29 @@ function modifyQuantity(productId,modifyStatus){
             if (Data.error === true) {
                 removebtn.disabled = true;
             }
-            let totalPrice = 0;
-            let totalTax = 0;
-            let totalAmount = 0;
-            for(let i = 0; i < Data.getCartData.length ; i++){
-                if(document.getElementById(`quantity${Data.getCartData[i].productId}`)){
-                    totalPrice += Data.getCartData[i].unitPrice * Data.getCartData[i].quantity;
-                    totalTax += Data.getCartData[i].unitTax * Data.getCartData[i].quantity;
-                    totalAmount += (Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax) * Data.getCartData[i].quantity;
-                    document.getElementById(`quantity${Data.getCartData[i].productId}`).value = Data.getCartData[i].quantity;
+            $.ajax({
+                url: "../components/cart.cfc?method=getCartDetails",
+                method: "POST",
+                success: function(response) {
+                    const getCart = JSON.parse(response);
+                    console.log(getCart)
+                    let totalPrice = 0, totalTax = 0, totalAmount = 0;
+                    for(let i = 0; i < getCart.cart.length ; i++){
+                        if(document.getElementById(`quantity${getCart.cart[i].productId}`)){
+                            totalPrice += getCart.cart[i].unitPrice * getCart.cart[i].quantity;
+                            totalTax += getCart.cart[i].unitTax * getCart.cart[i].quantity;
+                            totalAmount += (getCart.cart[i].unitPrice + getCart.cart[i].unitTax) * getCart.cart[i].quantity;
+                            document.getElementById(`quantity${getCart.cart[i].productId}`).value = getCart.cart[i].quantity;
+                        }
+                        if(document.getElementById(`price${getCart.cart[i].productId}`)){
+                            document.getElementById(`price${getCart.cart[i].productId}`).textContent = (getCart.cart[i].quantity*(getCart.cart[i].unitPrice + getCart.cart[i].unitTax)).toFixed(2);
+                        }
+                    }
+                    $('.totalPriceDiv').text(totalPrice.toFixed(2));
+                    $('.totalTaxDiv').text(totalTax.toFixed(2));
+                    $('.totalAmountDiv').text(totalAmount.toFixed(2));
                 }
-                if(document.getElementById(`price${Data.getCartData[i].productId}`)){
-                    document.getElementById(`price${Data.getCartData[i].productId}`).textContent = (Data.getCartData[i].quantity*(Data.getCartData[i].unitPrice + Data.getCartData[i].unitTax)).toFixed(2);
-                }
-            }
-            $('.totalPriceDiv').text(totalPrice.toFixed(2));
-            $('.totalTaxDiv').text(totalTax.toFixed(2));
-            $('.totalAmountDiv').text(totalAmount.toFixed(2));
+            })
         }
     });
 }

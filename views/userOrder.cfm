@@ -19,8 +19,9 @@
         <cfif structKeyExists(url, "productId")>
             <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             <cfif arrayIsEmpty(cartArray.cart)>
-                <cfset addToCartResult = application.cartObj.addCart(
-                    productId = url.productId
+                <cfset addToCartResult = application.cartObj.manageCart(
+                    productId = url.productId,
+                    modifyStatus = "add"
                 )>
                 <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             </cfif>
@@ -214,6 +215,7 @@
                 unitPrice = form.unitPrice,
                 unitTax = form.unitTax
             )>
+            <cfdump  var="#placeOrderResult#">
             <cfif placeOrderResult.error EQ false>
                 <div id="orderSuccessMessage" class="alert alert-success success-dialog fade show">
                     <div class="checkmark-circle">

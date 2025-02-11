@@ -18,7 +18,7 @@
         <cfset getCategoryArray = application.productManagementObj.getCategory()>
         <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryId)>
         <nav class="navbar fixed-top p-0">
-            <a href="##" class="nav-link">
+            <a href="userHome.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
                     <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>

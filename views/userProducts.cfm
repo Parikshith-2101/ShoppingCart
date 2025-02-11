@@ -12,11 +12,15 @@
 </head>
 <body>
 <cfoutput>
+    <cfset getCartLen = 0>
     <cfif structKeyExists(form, "addToCartBtn")>
         <cfif structKeyExists(session, "loginUserId")>
-            <cfset addToCartResult = application.cartObj.addCart(
-                productId = form.addToCartBtn
+            <cfset addToCartResult = application.cartObj.manageCart(
+                productId = form.addToCartBtn,
+                modifyStatus = "add"
             )>
+            <cfset getCartData = application.cartObj.getCartDetails(productId = form.addToCartBtn)>
+            <cfset getCartLen =  arrayLen(getCartData.cart)> 
         <cfelse>
             <cflocation url="userLogin.cfm?productId=#urlEncodedFormat(url.productId)#">
         </cfif>
@@ -51,16 +55,11 @@
                                 <p>#productItem.description#</p>
                             </div>
                             <form method="post" class="action-buttons">
-                                <cfif structKeyExists(session, "loginUserId")>
-                                    <cfset getCartData = application.cartObj.getCartDetails(productId = productItem.productId)>
-                                    <cfif arrayLen(getCartData.cart)> 
-                                        <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
-                                    <cfelse>
-                                        <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
-                                    </cfif>
+                                <cfif getCartLen GT 0>  
+                                    <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                 <cfelse>
                                     <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>
-                                </cfif>
+                                </cfif>                            
                                 <a href="userOrder.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="btn btn-success">Buy Now</a>
                             </form>
                         </div>

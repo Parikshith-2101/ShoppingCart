@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>adminLogin</title>
+    <title>Login</title>
     <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
     <link rel="stylesheet" href="../assets/style/userLogin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -57,15 +57,16 @@
                             <cfif loginResult.error EQ false>
                                 <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
                                 <cfif session.roleId EQ 1>
-                                    <cflocation  url = "categories.cfm">
+                                    <cflocation  url = "categories.cfm" addToken = "no">
                                 <cfelse>
                                     <cfif structKeyExists(url, "productId")>    
-                                        <cfset addToCartResult = application.cartObj.addCart(
-                                            productId = url.productId
+                                        <cfset addToCartResult = application.cartObj.manageCart(
+                                            productId = url.productId,
+                                            modifyStatus = "add"
                                         )>
-                                        <cflocation url = "userCart.cfm?">
+                                        <cflocation url = "userCart.cfm" addToken = "no">
                                     <cfelse>
-                                        <cflocation url = "userHome.cfm">
+                                        <cflocation url = "userHome.cfm" addToken = "no">
                                     </cfif> 
                                 </cfif>
                             <cfelse>

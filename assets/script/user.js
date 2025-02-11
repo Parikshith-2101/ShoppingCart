@@ -133,8 +133,20 @@ function deleteAddress(addressId){
                 addressId : addressId
             },
             success: function() {
-                document.getElementById(`${addressId}`).remove();
+                document.getElementById(addressId).remove();
             }
         })
     }
 }
+$('#searchOrder').on('input', function () {
+    let searchValue = $(this).val().toLowerCase();
+    $('.orderDetailsDiv').each(function () {
+        let orderId = $(this).attr('id').toLowerCase();
+        if (orderId.includes(searchValue)) {
+            $(this).show();
+            $('#search-for').text(`Search results for "${searchValue}"`);
+        } else {
+            $(this).hide();
+        }
+    });
+});

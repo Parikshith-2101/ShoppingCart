@@ -18,8 +18,12 @@
         <form method="post"> 
             <main>
                 <div class="container products-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 id="search-for" class="m-0 text-secondary"></h4>
+                        <input type="search" id="searchOrder" class="form-control w-25 shadow-sm border-2" placeholder="Search orders...">
+                    </div>
                     <cfloop array="#orderDetails.order#" item="orderItem">
-                        <div class="card p-4 mb-4 shadow-sm border-2">
+                        <div class="card p-4 mb-4 shadow-sm border-2 orderDetailsDiv" id="#orderItem.orderId#">
                             <h4 class="mb-3">Order Summary</h4>
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <p class="mb-1"><strong>Order ID:</strong> #orderItem.orderId#</p>
@@ -60,13 +64,16 @@
                             </div>
                             <div class="d-flex justify-content-between mt-3 align-items-center">
                                 <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
-                                <button type="submit" name="downloadInvoiceBtn" value="#orderItem.orderId#" class="btn btn-primary">Download Invoice</button>
+                                <button type="submit" id="downloadInvoice" name="downloadInvoiceBtn" value="#orderItem.orderId#" class="btn btn-primary">Download Invoice</button>
                             </div>
                         </div>
                     </cfloop>
                 </div>
                 <cfif structKeyExists(form, "downloadInvoiceBtn")>
-                    <cfset application.cartObj.downloadInVoice(orderId = form.downloadInvoiceBtn)>
+                    <cfset local.result =  application.cartObj.downloadInVoice(orderId = form.downloadInvoiceBtn)>
+                    <cfif local.result.error EQ false>
+                        <div id="checkInvoiceBtn"></div>
+                    </cfif>
                 </cfif>
             </main>
         </form>

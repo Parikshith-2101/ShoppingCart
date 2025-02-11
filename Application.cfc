@@ -3,13 +3,13 @@
     <cfset this.sessionManagement = true>
     <cfset this.sessionTimeout = createTimeSpan(0, 0, 30, 0)>
     <cfset this.applicationTimeout = createTimeSpan(1, 0, 0, 0)>
-    <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
-    <cfset application.dataSource = "shoppingCart">
  
     <cffunction name = "onApplicationStart">
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
         <cfset application.userObj = createObject("component", "components.userLogin")>     
         <cfset application.cartObj = createObject("component", "components.cart")>     
+        <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
+        <cfset application.dataSource = "shoppingCart">
     </cffunction>   
 
     <cffunction name = "onRequestStart" returnType = "boolean">
@@ -33,7 +33,7 @@
         </cfif>
     </cffunction>
     
-<!---     <cffunction name = "onError">
+    <cffunction name = "onError">
         <cfargument name = "Exception" required = true>
         <cfargument type = "String" name = "EventName" required = true>
         <cflog file = "#This.Name#" type = "error" text = "Event Name: #arguments.Eventname#">
@@ -47,7 +47,7 @@
             <cfdump var = #arguments.Exception#></p>
             </cfoutput>
         </cfif>
-    </cffunction> --->
+    </cffunction>
 
     <cffunction name = "onMissingTemplate">
         <cfargument name = "targetPage" type = "string" required = true>
