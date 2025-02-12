@@ -58,30 +58,32 @@
                                             </button>
                                         </div>
                                         <div class="modal-body">
-                                            <div class="d-flex flex-column">
+                                            <div class="d-flex flex-column mb-2">
                                                 <label for="categoryDropdown">Category</label>
-                                                <select id="categoryDropdown" name="categoryDropdown">                                                 
+                                                <select id="categoryDropdown" class="m-0" name="categoryDropdown">                                                 
                                                     <cfloop array="#getCategoryArray.category#" item="categoryItem">
                                                         <option value="#categoryItem.categoryId#">#categoryItem.categoryName#</option>
                                                     </cfloop>
                                                 </select>
+                                                <div id="category-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div class="d-flex flex-column">
+                                            <div class="d-flex flex-column mb-2">
                                                 <label for="subCategoryDropdown">SubCategory</label>
-                                                <select id="subCategoryDropdown" name="subCategoryDropdown"> 
+                                                <select id="subCategoryDropdown" class="m-0" name="subCategoryDropdown"> 
                                                     <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                                                         <option value="#subCategoryItem.subCategoryId#">#subCategoryItem.subCategoryName#</option>
                                                     </cfloop>                                         
                                                 </select>
+                                                <div id="subCategory-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>     
+                                            <div class="mb-2">     
                                                 <label for="productName">Product Name*</label>                                           
-                                                <input type="text" name="productName" id="productName" placeholder="Product Name">
+                                                <input class="m-0" type="text" name="productName" id="productName" placeholder="Product Name">
                                                 <div id="productName-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>
+                                            <div class="mb-2">
                                                 <label for="productBrand">Product Brand*</label>
-                                                <select id="productBrand" name="productBrand">                                                  
+                                                <select id="productBrand" class="m-0" name="productBrand">                                                  
                                                     <option value="" disabled selected>Select Brand Name</option>                                          
                                                     <cfloop array="#getBrandArray.brand#" item="brandItem">
                                                         <option value="#brandItem.brandId#">#brandItem.brandName#</option>
@@ -89,24 +91,24 @@
                                                 </select>
                                                 <div id="productBrand-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>
+                                            <div class="mb-2">
                                                 <label for="productDesc">Product Description*</label>
-                                                <input type="text" name="productDesc" id="productDesc" placeholder="Product Description">
+                                                <input class="m-0" type="text" name="productDesc" id="productDesc" placeholder="Product Description">
                                                 <div id="productDesc-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>
+                                            <div class="mb-2">
                                                 <label for="productPrice">Product Price*</label>
-                                                <input type="number" name="productPrice" id="productPrice" placeholder="Product Price">
+                                                <input class="m-0" type="number" name="productPrice" id="productPrice" placeholder="Product Price">
                                                 <div id="productPrice-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>
+                                            <div class="mb-2">
                                                 <label for="productTax">Product Tax*</label>
-                                                <input type="number" name="productTax" id="productTax" placeholder="Product Tax">
+                                                <input class="m-0" type="number" name="productTax" id="productTax" placeholder="Product Tax">
                                                 <div id="productTax-error" class="fw-bold text-danger"></div>
                                             </div>
-                                            <div>
+                                            <div class="mb-2">
                                                 <label for="productImage">Product Image*</label>
-                                                <input type="file" name="productImage" id="productImage" multiple accept="image/*">
+                                                <input class="m-0" type="file" name="productImage" id="productImage" multiple accept="image/*">
                                                 <div id="productImage-error" class="fw-bold text-danger"></div>
                                             </div>
                                         </div>
@@ -184,7 +186,7 @@
                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                         <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                             <div class="card product-card shadow-sm">
-                                                <div onclick="editImage('#productItem.productId#','#decryptedProductId#')">
+                                                <div onclick="editImage('#productItem.productId#','#decryptedProductId#')" class="cursor-pointer">
                                                     <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" 
                                                         class="card-img-top" alt="#productItem.productName#">
                                                 </div>

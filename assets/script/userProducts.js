@@ -93,12 +93,12 @@ function modifyQuantity(productId,modifyStatus){
                             document.getElementById(`quantity${getCart.cart[i].productId}`).value = getCart.cart[i].quantity;
                         }
                         if(document.getElementById(`price${getCart.cart[i].productId}`)){
-                            document.getElementById(`price${getCart.cart[i].productId}`).textContent = (getCart.cart[i].quantity*(getCart.cart[i].unitPrice + getCart.cart[i].unitTax)).toFixed(2);
+                            document.getElementById(`price${getCart.cart[i].productId}`).textContent = (getCart.cart[i].quantity*(getCart.cart[i].unitPrice + getCart.cart[i].unitTax)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                         }
                     }
-                    $('.totalPriceDiv').text(totalPrice.toFixed(2));
-                    $('.totalTaxDiv').text(totalTax.toFixed(2));
-                    $('.totalAmountDiv').text(totalAmount.toFixed(2));
+                    $('.totalPriceDiv').text(totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                    $('.totalTaxDiv').text(totalTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                    $('.totalAmountDiv').text(totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                 }
             })
         }
@@ -116,10 +116,11 @@ $(document).ready(function () {
         });
     }
     if($("#orderErrorMessage").length){
+        const errorMsg = $("#orderErrorMessage").attr("data-errorMessage");
         Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Something went wrong!"
+            text: `${errorMsg}!`
         });
     }
 

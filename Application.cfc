@@ -15,9 +15,9 @@
     <cffunction name = "onRequestStart" returnType = "boolean">
         <cfargument type = "String" name = "targetPage" required = true>
         <cfif structKeyExists(url, "reload") AND url.reload EQ 1>
-<!---             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+            <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfset onApplicationStart()>
-            </cfif> --->
+            </cfif>
             <cfset onApplicationStart()>
         </cfif>
         <cfreturn true>
@@ -25,10 +25,18 @@
 
     <cffunction name = "onRequest" returnType = "void">
         <cfargument name = "requestPage">
+        <cfset local.adminPages = ["categories.cfm","products.cfm","subCategories.cfm"]>
         <cfset local.allowedPages = ["userLogin.cfm","userSignup.cfm","userHome.cfm","userCategories.cfm","userSubCategories.cfm","userProducts.cfm","userSearch.cfm"]>
-        <cfif structKeyExists(session, "email") OR arrayFindNoCase(local.allowedPages, ListLast(CGI.SCRIPT_NAME,'/'))>        
+        
+        <cfif arrayFindNoCase(local.adminPages, ListLast(CGI.SCRIPT_NAME,'/'))>
+            <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
+                <cfinclude template = "#arguments.requestPage#">
+            <cfelse>
+                <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
+            </cfif>
+        <cfelseif arrayFindNoCase(local.allowedPages, ListLast(CGI.SCRIPT_NAME,'/')) OR structKeyExists(session, "email")>
             <cfinclude template = "#arguments.requestPage#">
-        <cfelse> 
+        <cfelse>
             <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
         </cfif>
     </cffunction>

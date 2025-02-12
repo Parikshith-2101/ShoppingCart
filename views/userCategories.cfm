@@ -27,11 +27,9 @@
                                 </a>
                                 <cfloop array="#getProductArray.product#" item="productItem">
                                     <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                    <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                                         <div class="product-card pb-0">
-                                            <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">
-                                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                            </a>
+                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                             <div class="card-body text-start">
                                                 <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                                 <p class="card-text text-muted small mb-1">
@@ -43,7 +41,7 @@
                                                 <div class="fw-bold">Rs.#productItem.unitPrice#/-</div> 
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </cfloop> 
                             </div>
                         </cfif>

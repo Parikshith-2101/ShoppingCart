@@ -215,11 +215,10 @@
                 unitPrice = form.unitPrice,
                 unitTax = form.unitTax
             )>
-            <cfdump  var="#placeOrderResult#">
             <cfif placeOrderResult.error EQ false>
                 <div id="orderSuccessMessage"></div>
             <cfelse>
-                <div id="orderErrorMessage"></div>
+                <div id="orderErrorMessage" data-errorMessage="#placeOrderResult.message#"></div>
             </cfif>
         </cfif>
     </cfoutput>

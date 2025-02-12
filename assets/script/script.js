@@ -48,7 +48,6 @@ $(document).ready(function () {
             return;
         }
         if(categoryId.trim()){
-            console.log("name : "+categoryName)
             //edit
             $.ajax({
                 url: "../components/productManagement.cfc?method=editCategory",
@@ -61,8 +60,8 @@ $(document).ready(function () {
                     const data = JSON.parse(editCategoryData);
                     console.log(data);
                     if (data.error === false) {
-                        $('#category-error').text(data.message);
                         $('#category-error').addClass('text-success').removeClass('text-danger');
+                        $('#category-error').text(data.message);
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
@@ -85,9 +84,9 @@ $(document).ready(function () {
                 success: function (categoryServerResponse) {
                     const data = JSON.parse(categoryServerResponse);
                     console.log(data)
-                    if (data.error === "true") {
-                        $('#category-error').text(data.message);
+                    if (data.error === false) {
                         $('#category-error').addClass('text-success').removeClass('text-danger');
+                        $('#category-error').text(data.message);
                         setTimeout(function() {
                             window.location.href = "categories.cfm";
                         }, 900);
@@ -152,8 +151,8 @@ $(document).ready(function () {
                     const data = JSON.parse(response);
                     console.log(data);
                     if(data.error == false){
-                        $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
+                        $('#subCategory-error').text(data.message);
                         setTimeout(function() {
                             window.location.reload();
                         }, 900);
@@ -180,8 +179,8 @@ $(document).ready(function () {
                     const data = JSON.parse(response);
                     console.log(data);
                     if(data.error === false){
-                        $('#subCategory-error').text(data.message);
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
+                        $('#subCategory-error').text(data.message);
                         setTimeout(function() {
                             window.location.reload();
                         }, 900);

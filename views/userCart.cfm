@@ -50,7 +50,7 @@
                                         </div>
                                         <div class="price-tag fs-5 mt-auto fw-bold">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                                            <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "0.00")#</span>
+                                            <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "99,999.00")#</span>
                                         </div>
                                     </div>
                                     <div class="product-delivery ms-auto">
@@ -83,7 +83,7 @@
                                     <p class="price">Price </p>
                                     <p class="number">
                                         <i class="fa-solid fa-indian-rupee-sign"></i> 
-                                        <span class="totalPriceDiv">#numberFormat(totalPrice, "0.00")#</span>
+                                        <span class="totalPriceDiv">#numberFormat(totalPrice, "99,999.00")#</span>
                                     </p>
                                 </div>
                                 <div class="checkout">
@@ -91,7 +91,7 @@
                                     <p class="number">
                                         <span class="green">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                                            <span class="totalTaxDiv">#numberFormat(totalTax, "0.00")#</span>
+                                            <span class="totalTaxDiv">#numberFormat(totalTax, "99,999.00")#</span>
                                         </span>
                                     </p>
                                 </div>
@@ -99,7 +99,7 @@
                                     <p class="bold">Total Amount</p>
                                     <p class="number">
                                         <i class="fa-solid fa-indian-rupee-sign"></i>
-                                        <span class="totalAmountDiv">#numberFormat(totalAmount, "0.00")#</span>
+                                        <span class="totalAmountDiv">#numberFormat(totalAmount, "99,999.00")#</span>
                                     </p>
                                 </div>
                             </div>

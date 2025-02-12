@@ -161,3 +161,52 @@ function toggleView() {
         $(this).text("View More");
     }
 }
+
+function addressValidate() {
+    let isValid = true;
+    $('#errorFirstName').text('');
+    $('#errorLastName').text('');
+    $('#errorAddressLine1').text('');
+    $('#errorAddressLine2').text('');
+    $('#errorCity').text('');
+    $('#errorState').text('');
+    $('#errorPincode').text('');
+    $('#errorPhone').text('');
+
+    if (!$('#adFirstName').val().trim()) {
+        $('#errorFirstName').text('First Name is required.');
+        isValid = false;
+    }
+    if (!$('#adLastName').val().trim()) {
+        $('#errorLastName').text('Last Name is required.');
+        isValid = false;
+    } 
+    if (!$('#adAddressLine1').val().trim()) {
+        $('#errorAddressLine1').text('Address Line 1 is required.');
+        isValid = false;
+    }
+    if (!$('#adAddressLine2').val().trim()) {
+        $('#errorAddressLine2').text('Address Line 2 is required.');
+        isValid = false;
+    }
+    if (!$('#adCity').val().trim()) {
+        $('#errorCity').text('City is required.');
+        isValid = false;
+    }
+
+    if (!$('#adState').val().trim()) {
+        $('#errorState').text('State is required.');
+        isValid = false;
+    } 
+    if (!($('#adPincode').val()) || $('#adPincode').val() < 6) {
+        $('#errorPincode').text('Pincode is required. Pincode must be 5 or 6 digits.');
+        isValid = false;
+    } 
+    if (!($('#adPhone').val()) || $('#adPhone').val() < 10) {
+        $('#errorPhone').text('Phone is required. Phone must be 10 digits.');
+        isValid = false;
+    }
+    $('#saveAddressBtn').prop('disabled', !isValid);
+}
+$('.address-input').on('input', addressValidate);
+

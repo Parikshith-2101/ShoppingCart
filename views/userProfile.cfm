@@ -122,18 +122,33 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" class="form-control mb-2" name="firstName" placeholder="Enter Firstname">
-                                <input type="text" class="form-control mb-2" name="lastName" placeholder="Enter Lastname">
-                                <input type="text" class="form-control mb-2" name="addressLine1" placeholder="Enter AddressLine1">
-                                <input type="text" class="form-control mb-2" name="addressLine2" placeholder="Enter AddressLine2">
-                                <input type="text" class="form-control mb-2" name="city" placeholder="Enter City">
-                                <input type="text" class="form-control mb-2" name="state" placeholder="Enter State">
-                                <input type="tel" class="form-control mb-2" name="pincode" maxlength="6" placeholder="Enter Pincode">
-                                <input type="tel" class="form-control mb-2" name="phone" placeholder="Enter Phone">
+                                <input type="text" class="form-control mb-2 address-input" id="adFirstName" name="firstName" placeholder="Enter Firstname">
+                                <div class="text-danger" id="errorFirstName"></div>
+
+                                <input type="text" class="form-control mb-2 address-input" id="adLastName" name="lastName" placeholder="Enter Lastname">
+                                <div class="text-danger" id="errorLastName"></div>
+
+                                <input type="text" class="form-control mb-2 address-input" id="adAddressLine1" name="addressLine1" placeholder="Enter AddressLine1">
+                                <div class="text-danger" id="errorAddressLine1"></div>
+
+                                <input type="text" class="form-control mb-2 address-input" id="adAddressLine2" name="addressLine2" placeholder="Enter AddressLine2">
+                                <div class="text-danger" id="errorAddressLine2"></div>
+
+                                <input type="text" class="form-control mb-2 address-input" id="adCity" name="city" placeholder="Enter City">
+                                <div class="text-danger" id="errorCity"></div>
+
+                                <input type="text" class="form-control mb-2 address-input" id="adState" name="state" placeholder="Enter State">
+                                <div class="text-danger" id="errorState"></div>
+
+                                <input type="tel" class="form-control mb-2 address-input" id="adPincode" name="pincode" maxlength="6" placeholder="Enter Pincode">
+                                <div class="text-danger" id="errorPincode"></div>
+
+                                <input type="tel" class="form-control mb-2 address-input" id="adPhone" name="phone" placeholder="Enter Phone">
+                                <div class="text-danger" id="errorPhone"></div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" name="saveAddressBtn" class="btn btn-success">Save Address</button>
+                                <button type="submit" id="saveAddressBtn" name="saveAddressBtn" onclick="addressValidate()" class="btn btn-success">Save Address</button>
                             </div>
                         </div>
                     </div>

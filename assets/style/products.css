@@ -98,7 +98,7 @@ select:focus {
     cursor: pointer;
 }
 .cursor-pointer:hover{
-    transform: scale(1.05);
+    transform: scale(1.01);
     transition: transform 0.2s;
 }
 .carousel-image{

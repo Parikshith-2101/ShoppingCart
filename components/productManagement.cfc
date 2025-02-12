@@ -5,21 +5,22 @@
         <cfset local.emailFrom = "parikshith2101@gmail.com">
         <cfset local.emailTo = "parikshith2k23@gmail.com">       
         <cfmail 
-            from="#local.emailFrom#"
-            to="#local.emailTo#"
-            subject="Error in #arguments.subject#"
+            from = "#local.emailFrom#"
+            to = "#local.emailTo#"
+            subject = "Error in #arguments.subject#"
+            type = "html"
         >
             <p><strong>Error Message:</strong> #arguments.errorMessage#</p>
         </cfmail>
     </cffunction>
 
-    <cffunction name = "encryptData" access="public" returnType = "string">
+    <cffunction name = "encryptData" access = "public" returnType = "string">
         <cfargument name = "data" required = true type = "string">
         <cfset local.encryptedData = encrypt(arguments.data, application.key,"AES","base64")>
         <cfreturn local.encryptedData>
     </cffunction>
 
-    <cffunction name = "decryptData" access="public" returnType = "string">
+    <cffunction name = "decryptData" access = "public" returnType = "string">
         <cfargument name = "data" required = true type = "string">
         <cfset local.decryptedData = "">
         <cftry>
@@ -446,13 +447,14 @@
             <cfloop query = "local.qryProduct">
                 <cfset local.encryptedProductId = encryptData(data = local.qryProduct.fldProduct_Id)>
                 <cfset local.encryptedSubCategoryId = encryptData(data = local.qryProduct.fldSubCategoryId)>
+                <cfset local.encryptedCategoryId = encryptData(data = local.qryProduct.fldCategory_Id)>
                 <cfset local.encryptedBrandId = encryptData(data = local.qryProduct.fldBrandId)>
                 <cfset arrayAppend(local.result['product'],{
                     'productId' : local.encryptedProductId,
                     'productName' : local.qryProduct.fldProductName,
                     'subCategoryId' : local.encryptedSubCategoryId,
                     'subCategoryName' : local.qryProduct.fldSubCategoryName,
-                    'categoryId' : local.qryProduct.fldCategory_Id,
+                    'categoryId' : local.encryptedCategoryId,
                     'categoryName' : local.qryProduct.fldCategoryName,
                     'brandId' : local.encryptedBrandId,
                     'brandName' : local.qryProduct.fldBrandName,
@@ -922,7 +924,7 @@
                     fldActive = 1
                     AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
             </cfquery>
-            <cfloop query="local.qryAddress">   
+            <cfloop query = "local.qryAddress">   
                 <cfset arrayAppend(local.result['address'], {
                     'addressId' : encryptData(data = local.qryAddress.fldAddress_Id),
                     'firstName' : local.qryAddress.fldFirstName,

@@ -36,7 +36,11 @@
                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                 <div class="row mt-5">
                     <div class="col-md-6">
-                        <a href="">#getSingleProductArray.product[1].categoryName#></a> <a href="">#getSingleProductArray.product[1].subCategoryName#</a>
+                        <ul class="breadcrumb">
+                            <li><a href="userCategories.cfm?categoryId=#getSingleProductArray.product[1].categoryId#">#getSingleProductArray.product[1].categoryName#</a><i class="fa-solid fa-chevron-right mx-1"></i></li>
+                            <li><a href="userSubCategories.cfm?subCategoryId=#getSingleProductArray.product[1].subCategoryId#">#getSingleProductArray.product[1].subCategoryName#</a><i class="fa-solid fa-chevron-right mx-1"></i></li>
+                            <li><span>#getSingleProductArray.product[1].productName#</span></li>
+                        </ul>
                         <div class="main-product-image mb-3">
                             <cfset defaultImage = ListGetAt(getSingleProductArray.product[1].imageFile, 1)>
                             <img src="../uploads/products/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">

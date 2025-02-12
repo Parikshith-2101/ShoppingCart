@@ -4,7 +4,12 @@
         <cfargument name = "orderID" required = true type = "string">
         <cfargument name = "totalPrice" required = true type = "string">
         <cfargument name = "totalTax" required = true type = "string">
-        <cfmail to = "#arguments.receiverMail#" from = "parikshith2101@gmail.com" subject = "Order Confirmation - #arguments.orderID#">
+        <cfmail 
+            to = "#arguments.receiverMail#" 
+            from = "parikshith2101@gmail.com" 
+            subject = "Order Confirmation - #arguments.orderID#"
+            type = "html"
+        >
             <p>Dear Customer,</p>
             <p>Thank you for your order!</p>
             <p><strong>Order ID:</strong> #arguments.orderID#</p>
@@ -234,19 +239,20 @@
                     A.fldState, 
                     A.fldPincode, 
                     A.fldPhone,
-                    GROUP_CONCAT(OI.fldProductId ORDER BY OI.fldUnitPrice DESC) AS productId, 
-                    GROUP_CONCAT(OI.fldQuantity ORDER BY OI.fldUnitPrice DESC) AS productQuantity,
-                    GROUP_CONCAT(OI.fldUnitPrice ORDER BY OI.fldUnitPrice DESC) AS unitPrice, 
-                    GROUP_CONCAT(OI.fldUnitTax ORDER BY OI.fldUnitPrice DESC) AS unitTax,  
-                    GROUP_CONCAT(P.fldProductName ORDER BY OI.fldUnitPrice DESC) AS productName, 
-                    GROUP_CONCAT(PI.fldImageFilePath ORDER BY OI.fldUnitPrice DESC) AS productImage,
-                    GROUP_CONCAT(B.fldBrandName ORDER BY OI.fldUnitPrice DESC) AS brandName
+                    OI.fldProductId,
+                    OI.fldQuantity,
+                    OI.fldUnitPrice,
+                    OI.fldUnitTax,
+                    P.fldProductName,
+                    PI.fldImageFilePath,
+                    B.fldBrandName
                 FROM
-                    tblorder O INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
-                    INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
-                    INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
-                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
-                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                    tblorder O
+                INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
+                INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
+                INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
+                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
                 WHERE
                     O.fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer"> 
                     AND A.fldActive = 1
@@ -254,33 +260,47 @@
                     <cfif structKeyExists(arguments, "orderId")>
                         AND O.fldOrder_Id = <cfqueryparam value = "#arguments.orderId#" cfsqltype = "varchar"> 
                     </cfif>
-                GROUP BY
-                    O.fldOrder_Id
                 ORDER BY 
                     O.fldOrderDate DESC;
             </cfquery>
             <cfloop query = "local.qryOrder">
-                <cfset arrayAppend(local.result['order'], {
-                    'orderId' : local.qryOrder.fldOrder_Id,
-                    'totalPrice' : local.qryOrder.fldTotalPrice, 
-                    'totalTax' : local.qryOrder.fldTotalTax, 
-                    'orderDate' : local.qryOrder.fldOrderDate, 
-                    'firstName' : local.qryOrder.fldFirstName, 
-                    'lastName' : local.qryOrder.fldLastName, 
-                    'addressLine1' : local.qryOrder.fldAddressLine1, 
-                    'addressLine2' : local.qryOrder.fldAddressLine2, 
-                    'city' : local.qryOrder.fldCity, 
-                    'state' : local.qryOrder.fldState, 
-                    'pincode' : local.qryOrder.fldPincode,
-                    'phone' : local.qryOrder.fldPhone,
-                    'productId' : local.qryOrder.productId, 
-                    'quantity' : local.qryOrder.productQuantity,
-                    'unitPrice' : local.qryOrder.unitPrice, 
-                    'unitTax' : local.qryOrder.unitTax,  
-                    'productName' : local.qryOrder.productName, 
-                    'productImage' : local.qryOrder.productImage,
-                    'brandName' : local.qryOrder.brandName
-                })>
+                <cfset local.index = ArrayFind(local.result['order'], 
+                    function(s) {
+                        if(s.orderId == qryOrder.fldOrder_Id) return true;
+                        return false;
+                    }
+                )>
+                <cfif local.index GT 0>
+                    <cfset arrayAppend(local.result['order'][local.index].productId, local.qryOrder.fldProductId)>
+                    <cfset arrayAppend(local.result['order'][local.index].quantity, local.qryOrder.fldQuantity)>
+                    <cfset arrayAppend(local.result['order'][local.index].unitPrice, local.qryOrder.fldUnitPrice)>
+                    <cfset arrayAppend(local.result['order'][local.index].unitTax, local.qryOrder.fldUnitTax)>
+                    <cfset arrayAppend(local.result['order'][local.index].productName, local.qryOrder.fldProductName)>
+                    <cfset arrayAppend(local.result['order'][local.index].productImage, local.qryOrder.fldImageFilePath)>
+                    <cfset arrayAppend(local.result['order'][local.index].brandName, local.qryOrder.fldBrandName)> 
+                <cfelse>
+                    <cfset arrayAppend(local.result['order'], {
+                        'orderId' : local.qryOrder.fldOrder_Id,
+                        'totalPrice' : local.qryOrder.fldTotalPrice, 
+                        'totalTax' : local.qryOrder.fldTotalTax,  
+                        'orderDate' : dateTimeFormat(local.qryOrder.fldOrderDate.toString()), 
+                        'firstName' : local.qryOrder.fldFirstName, 
+                        'lastName' : local.qryOrder.fldLastName, 
+                        'addressLine1' : local.qryOrder.fldAddressLine1, 
+                        'addressLine2' : local.qryOrder.fldAddressLine2, 
+                        'city' : local.qryOrder.fldCity, 
+                        'state' : local.qryOrder.fldState, 
+                        'pincode' : local.qryOrder.fldPincode,
+                        'phone' : local.qryOrder.fldPhone,
+                        'productId' : [local.qryOrder.fldProductId], 
+                        'quantity' : [local.qryOrder.fldQuantity],
+                        'unitPrice' : [local.qryOrder.fldUnitPrice], 
+                        'unitTax' : [local.qryOrder.fldUnitTax],  
+                        'productName' : [local.qryOrder.fldProductName], 
+                        'productImage' : [local.qryOrder.fldImageFilePath],
+                        'brandName' : [local.qryOrder.fldBrandName]
+                    })>
+                </cfif>
             </cfloop>
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
@@ -303,6 +323,7 @@
         }>
         <cftry>
             <cfset local.getOrderDetails = getOrderDetails(orderId = arguments.orderId)>
+            <cfset local.orderData = local.getOrderDetails.order[1]>
             <cfdocument format = "PDF" orientation = "landscape" overwrite = "yes">  
                 <cfoutput>
                     <style>
@@ -322,10 +343,10 @@
                         <p><b>Date:</b> #dateFormat(now(), "dd/mm/yyyy")#</p>        
                         <h3>Customer</h3>
                         <p class="lineHeight">
-                            #local.getOrderDetails.order[1].firstName# #local.getOrderDetails.order[1].lastName#<br>
-                            #local.getOrderDetails.order[1].addressLine1#,#local.getOrderDetails.order[1].addressLine2#,
-                            #local.getOrderDetails.order[1].city#, #local.getOrderDetails.order[1].state# - #local.getOrderDetails.order[1].pincode#<br>
-                            <strong>Phone : </strong>#local.getOrderDetails.order[1].phone#
+                            #local.orderData.firstName# #local.orderData.lastName#<br>
+                            #local.orderData.addressLine1#,#local.orderData.addressLine2#,
+                            #local.orderData.city#, #local.orderData.state# - #local.orderData.pincode#<br>
+                            <strong>Phone : </strong>#local.orderData.phone#
                         </p>
                         <table border="2">
                             <thead>
@@ -339,26 +360,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <cfloop from="1" to="#arrayLen(local.getOrderDetails.order)#" index="i">
-                                    <cfset productName = listToArray(local.getOrderDetails.order[i].productName)>
-                                    <cfset unitPrices = listToArray(local.getOrderDetails.order[i].unitPrice)>
-                                    <cfset unitTaxes = listToArray(local.getOrderDetails.order[i].unitTax)>
-                                    <cfset quantities = listToArray(local.getOrderDetails.order[i].quantity)>            
-                                    <cfloop from="1" to="#arrayLen(unitPrices)#" index="j">
-                                        <tr>
-                                            <td>#j#</td>
-                                            <td>#productName[j]#</td>
-                                            <td>#quantities[j]#</td>
-                                            <td>&##8377; #val(unitPrices[j])#</td>
-                                            <td>&##8377; #val(unitTaxes[j])#</td>
-                                            <td>&##8377; #val(unitPrices[j] + unitTaxes[j]) * val(quantities[j])#</td>
-                                        </tr>
-                                    </cfloop>
+                                <cfloop from="1" to="#arrayLen(local.orderData.productId)#" index="i">         
+                                    <tr>
+                                        <td>#i#</td>
+                                        <td>#local.orderData.productName[i]#</td>
+                                        <td>#local.orderData.quantity[i]#</td>
+                                        <td>&##8377; #numberFormat(local.orderData.unitPrice[i], "99,999.00")#</td>
+                                        <td>&##8377; #numberFormat(local.orderData.unitTax[i], "99,999.00")#</td>
+                                        <td>&##8377; #numberFormat((local.orderData.unitPrice[i] + local.orderData.unitTax[i]) * local.orderData.quantity[i], "99,999.00")#</td>
+                                    </tr>                                 
                                 </cfloop>
                                 <tr>
                                     <td colspan="4"></td>
                                     <td><b>Total</b></td>
-                                    <td><b>&##8377; #numberFormat(local.getOrderDetails.order[1].totalPrice, "999,999.00")#</b></td>
+                                    <td><b>&##8377; #numberFormat((local.orderData.totalPrice + local.orderData.totalTax), "99,999.00")#</b></td>
                                 </tr>        
                             </tbody>
                         </table>

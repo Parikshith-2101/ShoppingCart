@@ -63,7 +63,7 @@
                                             <div class="d-flex px-2 pb-1">
                                                 <div>
                                                     <select name="minPrice" id="minPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'minPriceCustom')">
-                                                        <option value="">Min</option>
+                                                        <option value="0" selected>Min</option>
                                                         <option value="10000">10,000</option>
                                                         <option value="20000">20,000</option>
                                                         <option value="30000">30,000</option>
@@ -74,7 +74,7 @@
                                                 <div class="mx-2 text-muted">to</div>
                                                 <div>
                                                     <select name="maxPrice" id="maxPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'maxPriceCustom')">
-                                                        <option value="">Max</option>
+                                                        <option value="1000000" selected>Max</option>
                                                         <option value="20000">20,000</option>
                                                         <option value="30000">30,000</option>
                                                         <option value="40000">40,000</option>
@@ -98,11 +98,9 @@
                         <div class="row g-4" id="product-container">
                             <cfloop array="#getProductArray.product#" item="productItem">
                                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                                     <div class="product-card pb-0">
-                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
-                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                        </a>
+                                        <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                         <div class="card-body text-start">
                                             <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                             <p class="card-text text-muted small mb-1">
@@ -114,48 +112,8 @@
                                             <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
                                         </div>
                                     </div>
-                                </div>
-                            </cfloop>  
-                            <cfloop array="#getProductArray.product#" item="productItem">
-                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                    <div class="product-card pb-0">
-                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
-                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                        </a>
-                                        <div class="card-body text-start">
-                                            <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                            <p class="card-text text-muted small mb-1">
-                                                <strong>Brand:</strong> #productItem.brandName#
-                                            </p>
-                                            <p class="card-text product-desc text-muted small mb-1">
-                                                <strong>Description:</strong> #productItem.description#
-                                            </p>                                   
-                                            <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
-                                        </div>
-                                    </div>
-                                </div>
-                            </cfloop>  
-                            <cfloop array="#getProductArray.product#" item="productItem">
-                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                    <div class="product-card pb-0">
-                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#">                                
-                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                        </a>
-                                        <div class="card-body text-start">
-                                            <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                            <p class="card-text text-muted small mb-1">
-                                                <strong>Brand:</strong> #productItem.brandName#
-                                            </p>
-                                            <p class="card-text product-desc text-muted small mb-1">
-                                                <strong>Description:</strong> #productItem.description#
-                                            </p>                                   
-                                            <div class="fw-bold">Rs.#productItem.unitPrice#/-</div>                               
-                                        </div>
-                                    </div>
-                                </div>
-                            </cfloop>  
+                                </a>
+                            </cfloop>    
                         </div>
                         <cfif arraylen(getProductArray.product) GT 4>
                             <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="toggleView()">View More</button>
