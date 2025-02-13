@@ -1,5 +1,4 @@
 function updateMainImage(imageElement) {
-    console.log(imageElement)
     const mainImage = $('#mainImage');
     const thumbnails = $('.product-images img');   
     thumbnails.removeClass('active');  
@@ -74,7 +73,6 @@ function modifyQuantity(productId,modifyStatus){
         },
         success: function(response) {
             const Data = JSON.parse(response);
-            console.log(Data);
             if (Data.error === true) {
                 removebtn.disabled = true;
             }
@@ -83,7 +81,6 @@ function modifyQuantity(productId,modifyStatus){
                 method: "POST",
                 success: function(response) {
                     const getCart = JSON.parse(response);
-                    console.log(getCart)
                     let totalPrice = 0, totalTax = 0, totalAmount = 0;
                     for(let i = 0; i < getCart.cart.length ; i++){
                         if(document.getElementById(`quantity${getCart.cart[i].productId}`)){
@@ -99,6 +96,12 @@ function modifyQuantity(productId,modifyStatus){
                     $('.totalPriceDiv').text(totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                     $('.totalTaxDiv').text(totalTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
                     $('.totalAmountDiv').text(totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                    if($('#totalPrice')){
+                        $('#totalPrice').val(totalPrice);
+                    }
+                    if($('#totalTax')){
+                        $('#totalTax').val(totalTax);
+                    }
                 }
             })
         }

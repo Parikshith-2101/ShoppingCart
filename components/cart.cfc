@@ -146,6 +146,7 @@
                     tblcart
                 WHERE
                     fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                    AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
             </cfquery>
             <cfcatch>
                 <cfset local.result['error'] = true>

@@ -125,7 +125,7 @@
 
                         <!---imageModal--->
 
-                        <div class="modal fade" id="productImageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="productImageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg w-50">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -133,9 +133,7 @@
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">                                      
-                                        <div id="displayProductImage" class="d-flex justify-content-evenly">
-
-                                        </div>
+                                        <div id="displayProductImage" class="d-flex justify-content-evenly"></div>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-primary" onclick="location.reload()">Save Changes</button>
@@ -175,8 +173,7 @@
                                 <div class="text-success fw-bold errorServerSide">#addProductResult.message#</div>
                             <cfelse>
                                 <div class="text-danger fw-bold errorServerSide">#addProductResult.message#</div>
-                            </cfif>
-                                
+                            </cfif>    
                         </cfif>
 
                         <div class="d-flex flex-column w-100 mt-3">

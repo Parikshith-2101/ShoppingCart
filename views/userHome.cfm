@@ -11,7 +11,7 @@
 </head>
 <body>
     <header>
-        <cfinclude template="userHeader.cfm">
+        <cfinclude template="/views/userHeader.cfm">
     </header>
     <main>
         <cfoutput>
@@ -47,7 +47,7 @@
                     <h3>Random Products</h3>
                     <cfloop array="#getProductArray.product#" item="productItem">
                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                        <a href="/views/userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                             <div class="product-card pb-0">      
                                 <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">                         
                                 <div class="card-body text-start">

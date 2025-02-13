@@ -58,7 +58,6 @@ $(document).ready(function () {
                 },
                 success: function(editCategoryData){
                     const data = JSON.parse(editCategoryData);
-                    console.log(data);
                     if (data.error === false) {
                         $('#category-error').addClass('text-success').removeClass('text-danger');
                         $('#category-error').text(data.message);
@@ -83,7 +82,7 @@ $(document).ready(function () {
                 },
                 success: function (categoryServerResponse) {
                     const data = JSON.parse(categoryServerResponse);
-                    console.log(data)
+
                     if (data.error === false) {
                         $('#category-error').addClass('text-success').removeClass('text-danger');
                         $('#category-error').text(data.message);
@@ -149,7 +148,6 @@ $(document).ready(function () {
                 },
                 success: function(response){
                     const data = JSON.parse(response);
-                    console.log(data);
                     if(data.error == false){
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         $('#subCategory-error').text(data.message);
@@ -177,7 +175,6 @@ $(document).ready(function () {
                 },
                 success : function(response){
                     const data = JSON.parse(response);
-                    console.log(data);
                     if(data.error === false){
                         $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                         $('#subCategory-error').text(data.message);
@@ -207,7 +204,6 @@ function editCategory(categoryId){
         },
         success: function(getCategoryData){
             const data = JSON.parse(getCategoryData);
-            console.log(data);
             if(data.error == true){
                 $('#category-error').text(data.message);
             }
@@ -224,7 +220,6 @@ function editCategory(categoryId){
 
 //delete Category
 function deleteCategory(categoryId){
-    console.log(categoryId)
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             type: "POST",
@@ -251,7 +246,6 @@ function editSubCategory(subCategoryId,categoryId){
         },
         success: function(getSubCategoryData){
             const data = JSON.parse(getSubCategoryData);
-            console.log(data.subCategory[0]);
             $('#categoryDropdown').val(data.subCategory[0].categoryId);
             $('#subCategoryValue').val(data.subCategory[0].subCategoryName);
             $('#saveSubCategory').val(data.subCategory[0].subCategoryId);

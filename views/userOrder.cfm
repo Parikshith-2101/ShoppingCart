@@ -99,8 +99,8 @@
                                                 <cfset totalTax += (cartItem.unitTax * cartItem.quantity)>
                                                 <cfset totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>   
                                             </cfloop>                  
-                                            <input type="hidden" value="#totalPrice#" name="totalPrice">         
-                                            <input type="hidden" value="#totalTax#" name="totalTax">         
+                                            <input type="hidden" value="#totalPrice#" id="totalPrice" name="totalPrice">         
+                                            <input type="hidden" value="#totalTax#" id="totalTax" name="totalTax">         
                                         </ul>
                                         <div class="d-flex">
                                             <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">Next</button>

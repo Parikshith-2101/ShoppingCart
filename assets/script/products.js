@@ -40,7 +40,6 @@ $(document).ready(function () {
 });
 $('#categoryDropdown').on('change', function() {
     var thisCategoryId = this.value;
-    console.log(thisCategoryId);
     $.ajax({
         url: "../components/productManagement.cfc?method=getSubCategory",
         method: "POST",
@@ -50,7 +49,6 @@ $('#categoryDropdown').on('change', function() {
         success: function(response){
             const serverData = JSON.parse(response);
             const data = serverData.subCategory;
-            console.log(data)
             $('#subCategoryDropdown').empty();
             for(let i in data){
                 const optionTag = `<option value = ${data[i].subCategoryId}>${data[i].subCategoryName}</option>`;
@@ -78,7 +76,6 @@ function editProduct(productId,subCategoryId,categoryId){
         success: function(product){
             const serverData = JSON.parse(product);
             const data = serverData.product;
-            console.log(data);
             $('#categoryDropdown').val(categoryId);
             $('#subCategoryDropdown').val(subCategoryId);
             $('#productName').val(data[0].productName);
@@ -174,7 +171,6 @@ function productValidation(event){
 
 //productImageModal
 function editImage(thisProductId,decryptedProductId){
-    console.log(thisProductId)
     $.ajax({
         url: "../components/productManagement.cfc?method=getSingleProduct",
         method: "POST",
@@ -184,7 +180,6 @@ function editImage(thisProductId,decryptedProductId){
         success: function(response){
             const serverData = JSON.parse(response);
             const data = serverData.product[0];
-            console.log(data);
             const imageIdArray = data.productImageId.split(',');
             const imagefileArray = data.imageFile.split(',');
             const defaultArray = data.defaultImage.split(',');
@@ -237,7 +232,6 @@ function setDefaultImage(productImageId,productId){
 }
 
 function deleteImage(productImageId,productId){
-    console.log(productImageId , productId)
     if(confirm("Delete! Are you sure?")){
         $.ajax({
             url: "../components/productManagement.cfc?method=deleteProductImage",

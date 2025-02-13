@@ -24,7 +24,6 @@ function userSignUpValidation(){
     const phoneNumber = $('#phoneNumber').val();
     const password = $('#password').val();
     const confirmPassword = $('#confirmPassword').val();
-    console.log(firstName,lastName,email,phoneNumber,password);
     let isValid = true;
     $('#firstName-error').text('');
     $('#lastName-error').text('');
@@ -112,32 +111,44 @@ function toggleCustomInput(selectElement, inputId) {
 }
 
 $('#filterBtn').on('click', function() {
-    let minPrice = $('#minPrice').val();
-    let maxPrice = $('#maxPrice').val();
-    let minPriceCustom = $('#minPriceCustom').val();
-    let maxPriceCustom = $('#maxPriceCustom').val();
-    console.log(`Min Price: ${minPrice === 'custom' ? minPriceCustom : minPrice}`);
-    console.log(`Max Price: ${maxPrice === 'custom' ? maxPriceCustom : maxPrice}`);
+    $('#minPrice').val();
+    $('#maxPrice').val();
+    $('#minPriceCustom').val();
+    $('#maxPriceCustom').val();
 });
 
 $(document).on("click", function(){
     $(".errorServerSide").hide();
 });
 
-function deleteAddress(addressId){
-    if(confirm("Remove! Are you sure?")){
-        $.ajax({
-            url: "../components/productManagement.cfc?method=deleteAddress",
-            method: "POST",
-            data: {
-                addressId : addressId
-            },
-            success: function() {
-                document.getElementById(addressId).remove();
-            }
-        })
-    }
+function deleteAddress(addressId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../components/productManagement.cfc?method=deleteAddress",
+                method: "POST",
+                data: { addressId: addressId},
+                success: function() {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your address has been deleted.",
+                        icon: "success"
+                    });
+                    document.getElementById(addressId).remove();
+                },
+            });
+        }
+    });
 }
+
 $('#searchOrder').on('input', function () {
     let searchValue = $(this).val().toLowerCase();
     $('.orderDetailsDiv').each(function () {
@@ -210,3 +221,10 @@ function addressValidate() {
 }
 $('.address-input').on('input', addressValidate);
 
+if($('#addressResult')){
+    Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `${$(this).attr("data-errorMsg")}!`
+    });
+}
