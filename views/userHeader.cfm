@@ -10,7 +10,6 @@
                 <input class="form-control me-2" name="searchKey" type="search" placeholder="Search for products..." aria-label="Search">
                 <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
             </form>
-
             <ul class="navbar-nav">
                 <li class="nav-item me-3">
                     <a class="nav-link" href="/views/userCart.cfm">
@@ -79,6 +78,4 @@
             </ul>
         </div>
     </nav>
-
-
 </cfoutput>

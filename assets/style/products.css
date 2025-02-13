@@ -103,6 +103,7 @@ select:focus {
 }
 .carousel-image{
     height: 15vh;
+    object-fit: contain;
 }
 .carousel-imageDiv{
     width: 9vw;

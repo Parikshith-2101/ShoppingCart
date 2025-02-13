@@ -99,7 +99,7 @@
                             <cfloop array="#getProductArray.product#" item="productItem">
                                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                 <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
-                                    <div class="product-card pb-0">
+                                    <div class="product-card pb-0 shadow-sm">
                                         <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                         <div class="card-body text-start">
                                             <h5 class="card-title text-truncate">#productItem.productName#</h5>
@@ -128,8 +128,8 @@
         </form>
         
     </main>
-    <footer class="mt-5 w-100">
-        
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" 
         integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>

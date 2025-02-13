@@ -70,25 +70,31 @@
         
                             <ul class="p-0 m-0 mt-3">
                                 <cfset getAddressArray = application.productManagementObj.getAddress()>
-                                <cfloop array="#getAddressArray.address#" item="addressItem">
-                                   <li class="card flex-row justify-content-between align-items-center p-3 my-3 shadow-sm" id="#addressItem.addressId#">
-                                        <div class="d-flex flex-column">
-                                            <h6 class="font-weight-bold mb-1">
-                                                #addressItem.firstName# #addressItem.lastName#
-                                            </h6>
-                                            <p class="mb-1">
-                                                #addressItem.addressLine1# #addressItem.addressLine2#, 
-                                                #addressItem.city#, #addressItem.state# - #addressItem.pincode#
-                                            </p>
-                                            <p class="mb-2 text-muted">
-                                                <strong>Phone:</strong> #addressItem.phone#
-                                            </p>
-                                        </div>
-                                        <button type="button" class="btn btn-danger p-2" onclick="deleteAddress('#addressItem.addressId#')">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </li>
-                                </cfloop>
+                                <cfif arrayLen(getAddressArray.address)>
+                                    <cfloop array="#getAddressArray.address#" item="addressItem">
+                                    <li class="card flex-row justify-content-between align-items-center p-3 my-3 shadow-sm" id="#addressItem.addressId#">
+                                            <div class="d-flex flex-column">
+                                                <h6 class="font-weight-bold mb-1">
+                                                    #addressItem.firstName# #addressItem.lastName#
+                                                </h6>
+                                                <p class="mb-1">
+                                                    #addressItem.addressLine1# #addressItem.addressLine2#, 
+                                                    #addressItem.city#, #addressItem.state# - #addressItem.pincode#
+                                                </p>
+                                                <p class="mb-2 text-muted">
+                                                    <strong>Phone:</strong> #addressItem.phone#
+                                                </p>
+                                            </div>
+                                            <button type="button" class="btn btn-danger p-2" onclick="deleteAddress('#addressItem.addressId#')">
+                                                <i class="fa fa-trash"></i> Delete
+                                            </button>
+                                        </li>
+                                    </cfloop>
+                                <cfelse>    
+                                    <div class="text-center">
+                                        <h4 class="text-muted">Add Address Here!</h4>
+                                    </div>
+                                </cfif>
                             </ul>
                         </div>
                     </div>
@@ -102,9 +108,9 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" name="userFirstName" class="form-control mb-2" placeholder="Enter firstName" value="#session.firstName#">
-                                <input type="text" name="userLastName" class="form-control mb-2" placeholder="Enter lastName" value="#session.lastName#">
-                                <input type="email" name="userEmail" class="form-control mb-2" placeholder="Enter email" value="#session.email#">
+                                <input type="text" name="userFirstName" class="form-control mb-2" placeholder="Enter firstName" value="#session.firstName#" required>
+                                <input type="text" name="userLastName" class="form-control mb-2" placeholder="Enter lastName" value="#session.lastName#" required>
+                                <input type="email" name="userEmail" class="form-control mb-2" placeholder="Enter email" value="#session.email#" required>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -173,8 +179,8 @@
         </main>
     </cfoutput>
 
-    <footer>
-
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
     </footer>
 
     <script src="../assets/script/bootstrap.min.js"></script>

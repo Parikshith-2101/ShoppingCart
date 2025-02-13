@@ -22,31 +22,40 @@
 
     <main>
         <div class="container products-container">
-            <div class="row g-4 mt-4">
+            <div class="row g-4">
                 <h3>Showing Results for '#form.searchKey#'</h3>
-                <cfloop array="#getProductArray.product#" item="productItem">
-                    <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
-                        <div class="product-card pb-0">
-                            <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">
-                            <div class="card-body text-start">
-                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                <p class="card-text text-muted small mb-1">
-                                    <strong>Brand:</strong> #productItem.brandName#
-                                </p>
-                                <p class="card-text product-desc text-muted small mb-1">
-                                    <strong>Description:</strong> #productItem.description#
-                                </p>
-                                <div class="fw-bold">Rs.#productItem.unitPrice#/-</div> 
+                <cfif arrayLen(getProductArray.product)>
+                    <cfloop array="#getProductArray.product#" item="productItem">
+                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                            <div class="product-card pb-0 shadow-sm">
+                                <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
+                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">
+                                <div class="card-body text-start">
+                                    <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                    <p class="card-text text-muted small mb-1">
+                                        <strong>Brand:</strong> #productItem.brandName#
+                                    </p>
+                                    <p class="card-text product-desc text-muted small mb-1">
+                                        <strong>Description:</strong> #productItem.description#
+                                    </p>
+                                    <div class="fw-bold">Rs.#productItem.unitPrice#/-</div> 
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </cfloop> 
+                        </a>
+                    </cfloop> 
+                <cfelse>
+                    <div class="w-100 text-center">
+                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25">
+                        <h4 class="mt-3 text-muted">Oops! No Products Found on '#form.searchKey#'</h4>
+                        <p class="text-muted">Sorry for your inconvenience. Let's find something amazing for you!</p>
+                        <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
+                    </div>
+                </cfif>
             </div>
         </div>
     </main>
-    <footer class="mt-5 w-100">
-        
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
     </footer>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>

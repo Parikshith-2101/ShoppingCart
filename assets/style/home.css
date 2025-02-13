@@ -22,7 +22,7 @@
 .product-card img {
     width: 100%;
     height: 150px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 8px;
 }
 .product-card:hover {
@@ -51,9 +51,7 @@
 .carousel-image{
     height: 360px;
 }
-main{
-    height: 115vh;
-}
+
 .product-desc{
     overflow: hidden;
     white-space: nowrap;

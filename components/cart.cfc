@@ -46,6 +46,7 @@
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldDefaultImage = 1
                 WHERE 
                     C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                    AND P.fldActive = 1
                     <cfif len(trim(local.decrytedProductId))>                        
                         AND C.fldProductId = <cfqueryparam value = "#local.decrytedProductId#" cfsqltype = "integer"> 
                     </cfif>

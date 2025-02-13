@@ -225,6 +225,6 @@ if($('#addressResult')){
     Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: `${$(this).attr("data-errorMsg")}!`
+        text: `${$('#addressResult').attr("data-errorMsg")}!`
     });
 }

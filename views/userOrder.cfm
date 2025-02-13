@@ -204,25 +204,32 @@
             </main>
         </form>
         <cfif structKeyExists(form, "placeOrderBtn")>
-            <cfset placeOrderResult = application.cartObj.placeOrder(
-                addressId = form.addressRadio,
-                cardNumber = form.cardNumber,
-                cvv = form.cvv,
-                totalPrice = form.totalPrice,
-                totalTax = form.totalTax,
-                productId = form.productId,
-                quantity = form.productQuantity,
-                unitPrice = form.unitPrice,
-                unitTax = form.unitTax
-            )>
-            <cfif placeOrderResult.error EQ false>
-                <div id="orderSuccessMessage"></div>
+            <cfif structKeyExists(form, "addressRadio")>
+                <cflocation url="userProfile.cfm" addToken="no">
+                <cfset placeOrderResult = application.cartObj.placeOrder(
+                    addressId = form.addressRadio,
+                    cardNumber = form.cardNumber,
+                    cvv = form.cvv,
+                    totalPrice = form.totalPrice,
+                    totalTax = form.totalTax,
+                    productId = form.productId,
+                    quantity = form.productQuantity,
+                    unitPrice = form.unitPrice,
+                    unitTax = form.unitTax
+                )>
+                <cfif placeOrderResult.error EQ false>
+                    <div id="orderSuccessMessage"></div>
+                <cfelse>
+                    <div id="orderErrorMessage" data-errorMessage="#placeOrderResult.message#"></div>
+                </cfif>
             <cfelse>
-                <div id="orderErrorMessage" data-errorMessage="#placeOrderResult.message#"></div>
+                <cflocation url="userProfile.cfm" addToken="no">
             </cfif>
         </cfif>
     </cfoutput>
-    <footer class="mt-5 w-100"></footer>
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
+    </footer>
     
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>

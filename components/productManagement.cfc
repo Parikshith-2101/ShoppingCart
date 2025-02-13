@@ -217,6 +217,7 @@
                     tblsubcategory SC INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     SC.fldActive = 1
+                    AND C.fldActive = 1
                     <cfif len(trim(local.decryptedCategoryId))>
                         AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                     </cfif>
@@ -436,6 +437,8 @@
                     INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     P.fldActive = 1
+                    AND SC.fldActive = 1
+                    AND C.fldActive = 1
                     AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     <cfif structKeyExists(arguments, "productImageId")>
                         AND PI.fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
@@ -528,6 +531,8 @@
                 INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     P.fldActive = 1
+                    AND SC.fldActive = 1
+                    AND C.fldActive = 1
                     <cfif len(trim(local.decryptedSubCategoryId))>
                         AND P.fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>

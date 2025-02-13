@@ -19,7 +19,7 @@
             <div class="container products-container">  
                 <cfif arrayLen(getSubCategoryArray.subCategory)>               
                     <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
-                        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId)>
+                        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId, limit = 4)>
                         <cfif arraylen(getProductArray.product)>
                             <div class="row g-4 mt-3">
                                 <a class="h3 text-decoration-none text-dark" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
@@ -28,7 +28,7 @@
                                 <cfloop array="#getProductArray.product#" item="productItem">
                                     <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                     <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
-                                        <div class="product-card pb-0">
+                                        <div class="product-card pb-0 shadow-sm">
                                             <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                             <div class="card-body text-start">
                                                 <h5 class="card-title text-truncate">#productItem.productName#</h5>
@@ -57,8 +57,8 @@
             </div>
         </cfoutput>
     </main>
-    <footer class="mt-5 w-100">
-        
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
     </footer>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>

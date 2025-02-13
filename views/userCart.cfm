@@ -120,6 +120,9 @@
             </div>
         </cfoutput>
     </main>
+    <footer class="mt-5 w-100 bg-dark text-white py-4">
+        <cfinclude template="/views/userFooter.cfm">
+    </footer>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/user.js"></script>
