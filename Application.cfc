@@ -18,7 +18,6 @@
             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfset onApplicationStart()>
             </cfif>
-            <cfset onApplicationStart()>
         </cfif>
         <cfreturn true>
     </cffunction>
@@ -65,6 +64,7 @@
                 <h3>#arguments.targetPage# could not be found.</h3>
                 <p>You requested a non-existent ColdFusion page.<br>
                 Please check the URL.</p>
+                <a href="userHome.cfm">Click here to go to Home Page<a>
             </cfoutput>
             <cfreturn true>
             <cfcatch>
