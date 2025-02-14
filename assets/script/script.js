@@ -266,7 +266,7 @@ function deleteSubCategory(subCategoryId,categoryId){
                     categoryId : categoryId
                 },
                 success: function() {
-                    document.getElementById(`${subCategoryId}`).remove();
+                    document.getElementById(subCategoryId).remove();
                     Swal.fire({
                         title: "Deleted!",
                         text: "SubCategory has been deleted.",

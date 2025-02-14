@@ -24,12 +24,6 @@
             <div class="main-container d-flex">
                 <cfif arrayLen(getCartArray.cart)>     
                     <div class="container-left">
-                        <div class="card-head d-flex">
-                            <div class="headDiv d-flex">
-                                <p class="m-0">From Saved Addresses</p>
-                                <button>Enter Delivery Pincode</button>
-                            </div>
-                        </div>
                         <cfset totalAmount = 0>
                         <cfset totalPrice = 0>
                         <cfset totalTax = 0>
@@ -44,9 +38,8 @@
                                         <p class="product-name">#cartItem.productName#</p>
                                         <div class="price-tag fs-7 d-flex align-items-center">
                                             Actual Price :  
-                                            <i class="fa-solid fa-indian-rupee-sign mx-1"></i>
-                                            #cartItem.unitPrice#
-                                            <span class="green mx-auto">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#cartItem.unitTax#</span>
+                                            <i class="fa-solid fa-indian-rupee-sign mx-1"></i>#numberFormat(cartItem.unitPrice, "99,999.00")#
+                                            <span class="green mx-auto">Tax : <i class="fa-solid fa-indian-rupee-sign me-1"></i>#numberFormat(cartItem.unitTax, "99,999.00")#</span>
                                         </div>
                                         <div class="price-tag fs-5 mt-auto fw-bold">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
