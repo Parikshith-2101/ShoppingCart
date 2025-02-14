@@ -20,8 +20,9 @@
                 <div class="container products-container">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h4 id="search-for" class="m-0 text-secondary"></h4>
-                        <input type="search" id="searchOrder" class="form-control w-25 shadow-sm border-2" placeholder="Search orders...">
+                        <input type="search" id="searchOrder" class="form-control w-25 ms-auto shadow-sm border-2" placeholder="Search orders...">
                     </div>
+                    <h4 id="noOrdersFound" class="text-danger">No orders found</h4>
                     <cfloop array="#orderDetails.order#" item="orderItem">
                         <div class="card p-4 mb-4 shadow-sm border-2 orderDetailsDiv" id="#orderItem.orderId#">
                             <h4 class="mb-3">Order Summary</h4>
@@ -37,7 +38,7 @@
                                             <img src="../uploads/products/product#orderItem.productId[i]#/#orderItem.productImage[i]#" alt="Product" class="rounded me-3" width="50" height="50">
                                             <div>
                                                 <h6 class="mb-1">#orderItem.productName[i]#</h6>
-                                                <p class="mb-0 text-muted">Qty: #orderItem.quantity[i]# | Price: ₹#orderItem.unitPrice[i]# | Tax: ₹#orderItem.unitTax[i]#</p>
+                                                <p class="mb-0 text-muted">Qty: #orderItem.quantity[i]# | Price: ₹#numberFormat(orderItem.unitPrice[i], "99,999.00")# | Tax: ₹#numberFormat(orderItem.unitTax[i], "99,999.00")#</p>
                                             </div>
                                         </div>
                                         <span class="text-dark fw-bold">₹#numberFormat((orderItem.unitPrice[i] + orderItem.unitTax[i]) * orderItem.quantity[i], "99,999.00")#</span>
@@ -76,11 +77,6 @@
             </main>
         </form>
     </cfoutput>
-    <footer class="mt-5 w-100 bg-dark text-white py-4">
-        <cfinclude template="/views/userFooter.cfm">
-    </footer>
-    <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/jquery-3.7.1.min.js"></script>
-    <script src="../assets/script/user.js"></script>
+    <cfinclude template="/views/userFooter.cfm">
 </body>
 </html>

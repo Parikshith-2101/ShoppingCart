@@ -125,7 +125,7 @@ select:focus {
 }
 .product-card img {
     height: 200px;
-    object-fit: cover;
+    object-fit: contain;
 }
 .category-title {
     font-size: 1.5rem;

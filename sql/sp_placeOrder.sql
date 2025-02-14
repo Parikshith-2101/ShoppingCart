@@ -8,25 +8,63 @@ CREATE DEFINER=`parikshith`@`%` PROCEDURE `sp_placeOrder`(
 	IN productId INT
 )
 BEGIN
-	INSERT INTO tblorder(fldOrder_Id,fldUserId,fldAddressId,fldCardNumber,fldTotalPrice,fldTotalTax)
-    VALUES(orderId,userId,addressId,cardNumber,totalPrice,totalTax);
+	INSERT INTO tblorder(
+        fldOrder_Id,
+        fldUserId,
+        fldAddressId,
+        fldCardNumber,
+        fldTotalPrice,
+        fldTotalTax
+        ) VALUES(
+        orderId,
+        userId,
+        addressId,
+        cardNumber,
+        totalPrice,
+        totalTax
+    );
     
     IF productId = 0 THEN	
-        INSERT INTO tblorderitems(fldOrderId, fldProductId, fldQuantity, fldUnitPrice, fldUnitTax)
-        SELECT orderId, c.fldProductId, c.fldQuantity, p.fldUnitPrice, p.fldUnitTax 
-        FROM tblcart c 
+        INSERT INTO tblorderitems(
+            fldOrderId,
+            fldProductId,
+            fldQuantity,
+            fldUnitPrice,
+            fldUnitTax
+        )
+        SELECT 
+            orderId,
+            c.fldProductId,
+            c.fldQuantity,
+            p.fldUnitPrice,
+            p.fldUnitTax 
+        FROM 
+            tblcart c 
         INNER JOIN tblproduct p ON p.fldProduct_Id = c.fldProductId
-        WHERE c.fldUserId = userId;
-        
-        DELETE FROM tblcart WHERE fldUserId = userId;
+        WHERE c.fldUserId = userId;    
+        DELETE FROM tblcart 
+        WHERE fldUserId = userId;
     ELSE
-        INSERT INTO tblorderitems(fldOrderId, fldProductId, fldQuantity, fldUnitPrice, fldUnitTax)
-        SELECT orderId, c.fldProductId, c.fldQuantity, p.fldUnitPrice, p.fldUnitTax 
-        FROM tblcart c
+        INSERT INTO tblorderitems(
+            fldOrderId,
+            fldProductId,
+            fldQuantity,
+            fldUnitPrice,
+            fldUnitTax
+        )
+        SELECT 
+            orderId,
+            c.fldProductId,
+            c.fldQuantity,
+            p.fldUnitPrice,
+            p.fldUnitTax 
+        FROM 
+            tblcart c
         INNER JOIN tblproduct p ON p.fldProduct_Id = c.fldProductId
         WHERE c.fldProductId = productId
-        AND c.fldUserId = userId;
-        
-        DELETE FROM tblcart WHERE fldUserId = userId AND fldProductId = productId;
+            AND c.fldUserId = userId;
+        DELETE FROM tblcart 
+        WHERE fldUserId = userId 
+            AND fldProductId = productId;
     END IF;
 END

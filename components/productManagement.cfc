@@ -864,6 +864,7 @@
         <cfargument name = "firstName" required = true type = "string">
         <cfargument name = "lastName" required = true type = "string">
         <cfargument name = "email" required = true type = "string">
+        <cfargument name = "phone" required = true type = "string">
         <cfset local.result = {
             'error' : false,
             'message' : ""
@@ -882,13 +883,15 @@
                     SET
                         fldFirstName = <cfqueryparam value = "#arguments.firstName#" cfsqltype = "varchar">,
                         fldLastName = <cfqueryparam value = "#arguments.lastName#" cfsqltype = "varchar">,
-                        fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">
+                        fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">,
+                        fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "varchar">
                     WHERE
                         fldUser_Id = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                 </cfquery>
                 <cfset session.firstName = arguments.firstName>
                 <cfset session.lastName = arguments.lastName>
                 <cfset session.email = arguments.email>
+                <cfset session.phone = arguments.phone>
                 <cfset local.result['error'] = false>
                 <cfset local.result['message'] = "User Details Edited Successfully">
             </cfif>

@@ -22,16 +22,20 @@
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="1"></li>
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="2"></li>
+                        <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="3"></li>
                     </ol>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
+                        <div class="carousel-item active" data-bs-interval="2000">
                             <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner1.jpg" alt="First slide">
                         </div>
-                        <div class="carousel-item">
-                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner2.jpg" alt="Second slide">
+                        <div class="carousel-item" data-bs-interval="2000">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner3.webp" alt="Second slide">
                         </div>
-                        <div class="carousel-item">
-                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner3.webp" alt="Third slide">
+                        <div class="carousel-item" data-bs-interval="2000">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner2.jpg" alt="Third slide">
+                        </div>
+                        <div class="carousel-item" data-bs-interval="2000">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner4.webp" alt="fourth slide">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="##carouselExampleIndicators" role="button" data-bs-slide="prev">
@@ -67,11 +71,6 @@
             </div>
         </cfoutput>
     </main>
-    <footer class="mt-5 w-100 bg-dark text-white py-4">
-        <cfinclude template="/views/userFooter.cfm">
-    </footer>
-    <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/jquery-3.7.1.min.js"></script>
-    <script src="../assets/script/user.js"></script>
+    <cfinclude template="/views/userFooter.cfm">
 </body>
 </html>

@@ -87,13 +87,13 @@
                                                                 <input type="text" id="quantity#cartItem.productId#" name="productQuantity" value="#cartItem.quantity#" class="w-25 text-center border-0">
                                                                 <button type="button" class="btn p-0 px-2 border-secondary" onclick="modifyQuantity('#cartItem.productId#','add')">+</button>
                                                             </div>
-                                                            <p class="my-1 text-muted">Price: ₹#cartItem.unitPrice#</p>
+                                                            <p class="my-1 text-muted">Price: ₹#numberFormat(cartItem.unitPrice, "99,999.00")#</p>
                                                             <input type="hidden" name="unitPrice" value="#cartItem.unitPrice#">
-                                                            <p class="mb-0 text-muted">Tax: ₹#cartItem.unitTax#</p>
-                                                            <input type="hidden" name="unitTax" value="#cartItem.unitTax#">
+                                                            <p class="mb-0 text-muted">Tax: ₹#numberFormat(cartItem.unitTax, "99,999.00")#</p>
+                                                            <input type="hidden" name="unitTax" value="#numberFormat(cartItem.unitTax)#">
                                                         </div>
                                                     </div>
-                                                    <div class="fw-bold">₹ <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "0.00")#</span></div>
+                                                    <div class="fw-bold">₹ <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "99,999.00")#</span></div>
                                                 </li>
                                                 <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>
                                                 <cfset totalTax += (cartItem.unitTax * cartItem.quantity)>
@@ -173,7 +173,7 @@
                                         <p class="price">Price</p>
                                         <p class="number">
                                             <i class="fa-solid fa-indian-rupee-sign"></i> 
-                                            <span class="totalPriceDiv">#numberFormat(totalPrice, "0.00")#</span>
+                                            <span class="totalPriceDiv">#numberFormat(totalPrice, "99,999.00")#</span>
                                         </p>
                                     </div>
                                     <div class="checkout">
@@ -181,7 +181,7 @@
                                         <p class="number">
                                             <span class="green">
                                                 <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                <span class="totalTaxDiv">#numberFormat(totalTax, "0.00")#</span>
+                                                <span class="totalTaxDiv">#numberFormat(totalTax, "99,999.00")#</span>
                                             </span>
                                         </p>
                                     </div>
@@ -189,7 +189,7 @@
                                         <p class="bold">Total Amount</p>
                                         <p class="number">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                                            <span class="totalAmountDiv">#numberFormat(totalAmount, "0.00")#</span>
+                                            <span class="totalAmountDiv">#numberFormat(totalAmount, "99,999.00")#</span>
                                         </p>
                                     </div>
                                 </div>
@@ -205,7 +205,6 @@
         </form>
         <cfif structKeyExists(form, "placeOrderBtn")>
             <cfif structKeyExists(form, "addressRadio")>
-                <cflocation url="userProfile.cfm" addToken="no">
                 <cfset placeOrderResult = application.cartObj.placeOrder(
                     addressId = form.addressRadio,
                     cardNumber = form.cardNumber,
@@ -227,14 +226,7 @@
             </cfif>
         </cfif>
     </cfoutput>
-    <footer class="mt-5 w-100 bg-dark text-white py-4">
-        <cfinclude template="/views/userFooter.cfm">
-    </footer>
-    
-    <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/jquery-3.7.1.min.js"></script>
-    <script src="../assets/script/user.js"></script>
+    <cfinclude template="/views/userFooter.cfm">
     <script src="../assets/script/userProducts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

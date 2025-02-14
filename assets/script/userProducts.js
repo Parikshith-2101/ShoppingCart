@@ -111,7 +111,7 @@ function modifyQuantity(productId,modifyStatus){
 $(document).ready(function () {
     if ($("#orderSuccessMessage").length) {
         Swal.fire({
-            title: "Good job!",
+            title: "Order Confirmed!",
             text: "You order placed successfully!",
             icon: "success",
             showConfirmButton: false,

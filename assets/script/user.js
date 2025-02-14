@@ -4,7 +4,7 @@ function userLogin () {
     let isValid = true;
     $('#userName-error').text('');
     $('#password-error').text('');
-    $('#resultMsg').text('');
+    $('.resultMsg').text('');
 
     if (!userName) {
         $('#userName-error').text('Username is required.');
@@ -77,17 +77,49 @@ function userSignUpValidation(){
     }
     return isValid;
 }
+
+if ($('#signUpSuccess').length) {
+    Swal.fire({
+        title: "Success!",
+        text: "Sign-up successful. Redirecting to login page...",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false
+    }).then(() => {
+        window.location.href = "userLogin.cfm";
+    });
+}
+
 $('#logoutBtn').click(function(){
-    if (confirm("Logout! Are you sure?")) {
-        $.ajax({
-            url: "../components/userLogin.cfc?method=logout",
-            method: "POST",
-            success: function () {
-                window.location.reload();
-            }
-        });
-    }
+    Swal.fire({
+        title: "Logout!",
+        text: "Are you sure you want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Logout!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../components/userLogin.cfc?method=logout",
+                method: "POST",
+                success: function () {
+                    Swal.fire({
+                        title: "Logged Out!",
+                        text: "You have been logged out successfully.",
+                        icon: "success",
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                }
+            });
+        }
+    });
 });
+
 $('#eyeIcon').click(function () {
     let passfield = $('#password');
     if (passfield.attr("type") === "password") {
@@ -149,17 +181,25 @@ function deleteAddress(addressId) {
     });
 }
 
+$('#noOrdersFound').hide();
 $('#searchOrder').on('input', function () {
     let searchValue = $(this).val().toLowerCase();
+    let anyVisible = false;
+    $('#search-for').text(`Search results for "${searchValue}"`).show();
     $('.orderDetailsDiv').each(function () {
         let orderId = $(this).attr('id').toLowerCase();
-        if (orderId.includes(searchValue)) {
+        if(orderId.includes(searchValue)) {
             $(this).show();
-            $('#search-for').text(`Search results for "${searchValue}"`);
-        } else {
+            anyVisible = true;
+        }else {
             $(this).hide();
         }
     });
+    if(anyVisible) {
+        $('#noOrdersFound').hide();
+    } else {
+        $('#noOrdersFound').show();
+    }
 });
 
 function toggleView() {

@@ -75,14 +75,9 @@
                                     password = form.password
                                 )>
                                 <cfif userSignUpResult.error EQ false>
-                                    <div id="resultMsg" class="fw-bold text-success">#userSignUpResult.message#</div>
-                                    <script type = "text/javascript">
-                                        setTimeout(function() {
-                                            window.location.href = "userLogin.cfm";
-                                        }, 1200); 
-                                    </script>
+                                    <div id="signUpSuccess" class="fw-bold text-success resultMsg">#userSignUpResult.message#</div>
                                 <cfelse>
-                                    <div id="resultMsg" class="fw-bold text-danger">#userSignUpResult.message#</div>
+                                    <div id="resultMsg" class="fw-bold text-danger resultMsg">#userSignUpResult.message#</div>
                                     Click here to<a href="userLogin.cfm">LOGIN</a>
                                 </cfif>
                             </cfif>

@@ -1,16 +1,35 @@
 $(document).ready(function () {
     // Logout
     $('#logoutCategory').on('click', function () {
-        if (confirm("Logout! Are you sure?")) {
-            $.ajax({
-                url: "../components/userLogin.cfc?method=logout",
-                method: "POST",
-                success: function () {
-                    window.location.reload();
-                }
-            });
-        }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You will be logged out.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, logout!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../components/userLogin.cfc?method=logout",
+                    method: "POST",
+                    success: function () {
+                        Swal.fire({
+                            title: "Logged Out!",
+                            text: "You have been logged out successfully.",
+                            icon: "success",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                });
+            }
+        });
     });
+
     //productModal
     $('#addProductBtn').on('click', function(){
         const searchParams = new URLSearchParams(window.location.search);
@@ -90,20 +109,37 @@ function editProduct(productId,subCategoryId,categoryId){
 }
 
 //delete Product
-function deleteProduct(productId,subCategoryId){
-    if(confirm("Delete! Are you sure?")){
-        $.ajax({
-            url: "../components/productManagement.cfc?method=deleteProduct",
-            method: "POST",
-            data: {
-                subCategoryId : subCategoryId,
-                productId : productId
-            },
-            success: function() {
-                document.getElementById(`${productId}`).remove();
-            }
-        });
-    }     
+function deleteProduct(productId, subCategoryId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../components/productManagement.cfc?method=deleteProduct",
+                method: "POST",
+                data: {
+                    subCategoryId: subCategoryId,
+                    productId: productId
+                },
+                success: function () {
+                    document.getElementById(productId).remove();
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your product has been deleted.",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    });
 }
 
 $(document).on("click", function(){
@@ -224,25 +260,39 @@ function setDefaultImage(productImageId,productId){
         data: {
             productImageId : productImageId,
             productId : productId
-        },
-        success: function(){
-            
         }
     });
 }
 
-function deleteImage(productImageId,productId){
-    if(confirm("Delete! Are you sure?")){
-        $.ajax({
-            url: "../components/productManagement.cfc?method=deleteProductImage",
-            method: "POST",
-            data: {
-                productImageId : productImageId,
-                productId : productId
-            },
-            success: function() {
-                $('#' + productImageId).remove();
-            }
-        });
-    } 
+function deleteImage(productImageId, productId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This image will be permanently deleted!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../components/productManagement.cfc?method=deleteProductImage",
+                method: "POST",
+                data: {
+                    productImageId: productImageId,
+                    productId: productId
+                },
+                success: function () {
+                    $('#' + productImageId).remove();
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "The image has been removed.",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        }
+    });
 }

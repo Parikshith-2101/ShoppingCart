@@ -71,6 +71,7 @@
                     <cfset session.email = local.getUser.user[1].email>
                     <cfset session.firstName = local.getUser.user[1].firstName>
                     <cfset session.lastName = local.getUser.user[1].lastName>
+                    <cfset session.phone = local.getUser.user[1].phone>
                     <cfset session.roleId = local.getUser.user[1].roleId>
                     <cfset local.result['message'] = "Login Successful">
                     <cfset local.result['error'] = false>

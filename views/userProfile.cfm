@@ -23,7 +23,8 @@
                                 <cfset editUserResult = application.productManagementObj.editUser(
                                     firstName = form.userFirstName,
                                     lastName = form.userLastName,
-                                    email = form.userEmail
+                                    email = form.userEmail,
+                                    phone = form.userPhone
                                 )>
                                 <div class="errorServerSide">
                                     <cfif editUserResult.error EQ true>
@@ -108,9 +109,12 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <input type="text" name="userFirstName" class="form-control mb-2" placeholder="Enter firstName" value="#session.firstName#" required>
-                                <input type="text" name="userLastName" class="form-control mb-2" placeholder="Enter lastName" value="#session.lastName#" required>
+                                <div class="d-flex">
+                                    <input type="text" name="userFirstName" class="form-control mb-2" placeholder="Enter firstName" value="#session.firstName#" required>
+                                    <input type="text" name="userLastName" class="form-control mb-2 ms-2" placeholder="Enter lastName" value="#session.lastName#" required>
+                                </div>
                                 <input type="email" name="userEmail" class="form-control mb-2" placeholder="Enter email" value="#session.email#" required>
+                                <input type="tel" name="userPhone" class="form-control mb-2" placeholder="Enter email" value="#session.phone#" required oninput="this.value = this.value.replace(/[^0-9][+]/g, '')" maxlength="10">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -179,13 +183,6 @@
         </main>
     </cfoutput>
 
-    <footer class="mt-5 w-100 bg-dark text-white py-4">
-        <cfinclude template="/views/userFooter.cfm">
-    </footer>
-
-    <script src="../assets/script/bootstrap.min.js"></script>
-    <script src="../assets/script/jquery-3.7.1.min.js"></script>
-    <script src="../assets/script/user.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <cfinclude template="/views/userFooter.cfm">
 </body>
 </html>
