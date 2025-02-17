@@ -70,6 +70,10 @@
                             </div>
         
                             <ul class="p-0 m-0 mt-3">
+                                <cfset sweetAlertId = "">
+                                <cfif structKeyExists(url, "error") AND url.error EQ true>
+                                    <cfset sweetAlertId = "activateSweetAlert">
+                                </cfif>
                                 <cfset getAddressArray = application.productManagementObj.getAddress()>
                                 <cfif arrayLen(getAddressArray.address)>
                                     <cfloop array="#getAddressArray.address#" item="addressItem">
@@ -93,7 +97,7 @@
                                     </cfloop>
                                 <cfelse>    
                                     <div class="text-center">
-                                        <h4 class="text-muted">Add Address Here!</h4>
+                                        <h4 class="text-muted" id="#sweetAlertId#">Add Address Here!</h4>
                                     </div>
                                 </cfif>
                             </ul>

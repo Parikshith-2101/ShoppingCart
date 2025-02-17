@@ -87,13 +87,13 @@
                                                                 <input type="text" id="quantity#cartItem.productId#" name="productQuantity" value="#cartItem.quantity#" class="w-25 text-center border-0">
                                                                 <button type="button" class="btn p-0 px-2 border-secondary" onclick="modifyQuantity('#cartItem.productId#','add')">+</button>
                                                             </div>
-                                                            <p class="my-1 text-muted">Price: ₹#numberFormat(cartItem.unitPrice, "99,999.00")#</p>
+                                                            <p class="my-1 text-muted">Price: ₹#numberFormat(cartItem.unitPrice, "9,999.00")#</p>
                                                             <input type="hidden" name="unitPrice" value="#cartItem.unitPrice#">
-                                                            <p class="mb-0 text-muted">Tax: ₹#numberFormat(cartItem.unitTax, "99,999.00")#</p>
+                                                            <p class="mb-0 text-muted">Tax: ₹#numberFormat(cartItem.unitTax, "9,999.00")#</p>
                                                             <input type="hidden" name="unitTax" value="#numberFormat(cartItem.unitTax)#">
                                                         </div>
                                                     </div>
-                                                    <div class="fw-bold">₹ <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "99,999.00")#</span></div>
+                                                    <div class="fw-bold">₹ <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "9,999.00")#</span></div>
                                                 </li>
                                                 <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>
                                                 <cfset totalTax += (cartItem.unitTax * cartItem.quantity)>
@@ -162,7 +162,7 @@
                             </div>
 
                             <div class="card-order">
-                                <div class="button"><button type="submit" name="placeOrderBtn" class="btn btn-success w-100 placeOrderBtn" disabled>✅ Place Order</button></div>
+                                <div class="button"><button type="submit" name="placeOrderBtn" id="placeOrderBtn" class="btn btn-success w-100 placeOrderBtn" disabled>✅ Place Order</button></div>
                             </div>
                         </div>
                         <div class="container-right">
@@ -173,7 +173,7 @@
                                         <p class="price">Price</p>
                                         <p class="number">
                                             <i class="fa-solid fa-indian-rupee-sign"></i> 
-                                            <span class="totalPriceDiv">#numberFormat(totalPrice, "99,999.00")#</span>
+                                            <span class="totalPriceDiv">#numberFormat(totalPrice, "9,999.00")#</span>
                                         </p>
                                     </div>
                                     <div class="checkout">
@@ -181,7 +181,7 @@
                                         <p class="number">
                                             <span class="green">
                                                 <i class="fa-solid fa-indian-rupee-sign"></i>
-                                                <span class="totalTaxDiv">#numberFormat(totalTax, "99,999.00")#</span>
+                                                <span class="totalTaxDiv">#numberFormat(totalTax, "9,999.00")#</span>
                                             </span>
                                         </p>
                                     </div>
@@ -189,7 +189,7 @@
                                         <p class="bold">Total Amount</p>
                                         <p class="number">
                                             <i class="fa-solid fa-indian-rupee-sign"></i>
-                                            <span class="totalAmountDiv">#numberFormat(totalAmount, "99,999.00")#</span>
+                                            <span class="totalAmountDiv">#numberFormat(totalAmount, "9,999.00")#</span>
                                         </p>
                                     </div>
                                 </div>
@@ -222,7 +222,7 @@
                     <div id="orderErrorMessage" data-errorMessage="#placeOrderResult.message#"></div>
                 </cfif>
             <cfelse>
-                <cflocation url="userProfile.cfm" addToken="no">
+                <cflocation url="userProfile.cfm?error=true" addToken="no">
             </cfif>
         </cfif>
     </cfoutput>

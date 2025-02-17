@@ -56,18 +56,24 @@
                             )>
                             <cfif loginResult.error EQ false>
                                 <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
-                                <cfif session.roleId EQ 1>
-                                    <cflocation  url = "categories.cfm" addToken = "no">
-                                <cfelse>
-                                    <cfif structKeyExists(url, "productId")>    
+                                <cfif (ListLast(CGI.SCRIPT_NAME,'/') EQ "userCart.cfm") OR structKeyExists(url, "productId")>
+                                    <cfif structKeyExists(url, "productId")>
                                         <cfset addToCartResult = application.cartObj.manageCart(
                                             productId = url.productId,
                                             modifyStatus = "add"
                                         )>
+                                    </cfif>
+                                    <cfif (ListLast(CGI.SCRIPT_NAME,'/') EQ "userOrder.cfm") AND structKeyExists(url, "productId")>
+                                        <cflocation url = "userOrder.cfm?productId=#urlEncodedFormat(url.productId)#" addToken = "no">
+                                    <cfelse>
                                         <cflocation url = "userCart.cfm" addToken = "no">
+                                    </cfif>
+                                <cfelse>
+                                    <cfif session.roleId EQ 1>
+                                        <cflocation url = "categories.cfm" addToken = "no">
                                     <cfelse>
                                         <cflocation url = "userHome.cfm" addToken = "no">
-                                    </cfif> 
+                                    </cfif>
                                 </cfif>
                             <cfelse>
                                 <div id="resultMsg" class="text-danger">

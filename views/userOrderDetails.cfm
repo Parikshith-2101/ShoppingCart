@@ -38,10 +38,10 @@
                                             <img src="../uploads/products/product#orderItem.productId[i]#/#orderItem.productImage[i]#" alt="Product" class="rounded me-3" width="50" height="50">
                                             <div>
                                                 <h6 class="mb-1">#orderItem.productName[i]#</h6>
-                                                <p class="mb-0 text-muted">Qty: #orderItem.quantity[i]# | Price: ₹#numberFormat(orderItem.unitPrice[i], "99,999.00")# | Tax: ₹#numberFormat(orderItem.unitTax[i], "99,999.00")#</p>
+                                                <p class="mb-0 text-muted">Qty: #orderItem.quantity[i]# | Price: ₹#numberFormat(orderItem.unitPrice[i], "9,999.00")# | Tax: ₹#numberFormat(orderItem.unitTax[i], "9,999.00")#</p>
                                             </div>
                                         </div>
-                                        <span class="text-dark fw-bold">₹#numberFormat((orderItem.unitPrice[i] + orderItem.unitTax[i]) * orderItem.quantity[i], "99,999.00")#</span>
+                                        <span class="text-dark fw-bold">₹#numberFormat((orderItem.unitPrice[i] + orderItem.unitTax[i]) * orderItem.quantity[i], "9,999.00")#</span>
                                     </li>
                                 </cfloop>
                             </ul>
@@ -49,16 +49,16 @@
                                 <div>                              
                                     <div class="d-flex">
                                         <p class="mb-1 me-1">Total Price :</p>
-                                        <p class="mb-1">₹#numberFormat(orderItem.totalPrice, "99,999.00")#</p>
+                                        <p class="mb-1">₹#numberFormat(orderItem.totalPrice, "9,999.00")#</p>
                                     </div>
                                     <div class="d-flex">
                                         <p class="mb-1 me-1">Total Tax :</p>
-                                        <p class="mb-1">₹#numberFormat(orderItem.totalTax, "99,999.00")#</p>
+                                        <p class="mb-1">₹#numberFormat(orderItem.totalTax, "9,999.00")#</p>
                                     </div>
                                 </div>
                                 <div class="d-flex fw-bold mt-2">
                                     <h5 class="mb-1 me-1">Total :</h5>
-                                    <h5 class="mb-1 text-success">₹#numberFormat(orderItem.totalTax + orderItem.totalPrice, "99,999.00")#</h5>
+                                    <h5 class="mb-1 text-success">₹#numberFormat(orderItem.totalTax + orderItem.totalPrice, "9,999.00")#</h5>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 align-items-center">

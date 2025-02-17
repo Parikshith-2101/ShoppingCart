@@ -112,7 +112,7 @@ $('#logoutBtn').click(function(){
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.reload();
+                        window.location.href = "userHome.cfm";
                     });
                 }
             });
@@ -261,10 +261,18 @@ function addressValidate() {
 }
 $('.address-input').on('input', addressValidate);
 
-if($('#addressResult')){
+if($('#addressResult').length){
     Swal.fire({
         icon: "error",
         title: "Oops...",
         text: `${$('#addressResult').attr("data-errorMsg")}!`
+    });
+}
+
+if ($('#activateSweetAlert').length) {
+    Swal.fire({
+        title: "Address Details Not Provided!",
+        text: "Please add your address to place the order.",
+        icon: "warning"
     });
 }

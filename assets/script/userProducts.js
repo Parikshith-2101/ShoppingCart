@@ -132,10 +132,8 @@ $(document).ready(function () {
         const cardNumber = $('#cardNumber').val().replace(/\s+/g, '');
         const expiryDate = $('#expiryDate').val();
         const cvv = $('#cvv').val();
-    
         let isValid = true;
         $('.error-message').remove();
-
         if (!cardName || cardName.length < 4) {
             isValid = false;
             $('#cardName').parent().append('<div class="error-message text-danger">Please enter a valid cardholder name (letters only).</div>');
@@ -144,20 +142,41 @@ $(document).ready(function () {
             isValid = false;
             $('#cardNumber').parent().append('<div class="error-message text-danger">Please enter a valid card number (12 digits).</div>');
         }
- 
         if (!expiryDate) {
             isValid = false;
             $('#expiryDateDiv').append('<div class="error-message text-danger">Please enter a valid expiry date (MM/YY format).</div>');
         }
-    
         if (!cvv || cvv.length < 3) {
             isValid = false;
             $('#cvvDiv').append('<div class="error-message text-danger">Please enter a valid CVV (3-4 digits).</div>');
         }
-    
         if (isValid) {
-            $('.placeOrderBtn').prop("disabled", false);
-            $('#confirmPaymentDiv').hide();
+            if (cardNumber === "111111111111" && cvv === "111") {
+                Swal.fire({
+                    title: "Verified!",
+                    icon: "success" ,
+                    showDenyButton: true,
+                    confirmButtonText: "✅ Confirm Place Order",
+                    denyButtonText: `❌ Cancel`
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#placeOrderBtn').prop("disabled", false);
+                        $('#placeOrderBtn').click();
+                    } else {
+                        Swal.fire({
+                            title: "Order Not Placed",
+                            text: "You cancelled the order placement",
+                            icon: "info"
+                        });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Invalid card details!"
+                });
+            }
         }
     });
 });

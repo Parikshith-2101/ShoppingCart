@@ -22,7 +22,7 @@ $(document).ready(function () {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
-                            window.location.reload();
+                            window.location.href = "userLogin.cfm";
                         });
                     }
                 });
@@ -86,23 +86,24 @@ function editProduct(productId,subCategoryId,categoryId){
     $('#productTax-error').text('');
     $('#productImage-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=getProduct",
+        url: "../components/productManagement.cfc?method=getSingleProduct",
         method: "POST",
         data:{
-            subCategoryId : subCategoryId,
             productId : productId
         },
         success: function(product){
             const serverData = JSON.parse(product);
-            const data = serverData.product;
+            const data = serverData.product[0];
+            console.log(data);
+            
             $('#categoryDropdown').val(categoryId);
             $('#subCategoryDropdown').val(subCategoryId);
-            $('#productName').val(data[0].productName);
-            $('#productBrand').val(data[0].brandId);
-            $('#productDesc').val(data[0].description);
-            $('#productPrice').val(data[0].unitPrice);
-            $('#productTax').val(data[0].unitTax);
-            $('#productIdHolder').val(data[0].productId);
+            $('#productName').val(data.productName);
+            $('#productBrand').val(data.brandId);
+            $('#productDesc').val(data.description);
+            $('#productPrice').val(data.unitPrice);
+            $('#productTax').val(data.unitTax);
+            $('#productIdHolder').val(data.productId);
             $('#productModal').modal('show');
         }
     });
@@ -201,7 +202,6 @@ function productValidation(event){
             isValid = false;
         }
     }      
-    
     return isValid;
 }
 

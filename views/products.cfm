@@ -111,6 +111,7 @@
                                                 <input class="m-0" type="file" name="productImage" id="productImage" multiple accept="image/*">
                                                 <div id="productImage-error" class="fw-bold text-danger"></div>
                                             </div>
+                                            <div class="mt-4 d-flex w-100 flex-wrap" id="productImageDiv"></div>
                                         </div>
                                         <input type="hidden" name="productIdHolder" id="productIdHolder">
                                         <div class="modal-footer">
@@ -202,7 +203,7 @@
                                                         <strong>Tax:</strong> Rs.#productItem.unitTax#
                                                     </p>
                                                     <div class="d-flex justify-content-between">
-                                                        <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#')">
+                                                        <button class="btn btn-outline-info btn-sm" onclick="editProduct('#productItem.productId#','#url.subCategoryId#','#url.categoryId#','#decryptedProductId#')">
                                                             <i class="fas fa-edit"></i> Edit
                                                         </button>
                                                         <button class="btn btn-outline-danger btn-sm" onclick="deleteProduct('#productItem.productId#','#url.subCategoryId#')">

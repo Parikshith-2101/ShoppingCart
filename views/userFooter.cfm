@@ -1,4 +1,4 @@
-<footer class="mt-5 w-100 bg-dark text-white py-4">
+<footer class="mt-auto w-100 bg-dark text-white p-4">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-3 col-6">
@@ -57,6 +57,6 @@
     </div>
 </footer>
 <script src="../assets/script/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../assets/script/jquery-3.7.1.min.js"></script>
 <script src="../assets/script/user.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

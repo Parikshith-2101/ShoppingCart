@@ -33,7 +33,7 @@ $(document).ready(function () {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
-                            window.location.reload();
+                            window.location.href = "userLogin.cfm";
                         });
                     },
                     error:handleAjaxError

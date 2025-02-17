@@ -4,21 +4,44 @@
         <cfargument name = "orderID" required = true type = "string">
         <cfargument name = "totalPrice" required = true type = "string">
         <cfargument name = "totalTax" required = true type = "string">
-        <cfmail 
-            to = "#arguments.receiverMail#" 
-            from = "parikshith2101@gmail.com" 
-            subject = "Order Confirmation - #arguments.orderID#"
-            type = "html"
-        >
-            <p>Dear Customer,</p>
-            <p>Thank you for your order!</p>
-            <p><strong>Order ID:</strong> #arguments.orderID#</p>
-            <p><strong>Total Price:</strong>&##8377; #arguments.totalPrice#</p>
-            <p><strong>Total Tax:</strong>&##8377; #arguments.totalTax#</p>
-            <p>We appreciate your business and will notify you once your order is shipped.</p>
-            <p>Best Regards,</p>
-            <p>Parikshith</p>
-        </cfmail>
+        <cftry>
+            <cfset local.getOrderDetails = getOrderDetails(orderId = arguments.orderId)>
+            <cfset local.orderDetails = local.getOrderDetails.order[1]>
+            <cfset local.productNames = "">
+            <cfloop from="1" to="#ArrayLen(local.orderDetails.productName)#" index="i">
+                <cfset local.productNames &= "- #local.orderDetails.productName[i]#<br>">
+            </cfloop>
+            <cfmail 
+                to = "#arguments.receiverMail#" 
+                from = "parikshith2101@gmail.com" 
+                subject = "Order Confirmation - #arguments.orderID#"
+                type = "html"
+            >
+                <p>Dear #local.orderDetails.firstName# #local.orderDetails.lastName#,</p>
+                <p>Thank you for your order! Below are the details:</p>
+                <p><strong>Order ID:</strong> #arguments.orderID#</p>
+                <p><strong>Order Date:</strong> #local.orderDetails.orderDate#</p>
+                <p><strong>Phone:</strong> #local.orderDetails.phone#</p>
+                <h3>Shipping Address:</h3>
+                <p>#local.orderDetails.addressLine1#, #local.orderDetails.addressLine2#</p>
+                <p>#local.orderDetails.city#, #local.orderDetails.state#, #local.orderDetails.pincode#</p>
+                <h3>Products Ordered:</h3>
+                <p>#local.productNames#</p>
+                <h3>Payment Summary:</h3>
+                <p><strong>Total Price:</strong> &##8377; #NumberFormat(arguments.totalPrice, "9,999.00")#</p>
+                <p><strong>Total Tax:</strong> &##8377; #NumberFormat(arguments.totalTax, "9,999.00")#</p>
+                <p><strong>Grand Total:</strong> &##8377; #NumberFormat(arguments.totalPrice + arguments.totalTax, "9,999.00")#</p>
+                <p>We appreciate your business and will notify you once your order is shipped.</p>
+                <p>Best Regards,<br>Parikshith</p>
+            </cfmail>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset application.productManagementObj.sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>
     </cffunction>
 
     <cffunction name = "getCartDetails" access = "remote" returnType = "struct" returnFormat = "JSON">
