@@ -56,24 +56,35 @@ $(document).ready(function () {
         $('#productIdHolder').val('');
         $('#productModal').modal('show');
     });
-});
-$('#categoryDropdown').on('change', function() {
-    var thisCategoryId = this.value;
-    $.ajax({
-        url: "../components/productManagement.cfc?method=getSubCategory",
-        method: "POST",
-        data:{
-            categoryId : thisCategoryId
-        },
-        success: function(response){
-            const serverData = JSON.parse(response);
-            const data = serverData.subCategory;
-            $('#subCategoryDropdown').empty();
-            for(let i in data){
-                const optionTag = `<option value = ${data[i].subCategoryId}>${data[i].subCategoryName}</option>`;
-                $('#subCategoryDropdown').append(optionTag);
+
+    $('#productImage').on('change',function(){
+        const file = this.files;
+        const dataTransfer = new DataTransfer();
+        console.log(this.files);
+    })
+
+    $('#categoryDropdown').on('change', function() {
+        var thisCategoryId = this.value;
+        $.ajax({
+            url: "../components/productManagement.cfc?method=getSubCategory",
+            method: "POST",
+            data:{
+                categoryId : thisCategoryId
+            },
+            success: function(response){
+                const serverData = JSON.parse(response);
+                const data = serverData.subCategory;
+                $('#subCategoryDropdown').empty();
+                for(let i in data){
+                    const optionTag = `<option value = ${data[i].subCategoryId}>${data[i].subCategoryName}</option>`;
+                    $('#subCategoryDropdown').append(optionTag);
+                }
             }
-        }
+        });
+    });
+
+    $(document).on("click", function(){
+        $(".errorServerSide").hide();
     });
 });
 
@@ -93,9 +104,7 @@ function editProduct(productId,subCategoryId,categoryId){
         },
         success: function(product){
             const serverData = JSON.parse(product);
-            const data = serverData.product[0];
-            console.log(data);
-            
+            const data = serverData.product[0];          
             $('#categoryDropdown').val(categoryId);
             $('#subCategoryDropdown').val(subCategoryId);
             $('#productName').val(data.productName);
@@ -142,10 +151,6 @@ function deleteProduct(productId, subCategoryId) {
         }
     });
 }
-
-$(document).on("click", function(){
-    $(".errorServerSide").hide();
-});
 
 function productValidation(event){
     const categoryId = $('#categoryDropdown').val();

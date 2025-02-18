@@ -171,14 +171,22 @@
             <cfset decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
-                    tblcategory
+                    tblcategory C
+                LEFT JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id
+                LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
                 SET 
-                    fldActive = 0,
-                    fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                    fldUpdatedDate = #now()#
+                    C.fldActive = 0,
+                    C.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    C.fldUpdatedDate = #now()#,
+                    SC.fldActive = 0,
+                    SC.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    SC.fldUpdatedDate = #now()#,
+                    P.fldActive = 0,
+                    P.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    P.fldUpdatedDate = #now()#
                 WHERE
-                    fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
-                    AND fldActive = 1;
+                    C.fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
+                    AND C.fldActive = 1;
             </cfquery>
             <cfcatch>
                 <cfset sendErrorEmail(
@@ -352,16 +360,20 @@
             <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)> 
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
-                    tblsubcategory
+                    tblsubcategory SC
+                LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
                 SET 
-                    fldActive = 0,
-                    fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                    fldUpdatedDate = #now()#
+                    SC.fldActive = 0,
+                    SC.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    SC.fldUpdatedDate = #now()#,
+                    P.fldActive = 0,
+                    P.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    P.fldUpdatedDate = #now()#
                 WHERE
-                    fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
-                    AND fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
-                    AND fldActive = 1;
-            </cfquery>
+                    SC.fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
+                    AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
+                    AND SC.fldActive = 1;
+            </cfquery>       
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset sendErrorEmail(
