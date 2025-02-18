@@ -69,7 +69,7 @@
                                 </button>
                             </div>
         
-                            <ul class="p-0 m-0 mt-3">
+                            <ul class="p-0 m-0 mt-3" id="addressParentDiv">
                                 <cfset sweetAlertId = "">
                                 <cfif structKeyExists(url, "error") AND url.error EQ true>
                                     <cfset sweetAlertId = "activateSweetAlert">

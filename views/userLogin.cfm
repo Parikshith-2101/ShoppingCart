@@ -70,9 +70,9 @@
                                     </cfif>
                                 <cfelse>
                                     <cfif session.roleId EQ 1>
-                                        <cflocation url = "categories.cfm" addToken = "no">
+                                        <cflocation url = "/views/categories.cfm" addToken = "no">
                                     <cfelse>
-                                        <cflocation url = "userHome.cfm" addToken = "no">
+                                        <cflocation url = "/views/userHome.cfm" addToken = "no">
                                     </cfif>
                                 </cfif>
                             <cfelse>

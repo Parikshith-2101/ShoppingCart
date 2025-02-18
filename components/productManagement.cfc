@@ -130,7 +130,7 @@
             'message' : ""
         }>
         <cftry> 
-            <cfset decryptedCategoryId = decryptData(data = arguments.categoryId)>
+            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>  
@@ -147,7 +147,7 @@
                         fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         fldUpdatedDate = #now()#
                     WHERE
-                        fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
+                        fldCategory_Id = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                         AND fldActive = 1;
                 </cfquery>
                 <cfset local.result['message'] = "Category Edited SuccessFully">
@@ -172,8 +172,9 @@
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory C
-                LEFT JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id
-                LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
+                    INNER JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id
+                    INNER JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
+                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id
                 SET 
                     C.fldActive = 0,
                     C.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
@@ -183,7 +184,10 @@
                     SC.fldUpdatedDate = #now()#,
                     P.fldActive = 0,
                     P.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                    P.fldUpdatedDate = #now()#
+                    P.fldUpdatedDate = #now()#,
+                    PI.fldActive = 0,
+                    PI.fldDeactivatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    PI.fldDeactivatedDate = #now()#
                 WHERE
                     C.fldCategory_Id = <cfqueryparam value = "#decryptedCategoryId#" cfsqltype = "integer">
                     AND C.fldActive = 1;
@@ -222,7 +226,8 @@
                     SC.fldSubCategoryName,
                     C.fldCategoryName
                 FROM
-                    tblsubcategory SC INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    tblsubcategory SC 
+                    INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
                 WHERE
                     SC.fldActive = 1
                     AND C.fldActive = 1
@@ -361,14 +366,18 @@
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblsubcategory SC
-                LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
+                    INNER JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
+                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id
                 SET 
                     SC.fldActive = 0,
                     SC.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                     SC.fldUpdatedDate = #now()#,
                     P.fldActive = 0,
                     P.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                    P.fldUpdatedDate = #now()#
+                    P.fldUpdatedDate = #now()#,
+                    PI.fldActive = 0,
+                    PI.fldDeactivatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
+                    PI.fldDeactivatedDate = #now()#
                 WHERE
                     SC.fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
@@ -443,10 +452,11 @@
                     GROUP_CONCAT(PI.fldImageFilePath ORDER BY PI.fldDefaultImage DESC) AS imageFiles,
                     GROUP_CONCAT(PI.fldDefaultImage ORDER BY PI.fldDefaultImage DESC) AS defaultImage
                 FROM
-                    tblproduct P LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldActive = 1
+                    tblproduct P 
                     INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
                     INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
                     INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldActive = 1
                 WHERE
                     P.fldActive = 1
                     AND SC.fldActive = 1
@@ -537,10 +547,10 @@
                     C.fldCategory_Id
                 FROM
                     tblproduct P
-                LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
-                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
-                INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
-                INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                    INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                    INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                    LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
                 WHERE
                     P.fldActive = 1
                     AND SC.fldActive = 1

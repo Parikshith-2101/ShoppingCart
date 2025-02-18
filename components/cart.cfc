@@ -65,7 +65,8 @@
                     P.fldUnitTax,
                     PI.fldImageFilePath
                 FROM 
-                    tblcart C INNER JOIN tblproduct P ON P.fldProduct_Id = C.fldProductId
+                    tblcart C 
+                    INNER JOIN tblproduct P ON P.fldProduct_Id = C.fldProductId
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldDefaultImage = 1
                 WHERE 
                     C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
@@ -273,11 +274,11 @@
                     B.fldBrandName
                 FROM
                     tblorder O
-                INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
-                INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
-                INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
-                INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
-                LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
+                    INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
+                    INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
+                    INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
+                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
                 WHERE
                     O.fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer"> 
                     AND A.fldActive = 1

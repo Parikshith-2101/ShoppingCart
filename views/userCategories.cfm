@@ -16,7 +16,7 @@
     <main>
         <cfoutput>
             <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
-            <div class="container products-container">  
+            <div class="container products-container"> 
                 <cfif arrayLen(getSubCategoryArray.subCategory)>               
                     <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                         <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId, limit = 4)>

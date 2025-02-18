@@ -82,7 +82,7 @@
                             </div>
                         </div>
 
-                        <div class="d-flex flex-column w-100 mt-3">
+                        <div class="d-flex flex-column w-100 mt-3" id="subCategoryParentDiv">
                             <cfif arrayLen(getSubCategoryArray.subCategory)>                                                   
                                 <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                                     <div class="card shadow-lg" id = "#subCategoryItem.subCategoryId#">
@@ -118,10 +118,10 @@
         </div>
     </cfoutput>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/script/bootstrap.min.js"></script>
     <script src="../assets/script/jquery-3.7.1.min.js"></script>
     <script src="../assets/script/script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

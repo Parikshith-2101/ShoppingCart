@@ -209,13 +209,18 @@ function deleteCategory(categoryId) {
                 url: "../components/productManagement.cfc?method=deleteCategory",
                 data: { categoryId: categoryId },
                 success: function () {
-                    document.getElementById(categoryId).remove();
+                    const parentDiv = $('#categoryParentDiv');
                     Swal.fire({
                         title: "Deleted!",
                         text: "Category has been deleted.",
-                        icon: "success",
-                        timer: 1500,
-                        showConfirmButton: false
+                        icon: "success"
+                    }).then((result)=>{
+                        if(result.isConfirmed){
+                            document.getElementById(categoryId).remove();
+                            if(parentDiv.children().length == 0){
+                                window.location.reload();
+                            }                    
+                        }
                     });
                 },
                 error: handleAjaxError
@@ -266,13 +271,18 @@ function deleteSubCategory(subCategoryId,categoryId){
                     categoryId : categoryId
                 },
                 success: function() {
-                    document.getElementById(subCategoryId).remove();
+                    const parentDiv = $('#subCategoryParentDiv');
                     Swal.fire({
                         title: "Deleted!",
                         text: "SubCategory has been deleted.",
-                        icon: "success",
-                        timer: 1500,
-                        showConfirmButton: false
+                        icon: "success"
+                    }).then((result)=>{
+                        if(result.isConfirmed){
+                            document.getElementById(subCategoryId).remove();
+                            if(parentDiv.children().length == 0){
+                                window.location.reload();
+                            }                    
+                        }
                     });
                 },
                 error: handleAjaxError

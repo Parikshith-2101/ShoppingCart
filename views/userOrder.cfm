@@ -56,8 +56,9 @@
                                             </div>
                                         </div>
                                     </cfloop>
-                                    <div class="d-flex">
-                                        <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">Next</button>
+                                    <div class="d-flex justify-content-evenly my-2">
+                                        <a href="userProfile.cfm" class="btn btn-info">Add Address</a>
+                                        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">Next</button>
                                     </div>
                                 </div>
                             </div>

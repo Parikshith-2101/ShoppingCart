@@ -173,8 +173,15 @@ function deleteAddress(addressId) {
                         title: "Deleted!",
                         text: "Your address has been deleted.",
                         icon: "success"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById(addressId).remove();
+                            let parentDiv = $('#addressParentDiv');
+                            if(parentDiv.children().length == 0){
+                                window.location.reload();
+                            } 
+                        }
                     });
-                    document.getElementById(addressId).remove();
                 },
             });
         }

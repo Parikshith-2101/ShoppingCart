@@ -82,10 +82,6 @@ $(document).ready(function () {
             }
         });
     });
-
-    $(document).on("click", function(){
-        $(".errorServerSide").hide();
-    });
 });
 
 //view productmodal
@@ -300,4 +296,18 @@ function deleteImage(productImageId, productId) {
             });
         }
     });
+}
+
+if($('#errorProductResult').length){
+    const msg = $('#errorProductResult').attr("data-errorMsg")
+    console.log(this)
+    Swal.fire({
+        title: "Warning!",
+        text: msg,
+        icon: "warning"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = document.URL;
+        }
+    })
 }
