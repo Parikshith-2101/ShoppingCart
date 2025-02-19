@@ -179,4 +179,8 @@ $(document).ready(function () {
             }
         }
     });
+    if($('#collapseAddress').children().length > 1){
+        const nextBTn = `<button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrder" aria-expanded="true" aria-controls="collapseOrder">Next</button>`
+        $('#checkAddressDiv').append(nextBTn);
+    }
 });

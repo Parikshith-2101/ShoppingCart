@@ -15,6 +15,7 @@
         <cfinclude template="userHeader.cfm">
     </header>
     <main>
+        <cfparam name = "url.subCategory" default = ""> 
         <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
         <cfif structKeyExists(form, "sortBtn")>
             <cfset getProductArray = application.productManagementObj.getProduct(
@@ -41,8 +42,7 @@
             <div class="container products-container">
                 <div class="row g-4 mt-3">
                     <div class="d-flex justify-content-between align-items-center">
-                        <cfset subCatName = application.productManagementObj.getSubCategory(subCategoryId = url.subCategoryId)>
-                        <h3 class="m-0">#subCatName.subCategory[1].subCategoryName#</h3>
+                        <h3 class="m-0">#getProductArray.product[1].subCategoryName#</h3>
                         <div class="d-flex">
                             <div class="d-flex">
                                 <h4 class="m-0">Sort By</h4>

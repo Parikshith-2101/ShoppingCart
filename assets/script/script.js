@@ -77,7 +77,6 @@ $(document).ready(function () {
             ajaxData.categoryId = categoryId;
             ajaxUrl = "../components/productManagement.cfc?method=editCategory";
         }
-        console.log(ajaxData)
         $.ajax({
             url: ajaxUrl,
             method: "POST",
@@ -92,6 +91,7 @@ $(document).ready(function () {
                     }, 1000);
                 }                     
                 else {
+                    $('#category-error').addClass('text-danger').removeClass('text-success');
                     $('#category-error').text(data.message);
                 }
             },
@@ -125,9 +125,7 @@ $(document).ready(function () {
         const newCategoryId = $('#categoryDropdown').val();
         const searchParams = new URLSearchParams(window.location.search);
         const oldCategoryId = searchParams.get('categoryId')
-        const subCategoryId = $('#saveSubCategory').val();
-        $('#subCategory-error').addClass('text-danger').removeClass('text-success');
-        
+        const subCategoryId = $('#saveSubCategory').val();   
         if(!newCategoryId){
             $('#subCategory-error').text('Select Category');
             return;
@@ -158,6 +156,7 @@ $(document).ready(function () {
                     }, 900);
                 }
                 else{
+                    $('#subCategory-error').addClass('text-danger').removeClass('text-success'); 
                     $('#subCategory-error').text(data.message);                       
                 }
             },

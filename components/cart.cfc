@@ -8,8 +8,8 @@
             <cfset local.getOrderDetails = getOrderDetails(orderId = arguments.orderId)>
             <cfset local.orderDetails = local.getOrderDetails.order[1]>
             <cfset local.productNames = "">
-            <cfloop from="1" to="#ArrayLen(local.orderDetails.productName)#" index="i">
-                <cfset local.productNames &= "- #local.orderDetails.productName[i]#<br>">
+            <cfloop array = "#local.orderDetails.product#" item="productItem">
+                <cfset local.productNames &= "- #productItem.productName#<br>">
             </cfloop>
             <cfmail 
                 to = "#arguments.receiverMail#" 
@@ -71,7 +71,7 @@
                 WHERE 
                     C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                     AND P.fldActive = 1
-                    <cfif len(trim(local.decrytedProductId))>                        
+                    <cfif val(local.decrytedProductId)>                        
                         AND C.fldProductId = <cfqueryparam value = "#local.decrytedProductId#" cfsqltype = "integer"> 
                     </cfif>
             </cfquery>
@@ -297,13 +297,15 @@
                     }
                 )>
                 <cfif local.index GT 0>
-                    <cfset arrayAppend(local.result['order'][local.index].productId, local.qryOrder.fldProductId)>
-                    <cfset arrayAppend(local.result['order'][local.index].quantity, local.qryOrder.fldQuantity)>
-                    <cfset arrayAppend(local.result['order'][local.index].unitPrice, local.qryOrder.fldUnitPrice)>
-                    <cfset arrayAppend(local.result['order'][local.index].unitTax, local.qryOrder.fldUnitTax)>
-                    <cfset arrayAppend(local.result['order'][local.index].productName, local.qryOrder.fldProductName)>
-                    <cfset arrayAppend(local.result['order'][local.index].productImage, local.qryOrder.fldImageFilePath)>
-                    <cfset arrayAppend(local.result['order'][local.index].brandName, local.qryOrder.fldBrandName)> 
+                    <cfset arrayAppend(local.result['order'][local.index].product, {
+                        'productId' : local.qryOrder.fldProductId,
+                        'quantity' : local.qryOrder.fldQuantity,
+                        'unitPrice' : local.qryOrder.fldUnitPrice, 
+                        'unitTax' : local.qryOrder.fldUnitTax,  
+                        'productName' : local.qryOrder.fldProductName, 
+                        'productImage' : local.qryOrder.fldImageFilePath,
+                        'brandName' : local.qryOrder.fldBrandName
+                    })>
                 <cfelse>
                     <cfset arrayAppend(local.result['order'], {
                         'orderId' : local.qryOrder.fldOrder_Id,
@@ -318,13 +320,17 @@
                         'state' : local.qryOrder.fldState, 
                         'pincode' : local.qryOrder.fldPincode,
                         'phone' : local.qryOrder.fldPhone,
-                        'productId' : [local.qryOrder.fldProductId], 
-                        'quantity' : [local.qryOrder.fldQuantity],
-                        'unitPrice' : [local.qryOrder.fldUnitPrice], 
-                        'unitTax' : [local.qryOrder.fldUnitTax],  
-                        'productName' : [local.qryOrder.fldProductName], 
-                        'productImage' : [local.qryOrder.fldImageFilePath],
-                        'brandName' : [local.qryOrder.fldBrandName]
+                        'product' : [
+                            {
+                                'productId' : local.qryOrder.fldProductId,
+                                'quantity' : local.qryOrder.fldQuantity,
+                                'unitPrice' : local.qryOrder.fldUnitPrice, 
+                                'unitTax' : local.qryOrder.fldUnitTax,  
+                                'productName' : local.qryOrder.fldProductName, 
+                                'productImage' : local.qryOrder.fldImageFilePath,
+                                'brandName' : local.qryOrder.fldBrandName
+                            }
+                        ]
                     })>
                 </cfif>
             </cfloop>
@@ -386,14 +392,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <cfloop from="1" to="#arrayLen(local.orderData.productId)#" index="i">         
+                                <cfloop array="#local.orderData.product#" item="productItem" index="i">         
                                     <tr>
                                         <td>#i#</td>
-                                        <td>#local.orderData.productName[i]#</td>
-                                        <td>#local.orderData.quantity[i]#</td>
-                                        <td>&##8377; #numberFormat(local.orderData.unitPrice[i], "99,999.00")#</td>
-                                        <td>&##8377; #numberFormat(local.orderData.unitTax[i], "99,999.00")#</td>
-                                        <td>&##8377; #numberFormat((local.orderData.unitPrice[i] + local.orderData.unitTax[i]) * local.orderData.quantity[i], "99,999.00")#</td>
+                                        <td>#productItem.productName#</td>
+                                        <td>#productItem.quantity#</td>
+                                        <td>&##8377; #numberFormat(productItem.unitPrice, "99,999.00")#</td>
+                                        <td>&##8377; #numberFormat(productItem.unitTax, "99,999.00")#</td>
+                                        <td>&##8377; #numberFormat((productItem.unitPrice + productItem.unitTax) * productItem.quantity, "99,999.00")#</td>
                                     </tr>                                 
                                 </cfloop>
                                 <tr>

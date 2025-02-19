@@ -16,6 +16,7 @@
     </header>
     <cfoutput>
         <cfset addressArray = application.productManagementObj.getAddress()>
+        <cfset redirectURl = "userProfile.cfm?error=true">
         <cfif structKeyExists(url, "productId")>
             <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             <cfif arrayIsEmpty(cartArray.cart)>
@@ -25,6 +26,7 @@
                 )>
                 <cfset cartArray = application.cartObj.getCartDetails(productId = url.productId)>
             </cfif>
+            <cfset redirectURl = "userProfile.cfm?error=true&productId=#URLEncodedFormat(url.productId)#">
         <cfelse>    
             <cfset cartArray = application.cartObj.getCartDetails()>
         </cfif>
@@ -56,9 +58,8 @@
                                             </div>
                                         </div>
                                     </cfloop>
-                                    <div class="d-flex justify-content-evenly my-2">
-                                        <a href="userProfile.cfm" class="btn btn-info">Add Address</a>
-                                        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapseOrder" aria-expanded="true" aria-controls="collapseOrder">Next</button>
+                                    <div class="d-flex justify-content-evenly my-2" id="checkAddressDiv">
+                                        <a href="#redirectURl#" class="btn btn-info">Add Address</a>
                                     </div>
                                 </div>
                             </div>
@@ -123,7 +124,7 @@
                                                 <label for="cardName" class="form-label">Cardholder Name:</label>
                                                 <input type="text" id="cardName" name="cardName" class="form-control" required 
                                                     oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
-                                                    placeholder="Andrew Paulson">
+                                                    placeholder="Enter Cardholder's Name">
                                             </div> 
                                             <div class="mb-2">
                                                 <label for="cardNumber" class="form-label">Card Number:</label>
@@ -132,7 +133,7 @@
                                                     oninput="this.value = this.value.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim(); 
                                                         if (this.value.endsWith(' ')) { this.value = this.value.slice(0, -1); } 
                                                         this.value = this.value.slice(0, 15);"
-                                                    placeholder="1234 5678 9012">
+                                                    placeholder="**** **** ****">
                                             </div>   
                                             <div class="d-flex align-items-center my-2">
                                                 <div id="expiryDateDiv" class="w-50">
@@ -150,7 +151,7 @@
                                                         <input type="tel" id="cvv" name="cvv" class="form-control mb-2" maxlength="3" required 
                                                             pattern="[0-9]{3,4}"
                                                             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                                            placeholder="123">
+                                                            placeholder="CVV">
                                                     </div>
                                                 </div>
                                             </div>

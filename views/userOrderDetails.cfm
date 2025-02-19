@@ -18,7 +18,7 @@
         <form method="post"> 
             <main>
                 <div class="container products-container">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
                         <h4 id="search-for" class="m-0 text-secondary"></h4>
                         <input type="search" id="searchOrder" class="form-control w-25 ms-auto shadow-sm border-2" placeholder="Search orders...">
                     </div>
@@ -32,16 +32,16 @@
                                 <p class="mb-1"><strong>Ordered By:</strong> <span class="">#orderItem.firstName# #orderItem.lastName#</span></p>
                             </div>
                             <ul class="list-group mb-3 border-0">
-                                <cfloop from="1" to="#arrayLen(orderItem.productId)#" index="i">
+                                <cfloop array="#orderItem.product#" item="productItem">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <img src="../uploads/products/product#orderItem.productId[i]#/#orderItem.productImage[i]#" alt="Product" class="rounded me-3" width="50" height="50">
+                                            <img src="../uploads/products/product#productItem.productId#/#productItem.productImage#" alt="Product" class="rounded me-3" width="50" height="50">
                                             <div>
-                                                <h6 class="mb-1">#orderItem.productName[i]#</h6>
-                                                <p class="mb-0 text-muted">Qty: #orderItem.quantity[i]# | Price: ₹#numberFormat(orderItem.unitPrice[i], "9,999.00")# | Tax: ₹#numberFormat(orderItem.unitTax[i], "9,999.00")#</p>
+                                                <h6 class="mb-1">#productItem.productName#</h6>
+                                                <p class="mb-0 text-muted">Qty: #productItem.quantity# | Price: ₹#numberFormat(productItem.unitPrice, "9,999.00")# | Tax: ₹#numberFormat(productItem.unitTax, "9,999.00")#</p>
                                             </div>
                                         </div>
-                                        <span class="text-dark fw-bold">₹#numberFormat((orderItem.unitPrice[i] + orderItem.unitTax[i]) * orderItem.quantity[i], "9,999.00")#</span>
+                                        <span class="text-dark fw-bold">₹#numberFormat((productItem.unitPrice + productItem.unitTax) * productItem.quantity, "9,999.00")#</span>
                                     </li>
                                 </cfloop>
                             </ul>

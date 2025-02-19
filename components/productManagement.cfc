@@ -58,7 +58,7 @@
                     tblcategory
                 WHERE
                     fldActive = 1
-                    <cfif len(trim(local.decryptedCategoryId))>
+                    <cfif val(local.decryptedCategoryId)>
                         AND fldCategory_Id = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "categoryName") AND len(trim(arguments.categoryName))>
@@ -203,17 +203,17 @@
 
     <!---SubCategory--->
     <cffunction name = "getSubCategory" access = "remote" returnType = "struct" returnFormat = "JSON">
-        <cfargument name = "categoryId" required = false type = "string">
+        <cfargument name = "categoryId" required = true type = "string" default = "0">
         <cfargument name = "subCategoryId" required = false type = "string">
         <cfargument name = "subCategoryName" required = false type = "string">
         <cfset local.result = {
             'error' : false,
             'subCategory' : []
         }>
-        <cfset local.decryptedCategoryId = "">
+        <cfset local.decryptedCategoryId = 0>
         <cfset local.decryptedSubCategoryId = "">
         <cftry>
-            <cfif structKeyExists(arguments, "categoryId")>
+            <cfif structKeyExists(arguments, "categoryId") AND arguments.categoryId NEQ "0">
                 <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             </cfif>
             <cfif structKeyExists(arguments, "subCategoryId")>
@@ -231,10 +231,10 @@
                 WHERE
                     SC.fldActive = 1
                     AND C.fldActive = 1
-                    <cfif len(trim(local.decryptedCategoryId))>
+                    <cfif val(local.decryptedCategoryId) AND local.decryptedCategoryId NEQ 0>
                         AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
                     </cfif>
-                    <cfif len(trim(local.decryptedSubCategoryId))>
+                    <cfif val(local.decryptedSubCategoryId)>
                         AND SC.fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "subCategoryName") AND len(trim(arguments.subCategoryName))>
@@ -555,13 +555,13 @@
                     P.fldActive = 1
                     AND SC.fldActive = 1
                     AND C.fldActive = 1
-                    <cfif len(trim(local.decryptedSubCategoryId))>
+                    <cfif val(local.decryptedSubCategoryId)>
                         AND P.fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
                         AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
                     </cfif>
-                    <cfif len(trim(local.decryptedProductId))>
+                    <cfif val(local.decryptedProductId)>
                         AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "searchKey") AND len(trim(arguments.searchKey))>
@@ -587,10 +587,11 @@
             <cfloop query = "local.qryProduct">
                 <cfset arrayAppend(local.result['product'],{
                     'productId' : encryptData(data = local.qryProduct.fldProduct_Id),
-                    'productName' : local.qryProduct.fldProductName,
                     'subCategoryId' : encryptData(data = local.qryProduct.fldSubCategoryId),
-                    'subCategoryName' : local.qryProduct.fldSubCategoryName,
+                    'categoryId' : encryptData(data = local.qryProduct.fldCategory_Id),
                     'brandId' : encryptData(data = local.qryProduct.fldBrandId),
+                    'productName' : local.qryProduct.fldProductName,
+                    'subCategoryName' : local.qryProduct.fldSubCategoryName,
                     'brandName' : local.qryProduct.fldBrandName,
                     'description' : local.qryProduct.fldDescription,
                     'unitPrice' : local.qryProduct.fldUnitPrice,

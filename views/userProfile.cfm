@@ -14,9 +14,14 @@
         <cfinclude template="userHeader.cfm">
     </header>
     <cfoutput>     
+        <cfset getAddressArray = application.productManagementObj.getAddress()>
+        <cfset alertMsg = "">
+        <cfif structKeyExists(url, "error") AND url.error EQ true>
+            <cfset alertMsg = "activateSweetAlert">
+        </cfif>
         <main class="container products-container">
             <form method="post">
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col-md-4">
                         <div class="card p-4 text-center">
                             <cfif structKeyExists(form, "saveProfileBtn")>
@@ -58,6 +63,12 @@
                         )>
                         <cfif addressResult.error EQ true>
                             <div id="addressResult" data-errorMsg="#addressResult.message#"></div>
+                        <cfelseif structKeyExists(url, "error")>
+                            <cfif structKeyExists(url, "productId")>
+                                <cflocation url="userOrder.cfm?productId=#urlEncodedFormat(url.productId)#" addToken="No">
+                            <cfelse>
+                                <cflocation url="userOrder.cfm" addToken="No">
+                            </cfif>
                         </cfif>
                     </cfif>
                     <div class="col-md-8">
@@ -70,11 +81,6 @@
                             </div>
         
                             <ul class="p-0 m-0 mt-3" id="addressParentDiv">
-                                <cfset sweetAlertId = "">
-                                <cfif structKeyExists(url, "error") AND url.error EQ true>
-                                    <cfset sweetAlertId = "activateSweetAlert">
-                                </cfif>
-                                <cfset getAddressArray = application.productManagementObj.getAddress()>
                                 <cfif arrayLen(getAddressArray.address)>
                                     <cfloop array="#getAddressArray.address#" item="addressItem">
                                     <li class="card flex-row justify-content-between align-items-center p-3 my-3 shadow-sm" id="#addressItem.addressId#">
@@ -97,7 +103,7 @@
                                     </cfloop>
                                 <cfelse>    
                                     <div class="text-center">
-                                        <h4 class="text-muted" id="#sweetAlertId#">Add Address Here!</h4>
+                                        <h4 class="text-muted" id="#alertMsg#">Add Address Here!</h4>
                                     </div>
                                 </cfif>
                             </ul>
@@ -172,7 +178,7 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <input type="tel" class="form-control address-input" id="adPhone" name="phone" placeholder="Enter Phone">
+                                    <input type="tel" class="form-control address-input" id="adPhone" name="phone" maxlength="10" placeholder="Enter Phone">
                                     <div class="text-danger" id="errorPhone"></div>
                                 </div>
                             </div>

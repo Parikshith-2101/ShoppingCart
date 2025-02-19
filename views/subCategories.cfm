@@ -14,9 +14,13 @@
 
 <body>
     <cfoutput>
+        <cfparam name = "url.categoryId" default = "">
         <cfset categoryId = url.categoryId>
         <cfset getCategoryArray = application.productManagementObj.getCategory()>
         <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryId)>
+        <cfif getSubCategoryArray.error EQ true>
+            <cflocation url="categories.cfm" addToken = "No">
+        </cfif>
         <nav class="navbar fixed-top p-0">
             <a href="categories.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
@@ -39,9 +43,13 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <cfset getCategoryName = application.productManagementObj.getCategory(categoryId = categoryId)>
                             <div class="login-title fs-4 px-2">
-                                #getCategoryName.category[1].categoryName#</div>
+                                <cfloop array="#getCategoryArray.category#" item="Categoryitem">
+                                    <cfif Categoryitem.categoryId EQ url.categoryId>
+                                        #Categoryitem.categoryName#
+                                    </cfif>
+                                </cfloop>
+                            </div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addSubCategoryBtn">Add+</div>
                         </div>
                         <div class="modal fade" id="subCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false"

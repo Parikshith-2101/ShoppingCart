@@ -9,7 +9,7 @@
     color: rgb(88, 211, 241);
 }
 .products-container {
-    margin-top: 100px;
+    margin-top: 60px;
     padding: 20px;
     margin-bottom: 60px;
 }
@@ -149,4 +149,9 @@ html{
 }
 footer{
     font-size: 12px;
+}
+table.cfdump_array,table.cfdump_struct{
+    position: relative;
+    z-index: 132;
+    top: 150;
 }

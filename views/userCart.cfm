@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="product-delivery ms-auto">
-                                        <p>Delivery by Tue Oct 8 |
+                                        <p>Delivery by #DateFormat(now() + 7, "e mmm d")# | <del class="text-muted">&##8377;40</del> <span class="text-success fw-bold">Free</span>
                                     </div>
                                 </div>                    
                                 <div class="quantity d-flex">

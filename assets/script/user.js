@@ -281,5 +281,9 @@ if ($('#activateSweetAlert').length) {
         title: "Address Details Not Provided!",
         text: "Please add your address to place the order.",
         icon: "warning"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#addAddressModal').modal('show');
+        }
     });
 }

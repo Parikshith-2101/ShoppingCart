@@ -1,5 +1,6 @@
 <cfoutput>
     <cfset getCategoryArray = application.productManagementObj.getCategory()>
+    <cfset getSubCategoryArray = application.productManagementObj.getSubCategory()>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
             <a href="/views/userHome.cfm" class="navbar-brand d-flex align-items-center">
@@ -64,13 +65,14 @@
                             #categoryItem.categoryName# 
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="#divId#">
-                            <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = categoryItem.categoryId)>
                             <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
-                                <li>
-                                    <a class="dropdown-item" href="/views/userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
-                                        #subCategoryItem.subCategoryName#
-                                    </a>
-                                </li>
+                                <cfif subCategoryItem.categoryId EQ categoryItem.categoryId>
+                                    <li>
+                                        <a class="dropdown-item" href="/views/userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
+                                            #subCategoryItem.subCategoryName#
+                                        </a>
+                                    </li>
+                                </cfif>
                             </cfloop>
                         </ul>
                     </li>

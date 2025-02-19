@@ -17,7 +17,7 @@
         <cfoutput>
             <cfset getProductArray = application.productManagementObj.getProduct(limit = 8)>
             <div class="container products-container">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                <div id="carouselExampleIndicators" class="carousel slide mt-5" data-bs-ride="carousel">
                     <ol class="carousel-indicators">
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="0" class="active"></li>
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="1"></li>

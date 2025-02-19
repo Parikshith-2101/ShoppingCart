@@ -15,33 +15,39 @@
     </header>
     <main>
         <cfoutput>
+            <cfparam name = "url.categoryId" default = ""> 
             <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
+            <cfif arrayLen(getSubCategoryArray.subCategory) EQ 0>
+                <cflocation url="userHome.cfm" addToken="No">
+            </cfif>
+            <cfset getProductArray = application.productManagementObj.getProduct()>
             <div class="container products-container"> 
                 <cfif arrayLen(getSubCategoryArray.subCategory)>               
                     <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
-                        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = subCategoryItem.subCategoryId, limit = 4)>
                         <cfif arraylen(getProductArray.product)>
                             <div class="row g-4 mt-3">
                                 <a class="h3 text-decoration-none text-dark" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
                                     #subCategoryItem.subCategoryName#
                                 </a>
                                 <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                                    <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
-                                        <div class="product-card pb-0 shadow-sm">
-                                            <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
-                                            <div class="card-body text-start">
-                                                <h5 class="card-title text-truncate">#productItem.productName#</h5>
-                                                <p class="card-text text-muted small mb-1">
-                                                    <strong>Brand:</strong> #productItem.brandName#
-                                                </p>
-                                                <p class="card-text product-desc text-muted small mb-1">
-                                                    <strong>Description:</strong> #productItem.description#
-                                                </p>
-                                                <div class="fw-bold">Rs.#productItem.unitPrice#/-</div> 
+                                    <cfif productItem.subCategoryId EQ subCategoryItem.subCategoryId>
+                                        <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
+                                        <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                                            <div class="product-card pb-0 shadow-sm">
+                                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                                <div class="card-body text-start">
+                                                    <h5 class="card-title text-truncate">#productItem.productName#</h5>
+                                                    <p class="card-text text-muted small mb-1">
+                                                        <strong>Brand:</strong> #productItem.brandName#
+                                                    </p>
+                                                    <p class="card-text product-desc text-muted small mb-1">
+                                                        <strong>Description:</strong> #productItem.description#
+                                                    </p>
+                                                    <div class="fw-bold">Rs.#productItem.unitPrice#/-</div> 
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
+                                    </cfif>
                                 </cfloop> 
                             </div>
                         </cfif>

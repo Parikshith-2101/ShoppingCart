@@ -13,11 +13,12 @@
 </head>
 
 <body>
+    <cfparam name = "url.categoryId" default="">
+    <cfparam name = "url.subCategoryId" default="">
     <cfset getCategoryArray = application.productManagementObj.getCategory()>
     <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
     <cfset getBrandArray = application.productManagementObj.getBrand()>
     <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
-
     <cfoutput>
         <nav class="navbar fixed-top p-0">
             <a href="categories.cfm" class="nav-link">
@@ -41,8 +42,7 @@
                 <div class="border rounded shadow-heavy w-100">
                     <div class="py-4 px-3 align-items-center d-flex flex-column" id="categoryDiv">
                         <div class="d-flex w-100 align-items-center">
-                            <cfset getSubCategoryName = application.productManagementObj.getSubCategory(subCategoryId = url.subCategoryId)>
-                            <div class="text-uppercase login-title fs-4 px-2">#getSubCategoryName.subcategory[1].subCategoryName#</div>
+                            <div class="text-uppercase login-title fs-4 px-2">#getSubCategoryArray.subCategory[1].subCategoryName#</div>
                             <div class="border border-2 rounded fw-bold px-2 ms-2 fs-small addPageBtn" id="addProductBtn">Add+</div>
                         </div>
                         <!---modal--->
