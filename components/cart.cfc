@@ -9,7 +9,7 @@
             <cfset local.orderDetails = local.getOrderDetails.order[1]>
             <cfset local.productNames = "">
             <cfloop array = "#local.orderDetails.product#" item="productItem">
-                <cfset local.productNames &= "- #productItem.productName#<br>">
+                <cfset local.productNames &= "- #productItem.productName# (Quantity - #productItem.productName#)<br>">
             </cfloop>
             <cfmail 
                 to = "#arguments.receiverMail#" 
@@ -17,6 +17,7 @@
                 subject = "Order Confirmation - #arguments.orderID#"
                 type = "html"
             >
+                <h2>Order Confirmation</h2>      
                 <p>Dear #local.orderDetails.firstName# #local.orderDetails.lastName#,</p>
                 <p>Thank you for your order! Below are the details:</p>
                 <p><strong>Order ID:</strong> #arguments.orderID#</p>
@@ -32,8 +33,8 @@
                 <p><strong>Total Tax:</strong> &##8377; #NumberFormat(arguments.totalTax, "9,999.00")#</p>
                 <p><strong>Grand Total:</strong> &##8377; #NumberFormat(arguments.totalPrice + arguments.totalTax, "9,999.00")#</p>
                 <p>We appreciate your business and will notify you once your order is shipped.</p>
-                <p>Best Regards,<br>Parikshith</p>
-            </cfmail>
+                <p>Best Regards,<br><strong>Shopping Cart</strong></p>
+            </cfmail>         
             <cfcatch>
                 <cfset local.currentFunction = getFunctionCalledName()>
                 <cfset application.productManagementObj.sendErrorEmail(
@@ -52,7 +53,7 @@
         }>
         <cfset local.decrytedProductId = "">
         <cftry>
-            <cfif structKeyExists(arguments,"productId")>
+            <cfif structKeyExists(arguments, "productId") AND arguments.productId NEQ 0>
                 <cfset local.decrytedProductId = application.productManagementObj.decryptData(data = arguments.productId)>
             </cfif>
             <cfquery name = "local.qryCart" datasource = "#application.dataSource#">
@@ -71,8 +72,8 @@
                 WHERE 
                     C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
                     AND P.fldActive = 1
-                    <cfif val(local.decrytedProductId)>                        
-                        AND C.fldProductId = <cfqueryparam value = "#local.decrytedProductId#" cfsqltype = "integer"> 
+                    <cfif local.decrytedProductId NEQ "">
+                        AND C.fldProductId = <cfqueryparam value = "#val(local.decrytedProductId)#" cfsqltype = "integer"> 
                     </cfif>
             </cfquery>
             <cfloop query = "local.qryCart">
@@ -188,35 +189,39 @@
         <cfargument name = "addressId" required = true type = "string">
         <cfargument name = "cardNumber" required = true type = "string">
         <cfargument name = "cvv" required = true type = "integer">
-        <cfargument name = "totalPrice" required = true type = "string">
-        <cfargument name = "totalTax" required = true type = "string">
         <cfargument name = "productId" required = true type = "string">
-        <cfargument name = "quantity" required = true type = "string">
-        <cfargument name = "unitPrice" required = true type = "string">
-        <cfargument name = "unitTax" required = true type = "string">
         <cfset local.result = {
             'error' : false,
             'message' : ""
         }>
         <cfset local.orderId = createUUID()>
-        <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
         <cfset local.cardNumber = replace(arguments.cardNumber, " ", "", "all")>
         <cftry>
             <cfif local.cardNumber EQ 111111111111 AND arguments.cvv EQ 111>
                 <cfif listLen(arguments.productId) GT 1>
+                    <cfset local.productId = "">
                     <cfset local.decryptedProductId = 0>
                 <cfelse>
+                    <cfset local.productId = "productId = #arguments.productId#">
                     <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = arguments.productId)>
                 </cfif>
+                <cfset local.getCart = getCartDetails(local.productId)>
+                <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
+                <cfset local.totalPrice = 0>
+                <cfset local.totalTax = 0>
+                <cfloop array = "#local.getCart.cart#" item = "cartItem">
+                    <cfset local.totalPrice += (cartItem.unitPrice * cartItem.quantity)>
+                    <cfset local.totalTax += (cartItem.unitTax * cartItem.quantity)>
+                </cfloop>
                 <cfquery datasource = "#application.dataSource#">
                     CALL sp_placeOrder(
                         <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#local.decryptedAddressId#" cfsqltype = "integer">,
                         <cfqueryparam value = "#right(arguments.cardNumber, 4)#" cfsqltype = "varchar">, 
-                        <cfqueryparam value = "#arguments.totalPrice#" cfsqltype = "decimal">,   
-                        <cfqueryparam value = "#arguments.totalTax#" cfsqltype = "decimal">,
+                        <cfqueryparam value = "#local.totalPrice#" cfsqltype = "decimal">,   
+                        <cfqueryparam value = "#local.totalTax#" cfsqltype = "decimal">,
                         <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,  
-                        <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer"> 
+                        <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer"> 
                     );
                 </cfquery>
                 <cfset local.result['error'] = false>
@@ -224,8 +229,8 @@
                 <cfset sendOrderPlacedMail(
                     receiverMail = session.email,
                     orderID = local.orderId,
-                    totalPrice = arguments.totalPrice,
-                    totalTax = arguments.totalTax
+                    totalPrice = local.totalPrice,
+                    totalTax = local.totalTax
                 )>       
             <cfelse>
                 <cfset local.result['error'] = true>

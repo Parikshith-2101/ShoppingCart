@@ -205,7 +205,7 @@ $('#searchOrder').on('input', function () {
     if(anyVisible) {
         $('#noOrdersFound').hide();
     } else {
-        $('#noOrdersFound').show();
+        $('#noOrdersFound').text("No Orders Found").show();
     }
 });
 

@@ -42,11 +42,17 @@ $(document).ready(function () {
         });
     });
     
-    $('#categoryValue').on('keyup',function () {
+    $('#categoryValue').on('input',function () {
         if($('#categoryValue').val() == "" || $('#categoryValue').val() == $('#categoryValue').attr("defaultValue")){
             $('#saveCategory').prop("disabled", true);
         }
+        else if($('#categoryValue').val().length > 32) {
+            $('#category-error').addClass('text-danger').removeClass('text-success');
+            $('#category-error').text("Maximum length should be 32");
+            $('#saveCategory').prop("disabled", true);
+        } 
         else{
+            $('#category-error').text('');
             $('#saveCategory').prop("disabled", false);
         }
     });
@@ -99,11 +105,17 @@ $(document).ready(function () {
         });
     });
 
-    $('#subCategoryValue').on('keyup',function () {
+    $('#subCategoryValue').on('input',function () {
         if($('#subCategoryValue').val() == "" || $('#subCategoryValue').val() == $('#subCategoryValue').attr("defaultValue")){
             $('#saveSubCategory').prop("disabled", true);
         }
+        else if($('#subCategoryValue').val().length > 32){
+            $('#subCategory-error').addClass('text-danger').removeClass('text-success'); 
+            $('#subCategory-error').text("Maxlength should be 32");
+            $('#saveSubCategory').prop("disabled", true);
+        }
         else{
+            $('#subCategory-error').text("");
             $('#saveSubCategory').prop("disabled", false);
         }
     });

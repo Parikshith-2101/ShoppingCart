@@ -41,60 +41,60 @@
         <form method="post">
             <div class="container products-container">
                 <div class="row g-4 mt-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="m-0">#getProductArray.product[1].subCategoryName#</h3>
-                        <div class="d-flex">
+                    <cfif arraylen(getProductArray.product)>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 class="m-0">#getProductArray.product[1].subCategoryName#</h3>
                             <div class="d-flex">
-                                <h4 class="m-0">Sort By</h4>
-                                <button type="submit" class="sort-btn" name="sortBtn" value="ASC">
-                                    <i class="fas fa-sort-amount-up"></i> Min
-                                </button>
-                                <button type="submit" class="sort-btn" name="sortBtn" value="DESC">
-                                    <i class="fas fa-sort-amount-down"></i> Max
-                                </button>
-                            </div>
-                            <div class="price-filter ms-3">
-                                <div class="dropdown">
-                                    <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Filter
+                                <div class="d-flex">
+                                    <h4 class="m-0">Sort By</h4>
+                                    <button type="submit" class="sort-btn" name="sortBtn" value="ASC">
+                                        <i class="fas fa-sort-amount-up"></i> Min
                                     </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <li>
-                                            <div class="d-flex px-2 pb-1">
-                                                <div>
-                                                    <select name="minPrice" id="minPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'minPriceCustom')">
-                                                        <option value="0" selected>Min</option>
-                                                        <option value="10000">10,000</option>
-                                                        <option value="20000">20,000</option>
-                                                        <option value="30000">30,000</option>
-                                                        <option value="custom">Custom</option>
-                                                    </select>
-                                                    <input type="number" name="minPriceCustom" id="minPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Min">
+                                    <button type="submit" class="sort-btn" name="sortBtn" value="DESC">
+                                        <i class="fas fa-sort-amount-down"></i> Max
+                                    </button>
+                                </div>
+                                <div class="price-filter ms-3">
+                                    <div class="dropdown">
+                                        <button class="btn btn-info dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Filter
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <li>
+                                                <div class="d-flex px-2 pb-1">
+                                                    <div>
+                                                        <select name="minPrice" id="minPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'minPriceCustom')">
+                                                            <option value="0" selected>Min</option>
+                                                            <option value="10000">10,000</option>
+                                                            <option value="20000">20,000</option>
+                                                            <option value="30000">30,000</option>
+                                                            <option value="custom">Custom</option>
+                                                        </select>
+                                                        <input type="number" name="minPriceCustom" id="minPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Min">
+                                                    </div>
+                                                    <div class="mx-2 text-muted">to</div>
+                                                    <div>
+                                                        <select name="maxPrice" id="maxPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'maxPriceCustom')">
+                                                            <option value="1000000" selected>Max</option>
+                                                            <option value="20000">20,000</option>
+                                                            <option value="30000">30,000</option>
+                                                            <option value="40000">40,000</option>
+                                                            <option value="custom">Custom</option>
+                                                        </select>
+                                                        <input type="number" name="maxPriceCustom" id="maxPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Max">
+                                                    </div>
                                                 </div>
-                                                <div class="mx-2 text-muted">to</div>
-                                                <div>
-                                                    <select name="maxPrice" id="maxPrice" class="form-control p-1" onchange="toggleCustomInput(this, 'maxPriceCustom')">
-                                                        <option value="1000000" selected>Max</option>
-                                                        <option value="20000">20,000</option>
-                                                        <option value="30000">30,000</option>
-                                                        <option value="40000">40,000</option>
-                                                        <option value="custom">Custom</option>
-                                                    </select>
-                                                    <input type="number" name="maxPriceCustom" id="maxPriceCustom" class="form-control my-2 p-1 d-none" placeholder="Max">
+                                            </li>
+                                            <li>
+                                                <div class="mx-2">
+                                                    <button type="submit" name="priceFilterBtn" id="filterBtn" class="form-control btn btn-success">Filter</button>
                                                 </div>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="mx-2">
-                                                <button type="submit" name="priceFilterBtn" id="filterBtn" class="form-control btn btn-success">Filter</button>
-                                            </div>
-                                        </li>
-                                    </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <cfif arraylen(getProductArray.product)>
                         <div class="row g-4" id="product-container">
                             <cfloop array="#getProductArray.product#" item="productItem">
                                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>

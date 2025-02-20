@@ -11,7 +11,6 @@
 .products-container {
     margin-top: 60px;
     padding: 20px;
-    margin-bottom: 60px;
 }
 .product-card {
     border: 1px solid #ddd;
@@ -150,8 +149,8 @@ html{
 footer{
     font-size: 12px;
 }
-table.cfdump_array,table.cfdump_struct{
+main>table.cfdump_struct{
     position: relative;
-    z-index: 132;
+    z-index: 1032;
     top: 150;
 }

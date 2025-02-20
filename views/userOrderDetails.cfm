@@ -17,12 +17,14 @@
         <cfset orderDetails = application.cartObj.getOrderDetails()>
         <form method="post"> 
             <main>
+<!---                 <cfdump  var="#orderDetails#"> --->
                 <div class="container products-container">
                     <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
                         <h4 id="search-for" class="m-0 text-secondary"></h4>
                         <input type="search" id="searchOrder" class="form-control w-25 ms-auto shadow-sm border-2" placeholder="Search orders...">
                     </div>
-                    <h4 id="noOrdersFound" class="text-danger">No orders found</h4>
+                    <h4 id="noOrdersFound" class="text-danger"></h4>
+                    
                     <cfloop array="#orderDetails.order#" item="orderItem">
                         <div class="card p-4 mb-4 shadow-sm border-2 orderDetailsDiv" id="#orderItem.orderId#">
                             <h4 class="mb-3">Order Summary</h4>

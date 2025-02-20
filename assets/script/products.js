@@ -114,6 +114,37 @@ function editProduct(productId,subCategoryId,categoryId){
     });
 }
 
+$("#productImage").change(function () {
+    $('#productImageDiv').empty();
+    const files = this.files;
+    let dataTransfer = new DataTransfer();
+    if (files.length > 0) {
+        for (let i = 0; i < files.length; i++) {
+            dataTransfer.items.add(files[i]);
+            let objectURL = URL.createObjectURL(files[i]);
+            let imgContainer = $(`
+                <div class="img-preview${i} d-flex" data-filename="${files[i].name}">
+                    <img src="${objectURL}" width="60">
+                    <button class="mb-auto btn" onclick="removeFile('img-preview${i}','${files[i].name}')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            `);
+            $("#productImageDiv").append(imgContainer);
+        }
+    }
+    this.files = dataTransfer.files;
+});
+function removeFile(parentDiv,fileName) {
+    const files = $('#productImage')[0].files;
+    let dataTransfer = new DataTransfer();
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].name !== fileName) {  
+            dataTransfer.items.add(files[i]);
+        }
+    }
+    $('.'+parentDiv).remove();
+    $('#productImage')[0].files = dataTransfer.files;
+}
+
 //delete Product
 function deleteProduct(productId, subCategoryId) {
     Swal.fire({

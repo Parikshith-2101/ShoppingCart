@@ -17,9 +17,6 @@
         <cfoutput>
             <cfparam name = "url.categoryId" default = ""> 
             <cfset getSubCategoryArray = application.productManagementObj.getSubCategory(categoryId = url.categoryId)>
-            <cfif arrayLen(getSubCategoryArray.subCategory) EQ 0>
-                <cflocation url="userHome.cfm" addToken="No">
-            </cfif>
             <cfset getProductArray = application.productManagementObj.getProduct()>
             <div class="container products-container"> 
                 <cfif arrayLen(getSubCategoryArray.subCategory)>               
@@ -55,8 +52,8 @@
                 <cfelse>
                     <div class="mt-5 w-100 text-center">
                         <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-25">
-                        <h4 class="mt-3 text-muted">Oops! Your Category is Empty</h4>
-                        <p class="text-muted">Looks like you haven't added anything yet. Let's find something amazing for you!</p>
+                        <h4 class="mt-3 text-muted">Oops! Category is Empty</h4>
+                        <p class="text-muted">Let's find something amazing for you!</p>
                         <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
                     </div>
                 </cfif>

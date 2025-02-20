@@ -33,9 +33,7 @@
     <main>
         <cfset getSingleProductArray = application.productManagementObj.getSingleProduct(productId = url.productId)>
         <div class="container products-container mt-5">         
-            <cfif getSingleProductArray.error EQ true>
-                <cflocation url="userHome.cfm" addToken="No">
-            <cfelse>
+            <cfif arrayLen(getSingleProductArray.product)>
                 <cfloop array="#getSingleProductArray.product#" item="productItem">
                     <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                     <div class="row mt-5">
@@ -74,6 +72,10 @@
                         </div>
                     </div>
                 </cfloop>
+            <cfelse>
+                <div class="col-12 text-center">
+                    <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75 h-75">
+                </div> 
             </cfif>
         </div>
     </main>

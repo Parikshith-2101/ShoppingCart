@@ -15,6 +15,7 @@
         <cfinclude template="userHeader.cfm">
     </header>
     <cfoutput>
+        <cfparam name = "url.productId" default="">
         <cfset addressArray = application.productManagementObj.getAddress()>
         <cfset redirectURl = "userProfile.cfm?error=true">
         <cfif structKeyExists(url, "productId")>
@@ -90,9 +91,7 @@
                                                                 <button type="button" class="btn p-0 px-2 border-secondary" onclick="modifyQuantity('#cartItem.productId#','add')">+</button>
                                                             </div>
                                                             <p class="my-1 text-muted">Price: ₹#numberFormat(cartItem.unitPrice, "9,999.00")#</p>
-                                                            <input type="hidden" name="unitPrice" value="#cartItem.unitPrice#">
                                                             <p class="mb-0 text-muted">Tax: ₹#numberFormat(cartItem.unitTax, "9,999.00")#</p>
-                                                            <input type="hidden" name="unitTax" value="#numberFormat(cartItem.unitTax)#">
                                                         </div>
                                                     </div>
                                                     <div class="fw-bold">₹ <span id="price#cartItem.productId#">#numberFormat((cartItem.quantity*(cartItem.unitPrice + cartItem.unitTax)), "9,999.00")#</span></div>
@@ -100,9 +99,7 @@
                                                 <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>
                                                 <cfset totalTax += (cartItem.unitTax * cartItem.quantity)>
                                                 <cfset totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>   
-                                            </cfloop>                  
-                                            <input type="hidden" value="#totalPrice#" id="totalPrice" name="totalPrice">         
-                                            <input type="hidden" value="#totalTax#" id="totalTax" name="totalTax">         
+                                            </cfloop>                          
                                         </ul>
                                         <div class="d-flex">
                                             <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">Next</button>
@@ -211,12 +208,7 @@
                     addressId = form.addressRadio,
                     cardNumber = form.cardNumber,
                     cvv = form.cvv,
-                    totalPrice = form.totalPrice,
-                    totalTax = form.totalTax,
-                    productId = form.productId,
-                    quantity = form.productQuantity,
-                    unitPrice = form.unitPrice,
-                    unitTax = form.unitTax
+                    productId = form.productId
                 )>
                 <cfif placeOrderResult.error EQ false>
                     <div id="orderSuccessMessage"></div>

@@ -93,7 +93,13 @@
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>
-            <cfif arrayLen(local.fetchCategoryData.category)>
+            <cfif len(trim(arguments.categoryName)) GT 32>
+                <cfset local.result['message'] = "Maximum Length of CategoryName Should be 32">
+                <cfset local.result['error'] = true>
+            <cfelseif NOT reFindNoCase("^[A-Za-z &'']+$", arguments.categoryName)>
+                <cfset local.result['message'] = "Invalid category name">
+                <cfset local.result['error'] = true>
+            <cfelseif arrayLen(local.fetchCategoryData.category)>
                 <cfset local.result['message'] = "Catergory Already Exists">
                 <cfset local.result['error'] = true>
             <cfelse>
@@ -129,16 +135,22 @@
             'error' : false,
             'message' : ""
         }>
-        <cftry> 
-            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+        <cftry>     
             <cfset local.fetchCategoryData = getCategory(
                 categoryName = arguments.categoryName
             )>  
-            <cfif arrayLen(local.fetchCategoryData.category) 
+            <cfif len(trim(arguments.categoryName)) GT 32>
+                <cfset local.result['message'] = "Maximum Length of CategoryName Should be 32">
+                <cfset local.result['error'] = true>
+            <cfelseif NOT reFindNoCase("^[A-Za-z &'']+$", arguments.categoryName)>
+                <cfset local.result['message'] = "Invalid category name">
+                <cfset local.result['error'] = true>
+            <cfelseif arrayLen(local.fetchCategoryData.category) 
                 AND (local.fetchCategoryData.category[1].categoryId NEQ arguments.categoryId)>
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = true>
             <cfelse>
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
                 <cfquery datasource = "#application.dataSource#">
                     UPDATE 
                         tblcategory
@@ -172,9 +184,9 @@
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory C
-                    INNER JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id
-                    INNER JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
-                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id
+                    LEFT JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id AND SC.fldActive = 1
+                    LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id AND P.fldActive = 1
+                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldActive = 1
                 SET 
                     C.fldActive = 0,
                     C.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
@@ -210,10 +222,10 @@
             'error' : false,
             'subCategory' : []
         }>
-        <cfset local.decryptedCategoryId = 0>
+        <cfset local.decryptedCategoryId = "">
         <cfset local.decryptedSubCategoryId = "">
         <cftry>
-            <cfif structKeyExists(arguments, "categoryId") AND arguments.categoryId NEQ "0">
+            <cfif arguments.categoryId NEQ "0">
                 <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             </cfif>
             <cfif structKeyExists(arguments, "subCategoryId")>
@@ -231,8 +243,8 @@
                 WHERE
                     SC.fldActive = 1
                     AND C.fldActive = 1
-                    <cfif val(local.decryptedCategoryId) AND local.decryptedCategoryId NEQ 0>
-                        AND SC.fldCategoryId = <cfqueryparam value = "#local.decryptedCategoryId#" cfsqltype = "integer">
+                    <cfif arguments.categoryId NEQ "0">
+                        AND SC.fldCategoryId = <cfqueryparam value = "#val(local.decryptedCategoryId)#" cfsqltype = "integer">
                     </cfif>
                     <cfif val(local.decryptedSubCategoryId)>
                         AND SC.fldSubCategory_Id = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
@@ -269,15 +281,21 @@
             'message' : ""
         }>
         <cftry>
-            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.categoryId
             )>
-            <cfif arrayLen(local.fetchSubCategoryData.subCategory)>
+            <cfif len(trim(arguments.subCategoryName)) GT 32>
+                <cfset local.result['message'] = "Maximum Length of SubCategoryName Should be 32">
+                <cfset local.result['error'] = true>
+            <cfelseif NOT reFindNoCase("^[A-Za-z &'']+$", arguments.subCategoryName)>
+                <cfset local.result['message'] = "Invalid SubCategory name">
+                <cfset local.result['error'] = true>
+            <cfelseif arrayLen(local.fetchSubCategoryData.subCategory)>
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "SubCatergory Already Exists">
             <cfelse>
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
                 <cfquery result = "local.subCategoryId" datasource = "#application.dataSource#">
                     INSERT INTO tblsubcategory(
                         fldSubCategoryName,
@@ -316,18 +334,24 @@
             'message' : ""
         }>
         <cftry>
-            <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
-            <cfset local.decryptedNewCategoryId = decryptData(data = arguments.newCategoryId)>
-            <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
             <cfset local.fetchSubCategoryData = getSubCategory(
                 subCategoryName = arguments.subCategoryName,
                 categoryId = arguments.newCategoryId
             )>
-            <cfif arrayLen(local.fetchSubCategoryData.subCategory) 
+            <cfif len(trim(arguments.subCategoryName)) GT 32>
+                <cfset local.result['message'] = "Maximum Length of SubCategoryName Should be 32">
+                <cfset local.result['error'] = true>
+            <cfelseif NOT reFindNoCase("^[A-Za-z &'']+$", arguments.subCategoryName)>
+                <cfset local.result['message'] = "Invalid SubCategory name">
+                <cfset local.result['error'] = true>
+            <cfelseif arrayLen(local.fetchSubCategoryData.subCategory) 
                 AND (local.fetchSubCategoryData.subCategory[1].subCategoryId NEQ arguments.subCategoryId)>
                 <cfset local.result['message'] = "Category Already Exists">
                 <cfset local.result['error'] = true>
             <cfelse>
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+                <cfset local.decryptedNewCategoryId = decryptData(data = arguments.newCategoryId)>
+                <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
                 <cfquery datasource = "#application.dataSource#">
                     UPDATE 
                         tblsubcategory
@@ -366,8 +390,8 @@
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblsubcategory SC
-                    INNER JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id
-                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id
+                    LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id AND P.fldActive = 1
+                    LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldActive = 1
                 SET 
                     SC.fldActive = 0,
                     SC.fldUpdatedBy = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
@@ -461,7 +485,7 @@
                     P.fldActive = 1
                     AND SC.fldActive = 1
                     AND C.fldActive = 1
-                    AND P.fldProduct_Id = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
+                    AND P.fldProduct_Id = <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">
                     <cfif structKeyExists(arguments, "productImageId")>
                         AND PI.fldProductImage_Id = <cfqueryparam value = "#arguments.productImageId#" cfsqltype = "integer">
                     </cfif>
@@ -506,7 +530,7 @@
 
     <cffunction name = "getProduct" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "productName" required = false type = "string">
-        <cfargument name = "subCategoryId" required = false type = "string">     
+        <cfargument name = "subCategoryId" required = false type = "string" default = "0">     
         <cfargument name = "productId" required = false type = "string"> 
         <cfargument name = "limit" required = false type = "integer"> 
         <cfargument name = "sortType" required = false type = "string">
@@ -524,7 +548,7 @@
             <cfset local.sort = "P.fldUnitPrice #arguments.sortType#,P.fldProductName">
         </cfif>
         <cftry>
-            <cfif structKeyExists(arguments, "subCategoryId")>
+            <cfif arguments.subCategoryId NEQ "0">
                 <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
             </cfif>
             <cfif structKeyExists(arguments, "productId")>
@@ -555,8 +579,8 @@
                     P.fldActive = 1
                     AND SC.fldActive = 1
                     AND C.fldActive = 1
-                    <cfif val(local.decryptedSubCategoryId)>
-                        AND P.fldSubCategoryId = <cfqueryparam value = "#local.decryptedSubCategoryId#" cfsqltype = "integer">
+                    <cfif arguments.subCategoryId NEQ "0">
+                        AND P.fldSubCategoryId = <cfqueryparam value = "#val(local.decryptedSubCategoryId)#" cfsqltype = "integer">
                     </cfif>
                     <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
                         AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
