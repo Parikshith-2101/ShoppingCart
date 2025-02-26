@@ -64,7 +64,10 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mt-2 align-items-center">
-                                <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
+                                <div>
+                                    <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
+                                    <p class="mb-1"><strong>Phone:</strong> +91#orderItem.phone#</p>
+                                </div>
                                 <button type="submit" id="downloadInvoice" name="downloadInvoiceBtn" value="#orderItem.orderId#" class="btn btn-primary">Download Invoice</button>
                             </div>
                         </div>

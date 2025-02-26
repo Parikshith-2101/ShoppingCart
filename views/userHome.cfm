@@ -23,6 +23,7 @@
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="1"></li>
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="2"></li>
                         <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="3"></li>
+                        <li data-bs-target="##carouselExampleIndicators" data-bs-slide-to="4"></li>
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item active" data-bs-interval="2000">
@@ -37,6 +38,9 @@
                         <div class="carousel-item" data-bs-interval="2000">
                             <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner4.webp" alt="fourth slide">
                         </div>
+                        <div class="carousel-item" data-bs-interval="2000">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner5.jpg" alt="fifth slide">
+                        </div>
                     </div>
                     <a class="carousel-control-prev" href="##carouselExampleIndicators" role="button" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,7 +51,7 @@
                         <span class="visually-hidden">Next</span>
                     </a>
                 </div>
-                <div class="row g-4 mt-4">
+                <div class="row g-4 my-4">
                     <h3>Random Products</h3>
                     <cfloop array="#getProductArray.product#" item="productItem">
                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>

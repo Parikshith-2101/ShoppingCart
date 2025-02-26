@@ -41,15 +41,22 @@
                             <ul class="breadcrumb">
                                 <li><a href="userCategories.cfm?categoryId=#getSingleProductArray.product[1].categoryId#">#getSingleProductArray.product[1].categoryName#</a><i class="fa-solid fa-chevron-right mx-1"></i></li>
                                 <li><a href="userSubCategories.cfm?subCategoryId=#getSingleProductArray.product[1].subCategoryId#">#getSingleProductArray.product[1].subCategoryName#</a><i class="fa-solid fa-chevron-right mx-1"></i></li>
-                                <li><span>#getSingleProductArray.product[1].productName#</span></li>
+                                <li><span class="text-muted">#getSingleProductArray.product[1].productName#</span></li>
                             </ul>
                             <div class="main-product-image mb-3">
                                 <cfset defaultImage = ListGetAt(getSingleProductArray.product[1].imageFile, 1)>
                                 <img src="../uploads/products/product#decryptedProductId#/#defaultImage#" id="mainImage" alt="Main Product" height="300">
                             </div>
                             <div class="product-images">
+                                <cfset imagecount = 0>
                                 <cfloop list="#getSingleProductArray.product[1].imageFile#" item="productImageItem">
-                                    <img src="../uploads/products/product#decryptedProductId#/#productImageItem#" alt="Product Image 1" onmouseover="updateMainImage(this)">
+                                    <cfset imageCount += 1>
+                                    <cfif imageCount LT 6>
+                                        <img src="../uploads/products/product#decryptedProductId#/#productImageItem#" alt="Product Image 1" onmouseover="updateMainImage(this)">
+                                    <cfelse>
+                                        <img src="../assets/images/designImages/more.jpg" alt="more">
+                                        <cfbreak>
+                                    </cfif>
                                 </cfloop>
                             </div>
                         </div>
@@ -73,8 +80,9 @@
                     </div>
                 </cfloop>
             <cfelse>
-                <div class="col-12 text-center">
-                    <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75 h-75">
+                <div class="d-flex flex-column">
+                    <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75">
+                    <a href="userHome.cfm" class="btn btn-primary mx-auto w-25 mb-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
                 </div> 
             </cfif>
         </div>

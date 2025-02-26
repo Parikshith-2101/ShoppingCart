@@ -102,7 +102,7 @@ $('#logoutBtn').click(function(){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../components/userLogin.cfc?method=logout",
+                url: "../components/user.cfc?method=logout",
                 method: "POST",
                 success: function () {
                     Swal.fire({
@@ -209,16 +209,53 @@ $('#searchOrder').on('input', function () {
     }
 });
 
-function toggleView() {
-    let container = $("#product-container");
-    if (container.css("max-height") === "360px") {
-        container.css("max-height", "none");
-        $(this).text("View Less");
-    } else {
-        container.css("max-height", "360px");
-        $(this).text("View More");
-    }
+let offset = 0;
+function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey) {
+    offset += 4;
+    $.ajax({
+        url : "../components/productManagement.cfc?method=getProduct",
+        method : "POST",
+        data : {
+            subCategoryId : subCategoryId,
+            limit : 4,
+            offset : offset,
+            sortType : sortType,
+            minPrice : minPrice,
+            maxPrice : maxPrice,
+            searchKey : searchKey
+        },
+        success: function(response){
+            const data = JSON.parse(response);
+            const productData = data.product;
+            let productLength = data.product.length;
+            console.log(data)    
+            for(let productItem of productData){
+                if(productLength < 4){
+                    $('#viewMoreBtn').prop("disabled",true);
+                }
+               
+                $(`<a href="userProducts.cfm?productId=${encodeURIComponent(productItem.productId)}" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                        <div class="product-card pb-0 shadow-sm">
+                            <img src="../uploads/products/product${productItem.decryptedProductId}/${productItem.imageFile}" alt="${productItem.productName}">
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">${productItem.productName}</h5>
+                                <p class="card-text text-muted small mb-1">
+                                    <strong>Brand:</strong> ${productItem.brandName}
+                                </p>
+                                <p class="card-text product-desc text-muted small mb-1">
+                                    <strong>Description:</strong> ${productItem.description}
+                                </p>                                   
+                                <div class="fw-bold">Rs.${productItem.unitPrice}/-</div>                               
+                            </div>
+                        </div>
+                    </a>`
+                ).hide().appendTo('#product-container').slideDown();
+            
+            }
+        }
+    });
 }
+ 
 
 function addressValidate() {
     let isValid = true;

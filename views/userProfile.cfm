@@ -25,7 +25,7 @@
                     <div class="col-md-4">
                         <div class="card p-4 text-center">
                             <cfif structKeyExists(form, "saveProfileBtn")>
-                                <cfset editUserResult = application.productManagementObj.editUser(
+                                <cfset editUserResult = application.userObj.editUser(
                                     firstName = form.userFirstName,
                                     lastName = form.userLastName,
                                     email = form.userEmail,

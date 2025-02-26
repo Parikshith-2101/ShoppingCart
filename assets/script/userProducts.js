@@ -5,7 +5,9 @@ function updateMainImage(imageElement) {
     $(imageElement).addClass('active'); 
     mainImage.attr('src', $(imageElement).attr('src'));
 }
-
+if($('.product-images').children().lenght > 5){
+    
+};
 function deleteCartItem(productId) {
     Swal.fire({
         title: "Are you sure?",

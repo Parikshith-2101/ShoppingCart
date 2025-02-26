@@ -101,7 +101,7 @@
                                                 <cfset totalAmount += (cartItem.unitPrice + cartItem.unitTax) * cartItem.quantity>   
                                             </cfloop>                          
                                         </ul>
-                                        <div class="d-flex">
+                                        <div class="d-flex my-2">
                                             <button class="mx-auto btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="##collapsePrice" aria-expanded="true" aria-controls="collapsePrice">Next</button>
                                         </div>
                                     </div>
@@ -161,7 +161,7 @@
                             </div>
 
                             <div class="card-order">
-                                <div class="button"><button type="submit" name="placeOrderBtn" id="placeOrderBtn" class="btn btn-success w-100 placeOrderBtn" disabled>✅ Place Order</button></div>
+                                <div class="button d-none"><button type="submit" name="placeOrderBtn" id="placeOrderBtn" class="btn btn-success w-100 placeOrderBtn" disabled>✅ Place Order</button></div>
                             </div>
                         </div>
                         <div class="container-right">

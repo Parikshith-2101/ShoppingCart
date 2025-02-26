@@ -6,7 +6,7 @@
  
     <cffunction name = "onApplicationStart">
         <cfset application.productManagementObj = createObject("component", "components.productManagement")>
-        <cfset application.userObj = createObject("component", "components.userLogin")>     
+        <cfset application.userObj = createObject("component", "components.user")>     
         <cfset application.cartObj = createObject("component", "components.cart")>     
         <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
         <cfset application.dataSource = "shoppingCart">

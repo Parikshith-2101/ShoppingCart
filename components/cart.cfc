@@ -70,7 +70,7 @@
                     INNER JOIN tblproduct P ON P.fldProduct_Id = C.fldProductId
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldDefaultImage = 1
                 WHERE 
-                    C.fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                    C.fldUserId = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
                     AND P.fldActive = 1
                     <cfif local.decrytedProductId NEQ "">
                         AND C.fldProductId = <cfqueryparam value = "#val(local.decrytedProductId)#" cfsqltype = "integer"> 
@@ -116,17 +116,17 @@
                     <cfset local.quantityCount = local.cartData.cart[1].quantity + 1>
                     <cfquery datasource = "#application.dataSource#">
                         UPDATE tblcart
-                        SET fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer">
-                        WHERE fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
-                            AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                        SET fldQuantity = <cfqueryparam value = "#val(local.quantityCount)#" cfsqltype = "integer">
+                        WHERE fldProductId = <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">
+                            AND fldUserId = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
                     </cfquery>
                     <cfset local.result['message'] = "Edited">
                 <cfelse>
                     <cfquery datasource = "#application.dataSource#">
                         INSERT INTO tblcart (fldUserId, fldProductId, fldQuantity)
                         VALUES (
-                            <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                            <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">,
+                            <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">,
+                            <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">,
                             1
                         );
                     </cfquery>
@@ -138,10 +138,10 @@
                     UPDATE 
                         tblcart
                     SET 
-                        fldQuantity = <cfqueryparam value = "#local.quantityCount#" cfsqltype = "integer">
+                        fldQuantity = <cfqueryparam value = "#val(local.quantityCount)#" cfsqltype = "integer">
                     WHERE 
-                        fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
-                        AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                        fldProductId = <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">
+                        AND fldUserId = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
                 </cfquery>
                 <cfset local.result['message'] = "Removed">
             <cfelse>
@@ -171,8 +171,8 @@
                 DELETE FROM 
                     tblcart
                 WHERE
-                    fldProductId = <cfqueryparam value = "#local.decryptedProductId#" cfsqltype = "integer">
-                    AND fldUserId = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">
+                    fldProductId = <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">
+                    AND fldUserId = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
             </cfquery>
             <cfcatch>
                 <cfset local.result['error'] = true>
@@ -215,8 +215,8 @@
                 </cfloop>
                 <cfquery datasource = "#application.dataSource#">
                     CALL sp_placeOrder(
-                        <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#local.decryptedAddressId#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#val(local.decryptedAddressId)#" cfsqltype = "integer">,
                         <cfqueryparam value = "#right(arguments.cardNumber, 4)#" cfsqltype = "varchar">, 
                         <cfqueryparam value = "#local.totalPrice#" cfsqltype = "decimal">,   
                         <cfqueryparam value = "#local.totalTax#" cfsqltype = "decimal">,
@@ -285,7 +285,7 @@
                     INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
                 WHERE
-                    O.fldUserID = <cfqueryparam value = "#session.loginUserId#" cfsqltype = "integer"> 
+                    O.fldUserID = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer"> 
                     AND A.fldActive = 1
                     AND P.fldActive = 1
                     <cfif structKeyExists(arguments, "orderId")>

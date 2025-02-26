@@ -45,24 +45,27 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .breadcrumb {
-    display: flex;
-    align-items: center;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     color: #6c757d;
 }
-
 .breadcrumb li {
     display: flex;
     align-items: center;
 }
-
-.breadcrumb a {
+.breadcrumb a , .breadcrumb span{
     text-decoration: none;
     color: #2790ff; 
+    width: 78%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
-
-.breadcrumb a:hover {
+.breadcrumb a:hover ,.breadcrumb span:hover{
     color: #0056b3; 
     text-decoration: underline;
+    width: unset;
+    text-overflow: unset;
+    white-space: unset;
+    overflow: unset;
 }

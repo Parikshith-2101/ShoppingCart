@@ -16,12 +16,20 @@
     </header>
     <main>
         <cfparam name = "url.subCategory" default = ""> 
-        <cfset getProductArray = application.productManagementObj.getProduct(subCategoryId = url.subCategoryId)>
+        <cfset sortType = "">
+        <cfset minPrice = "">
+        <cfset maxPrice = "">
+        <cfset getProductArray = application.productManagementObj.getProduct(
+                subCategoryId = url.subCategoryId,
+                limit = 4
+            )>
         <cfif structKeyExists(form, "sortBtn")>
             <cfset getProductArray = application.productManagementObj.getProduct(
                 subCategoryId = url.subCategoryId,
-                sortType = form.sortBtn
+                sortType = form.sortBtn,
+                limit = 4
             )>
+            <cfset sortType = form.sortBtn>
         </cfif>
         <cfif structKeyExists(form, "priceFilterBtn")>    
             <cfset minPrice = form.minPrice>
@@ -35,7 +43,8 @@
             <cfset getProductArray = application.productManagementObj.getProduct(
                 subCategoryId = url.subCategoryId,
                 minPrice = minPrice,
-                maxPrice = maxPrice
+                maxPrice = maxPrice,
+                limit = 4
             )>
         </cfif>
         <form method="post">
@@ -115,12 +124,13 @@
                                 </a>
                             </cfloop>    
                         </div>
-                        <cfif arraylen(getProductArray.product) GT 4>
-                            <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="toggleView()">View More</button>
+                        <cfif arraylen(getProductArray.product) EQ 4>
+                            <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="viewMoreProducts('#url.subCategoryId#','#sortType#','#minPrice#','#maxPrice#','')">View More</button>
                         </cfif>
                     <cfelse>
-                        <div class="col-12 text-center">
-                            <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75 h-75">
+                        <div class="d-flex flex-column">
+                            <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75">
+                            <a href="userHome.cfm" class="btn btn-primary mx-auto w-25"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
                         </div> 
                     </cfif>
                 </div>
@@ -129,8 +139,6 @@
         
     </main>
     <cfinclude template="/views/userFooter.cfm">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" 
-        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
 </cfoutput>
 </body>
 </html>

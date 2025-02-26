@@ -12,7 +12,11 @@
 <body>
 <cfoutput>
     <cfif structKeyExists(form, "searchKey") AND len(trim(form.searchKey))>
-        <cfset getProductArray = application.productManagementObj.getProduct(searchKey = form.searchKey)>
+        <cfset getProductArray = application.productManagementObj.getProduct(
+            searchKey = form.searchKey,
+            limit = 4,
+            sortType = 'ASC'
+        )>
     <cfelse>
         <cflocation  url="userHome.cfm" addToken="No">
     </cfif>
@@ -22,9 +26,9 @@
 
     <main>
         <div class="container products-container">
-            <div class="row g-4">
-                <h3>Showing Results for '#form.searchKey#'</h3>
-                <cfif arrayLen(getProductArray.product)>
+            <h3 class="mt-5">Showing Results for '#form.searchKey#'</h3>
+            <cfif arrayLen(getProductArray.product)>
+                <div class="row g-4 my-4" id="product-container">
                     <cfloop array="#getProductArray.product#" item="productItem">
                         <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                             <div class="product-card pb-0 shadow-sm">
@@ -43,15 +47,18 @@
                             </div>
                         </a>
                     </cfloop> 
-                <cfelse>
-                    <div class="w-100 text-center">
-                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25">
-                        <h4 class="mt-3 text-muted">Oops! No Products Found on '#form.searchKey#'</h4>
-                        <p class="text-muted">Sorry for your inconvenience. Let's find something amazing for you!</p>
-                        <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
-                    </div>
+                </div>
+                <cfif arraylen(getProductArray.product) EQ 4>
+                    <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto d-block" type="button" onclick="viewMoreProducts('','ASC','','','#form.searchKey#')">View More</button>
                 </cfif>
-            </div>
+            <cfelse>
+                <div class="w-100 text-center">
+                    <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25">
+                    <h4 class="mt-3 text-muted">Oops! No Products Found on '#form.searchKey#'</h4>
+                    <p class="text-muted">Sorry for your inconvenience. Let's find something amazing for you!</p>
+                    <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
+                </div>
+            </cfif>
         </div>
     </main>
     <cfinclude template="/views/userFooter.cfm">

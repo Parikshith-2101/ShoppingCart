@@ -12,7 +12,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "../components/userLogin.cfc?method=logout",
+                    url: "../components/user.cfc?method=logout",
                     method: "POST",
                     success: function () {
                         Swal.fire({
@@ -256,9 +256,9 @@ function editImage(thisProductId,decryptedProductId){
                 let active = "";
                 let checkbox = `
                         <div class="d-flex align-items-center justify-content-between">
-                            <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px">
+                            <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px" onclick="setDefaultImage(this,'${imageIdArray[i]}','${data.productId}')">
                                 <label class="text-nowrap me-1">Set</label>
-                                <input type="radio" class="m-0 btn" name="productImageCheck" onclick="setDefaultImage('${imageIdArray[i]}','${data.productId}')">
+                                <input type="radio" class="m-0 btn" name="productImageCheck">
                             </div>
                             <button class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage('${imageIdArray[i]}','${data.productId}')">Delete</button>
                         </div>
@@ -285,7 +285,8 @@ function editImage(thisProductId,decryptedProductId){
     }); 
 }
 
-function setDefaultImage(productImageId,productId){
+function setDefaultImage(element,productImageId,productId){
+    element.querySelector('input[type=radio]').checked = true;
     $.ajax({
         url: "../components/productManagement.cfc?method=setDefaultProductImage",
         method: "POST",
@@ -320,7 +321,7 @@ function deleteImage(productImageId, productId) {
                         title: "Deleted!",
                         text: "The image has been removed.",
                         icon: "success",
-                        timer: 2000,
+                        timer: 600,
                         showConfirmButton: false
                     });
                 }

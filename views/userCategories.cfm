@@ -22,12 +22,14 @@
                 <cfif arrayLen(getSubCategoryArray.subCategory)>               
                     <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                         <cfif arraylen(getProductArray.product)>
-                            <div class="row g-4 mt-3">
+                            <div class="row g-4 my-3">
                                 <a class="h3 text-decoration-none text-dark" href="userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
                                     #subCategoryItem.subCategoryName#
                                 </a>
+                                <cfset count = 0>
                                 <cfloop array="#getProductArray.product#" item="productItem">
-                                    <cfif productItem.subCategoryId EQ subCategoryItem.subCategoryId>
+                                    <cfif productItem.subCategoryId EQ subCategoryItem.subCategoryId AND count LT 4>
+                                        <cfset count += 1>
                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                         <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                                             <div class="product-card pb-0 shadow-sm">
@@ -50,11 +52,11 @@
                         </cfif>
                     </cfloop> 
                 <cfelse>
-                    <div class="mt-5 w-100 text-center">
-                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-25">
-                        <h4 class="mt-3 text-muted">Oops! Category is Empty</h4>
+                    <div class="w-100 text-center">
+                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-50 h-50">
+                        <h4 class="text-muted">Oops! Category is Empty</h4>
                         <p class="text-muted">Let's find something amazing for you!</p>
-                        <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
+                        <a href="userHome.cfm" class="btn btn-primary mt-2"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
                     </div>
                 </cfif>
             </div>

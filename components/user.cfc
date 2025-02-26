@@ -149,4 +149,53 @@
     <cffunction name = "logout" access = "remote" returnType = "void">
         <cfset structClear(session)>
     </cffunction>
+
+
+    <cffunction name = "editUser" access = "public" returnType = "struct">
+        <cfargument name = "firstName" required = true type = "string">
+        <cfargument name = "lastName" required = true type = "string">
+        <cfargument name = "email" required = true type = "string">
+        <cfargument name = "phone" required = true type = "string">
+        <cfset local.result = {
+            'error' : false,
+            'message' : ""
+        }>   
+        <cftry>
+            <cfset local.getUser = getUser(
+                userName = arguments.email
+            )>
+            <cfif arrayLen(local.getUser.user) AND local.getUser.user[1].userId NEQ session.loginUserId>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "Email Already Exists">
+            <cfelse>
+                <cfquery dataSource = "#application.dataSource#">
+                    UPDATE 
+                        tbluser
+                    SET
+                        fldFirstName = <cfqueryparam value = "#arguments.firstName#" cfsqltype = "varchar">,
+                        fldLastName = <cfqueryparam value = "#arguments.lastName#" cfsqltype = "varchar">,
+                        fldEmail = <cfqueryparam value = "#arguments.email#" cfsqltype = "varchar">,
+                        fldPhone = <cfqueryparam value = "#arguments.phone#" cfsqltype = "varchar">
+                    WHERE
+                        fldUser_Id = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
+                </cfquery>
+                <cfset session.firstName = arguments.firstName>
+                <cfset session.lastName = arguments.lastName>
+                <cfset session.email = arguments.email>
+                <cfset session.phone = arguments.phone>
+                <cfset local.result['error'] = false>
+                <cfset local.result['message'] = "User Details Edited Successfully">
+            </cfif>
+            <cfcatch>
+                <cfset local.currentFunction = getFunctionCalledName()>
+                <cfset local.result['error'] = true>
+                <cfset local.result['message'] = "error in #local.currentFunction# : #cfcatch.message#">
+                <cfset application.productManagementObj.sendErrorEmail(
+                    subject = local.currentFunction,
+                    errorMessage = cfcatch.message
+                )>
+            </cfcatch>
+        </cftry>
+        <cfreturn local.result>
+    </cffunction>
 </cfcomponent>

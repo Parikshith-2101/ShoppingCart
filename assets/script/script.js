@@ -23,7 +23,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "../components/userLogin.cfc?method=logout",
+                    url: "../components/user.cfc?method=logout",
                     method: "POST",
                     success: function () {
                         Swal.fire({
