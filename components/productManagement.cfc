@@ -184,7 +184,7 @@
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory C
-                    LEFT JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id AND SC.fldActive = 1
+                        JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id AND SC.fldActive = 1
                     LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id AND P.fldActive = 1
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldActive = 1
                 SET 

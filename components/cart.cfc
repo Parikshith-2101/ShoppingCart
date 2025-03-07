@@ -18,14 +18,14 @@
                 type = "html"
             >
                 <h2>Order Confirmation</h2>      
-                <p>Dear #local.orderDetails.firstName# #local.orderDetails.lastName#,</p>
+                <p>Dear #local.orderDetails.address.firstName# #local.orderDetails.address.lastName#,</p>
                 <p>Thank you for your order! Below are the details:</p>
                 <p><strong>Order ID:</strong> #arguments.orderID#</p>
                 <p><strong>Order Date:</strong> #local.orderDetails.orderDate#</p>
-                <p><strong>Phone:</strong> #local.orderDetails.phone#</p>
+                <p><strong>Phone:</strong> #local.orderDetails.address.phone#</p>
                 <h3>Shipping Address:</h3>
-                <p>#local.orderDetails.addressLine1#, #local.orderDetails.addressLine2#</p>
-                <p>#local.orderDetails.city#, #local.orderDetails.state#, #local.orderDetails.pincode#</p>
+                <p>#local.orderDetails.address.addressLine1#, #local.orderDetails.address.addressLine2#</p>
+                <p>#local.orderDetails.address.city#, #local.orderDetails.address.state#, #local.orderDetails.address.pincode#</p>
                 <h3>Products Ordered:</h3>
                 <p>#local.productNames#</p>
                 <h3>Payment Summary:</h3>
@@ -280,14 +280,12 @@
                 FROM
                     tblorder O
                     INNER JOIN tblorderitems OI ON OI.fldOrderId = O.fldOrder_Id
-                    INNER JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
-                    INNER JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
-                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                    LEFT JOIN tbladdress A ON A.fldAddress_Id = O.fldAddressId
+                    LEFT JOIN tblproduct P ON P.fldProduct_Id = OI.fldProductId
+                    LEFT JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND fldDefaultImage = 1
                 WHERE
                     O.fldUserID = <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer"> 
-                    AND A.fldActive = 1
-                    AND P.fldActive = 1
                     <cfif structKeyExists(arguments, "orderId")>
                         AND O.fldOrder_Id = <cfqueryparam value = "#arguments.orderId#" cfsqltype = "varchar"> 
                     </cfif>
@@ -316,15 +314,17 @@
                         'orderId' : local.qryOrder.fldOrder_Id,
                         'totalPrice' : local.qryOrder.fldTotalPrice, 
                         'totalTax' : local.qryOrder.fldTotalTax,  
-                        'orderDate' : dateTimeFormat(local.qryOrder.fldOrderDate.toString()), 
-                        'firstName' : local.qryOrder.fldFirstName, 
-                        'lastName' : local.qryOrder.fldLastName, 
-                        'addressLine1' : local.qryOrder.fldAddressLine1, 
-                        'addressLine2' : local.qryOrder.fldAddressLine2, 
-                        'city' : local.qryOrder.fldCity, 
-                        'state' : local.qryOrder.fldState, 
-                        'pincode' : local.qryOrder.fldPincode,
-                        'phone' : local.qryOrder.fldPhone,
+                        'orderDate' : dateTimeFormat(local.qryOrder.fldOrderDate.toString()),
+                        'address' : {
+                            'firstName' : local.qryOrder.fldFirstName, 
+                            'lastName' : local.qryOrder.fldLastName, 
+                            'addressLine1' : local.qryOrder.fldAddressLine1, 
+                            'addressLine2' : local.qryOrder.fldAddressLine2, 
+                            'city' : local.qryOrder.fldCity, 
+                            'state' : local.qryOrder.fldState, 
+                            'pincode' : local.qryOrder.fldPincode,
+                            'phone' : local.qryOrder.fldPhone
+                        },
                         'product' : [
                             {
                                 'productId' : local.qryOrder.fldProductId,
@@ -380,10 +380,10 @@
                         <p><b>Date:</b> #dateFormat(now(), "dd/mm/yyyy")#</p>        
                         <h3>Customer</h3>
                         <p class="lineHeight">
-                            #local.orderData.firstName# #local.orderData.lastName#<br>
-                            #local.orderData.addressLine1#,#local.orderData.addressLine2#,
-                            #local.orderData.city#, #local.orderData.state# - #local.orderData.pincode#<br>
-                            <strong>Phone : </strong>#local.orderData.phone#
+                            #local.orderData.address.firstName# #local.orderData.address.lastName#<br>
+                            #local.orderData.address.addressLine1#,#local.orderData.address.addressLine2#,
+                            #local.orderData.address.city#, #local.orderData.address.state# - #local.orderData.address.pincode#<br>
+                            <strong>Phone : </strong>#local.orderData.address.phone#
                         </p>
                         <table border="2">
                             <thead>

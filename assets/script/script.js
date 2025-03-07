@@ -1,55 +1,56 @@
-function handleAjaxError(xhr, status, error) {
+function handleAjaxError(xhr, status, error){
     console.error('AJAX error:', status, error);
     Swal.fire({
-        title: "Error!",
-        text: "Something went wrong. Please try again.",
+        title: "Error!", 
+        text: "Something went wrong. Please try again.", 
         icon: "error"
     });
 }
 
-$(document).ready(function () {
+$(document).ready(function (){
     $('#saveCategory').prop("disabled", true);
     $('#saveSubCategory').prop("disabled", true);
     // Logout
-    $('#logoutCategory').on('click', function () {
+    $('#logoutCategory').on('click', function (){
         Swal.fire({
-            title: "Are you sure?",
-            text: "You will be logged out.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
+            title: "Are you sure?", 
+            text: "You will be logged out.", 
+            icon: "warning", 
+            showCancelButton: true, 
+            confirmButtonColor: "#d33", 
+            cancelButtonColor: "#3085d6", 
             confirmButtonText: "Yes, logout!"
         }).then((result) => {
-            if (result.isConfirmed) {
+            if (result.isConfirmed){
                 $.ajax({
-                    url: "../components/user.cfc?method=logout",
-                    method: "POST",
-                    success: function () {
+                    url: "../components/user.cfc?method=logout", 
+                    method: "POST", 
+                    success: function (){
                         Swal.fire({
-                            title: "Logged Out!",
-                            text: "You have been logged out successfully.",
-                            icon: "success",
-                            timer: 1500,
+                            title: "Logged Out!", 
+                            text: "You have been logged out successfully", 
+                            icon: "success", 
+                            timer: 1500, 
                             showConfirmButton: false
                         }).then(() => {
                             window.location.href = "userLogin.cfm";
                         });
-                    },
+                    }, 
                     error:handleAjaxError
                 });
             }
         });
     });
     
-    $('#categoryValue').on('input',function () {
+    $('#categoryValue').on('input', function (){
         if($('#categoryValue').val() == "" || $('#categoryValue').val() == $('#categoryValue').attr("defaultValue")){
             $('#saveCategory').prop("disabled", true);
         }
-        else if($('#categoryValue').val().length > 32) {
+        else if($('#categoryValue').val().length > 32){
             $('#category-error').addClass('text-danger').removeClass('text-success');
             $('#category-error').text("Maximum length should be 32");
             $('#saveCategory').prop("disabled", true);
+            $('#categoryValue').prop("maxlength", 33);
         } 
         else{
             $('#category-error').text('');
@@ -58,38 +59,38 @@ $(document).ready(function () {
     });
 
     //CategoryModal
-    $('#addCategoryBtn').on('click', function () {
+    $('#addCategoryBtn').on('click', function (){
         $('#categoryValue').val('');
         $('#categoryModal').modal('show');
         $('#category-error').text('');
         $('#saveCategory').val('');
-        $('#categoryValue').attr("defaultValue","");
+        $('#categoryValue').attr("defaultValue", "");
     });
 
     //saveCategory
-    $('#saveCategory').on('click', function () {
+    $('#saveCategory').on('click', function (){
         const categoryName = $('#categoryValue').val();
         const categoryId = $('#saveCategory').val();
         $('#category-error').text('');
 
-        if (!categoryName) {
+        if (!categoryName){
             $('#category-error').text('Enter Category Name');
             return;
         }
         const ajaxData = {};  
         ajaxData.categoryName =  categoryName ;
         let ajaxUrl = "../components/productManagement.cfc?method=addCategory";
-        if (categoryId.trim()) {
+        if (categoryId.trim()){
             ajaxData.categoryId = categoryId;
             ajaxUrl = "../components/productManagement.cfc?method=editCategory";
         }
         $.ajax({
-            url: ajaxUrl,
-            method: "POST",
-            data: ajaxData,
-            success: function (response) {
+            url: ajaxUrl, 
+            method: "POST", 
+            data: ajaxData, 
+            success: function (response){
                 const data = JSON.parse(response);
-                if (data.error === false) {
+                if (data.error === false){
                     $('#category-error').addClass('text-success').removeClass('text-danger');
                     $('#category-error').text(data.message);
                     setTimeout(()=>{
@@ -100,12 +101,12 @@ $(document).ready(function () {
                     $('#category-error').addClass('text-danger').removeClass('text-success');
                     $('#category-error').text(data.message);
                 }
-            },
+            }, 
             error: handleAjaxError
         });
     });
 
-    $('#subCategoryValue').on('input',function () {
+    $('#subCategoryValue').on('input', function (){
         if($('#subCategoryValue').val() == "" || $('#subCategoryValue').val() == $('#subCategoryValue').attr("defaultValue")){
             $('#saveSubCategory').prop("disabled", true);
         }
@@ -113,14 +114,23 @@ $(document).ready(function () {
             $('#subCategory-error').addClass('text-danger').removeClass('text-success'); 
             $('#subCategory-error').text("Maxlength should be 32");
             $('#saveSubCategory').prop("disabled", true);
+            $('#subCategoryValue').prop("maxlength", 33);
         }
         else{
             $('#subCategory-error').text("");
             $('#saveSubCategory').prop("disabled", false);
         }
     });
+    $('#categoryDropdown').on('input', function (){
+        if($('#categoryDropdown').val() == "" || $('#categoryDropdown').val() == $('#categoryDropdown').attr("defaultValue")){
+            $('#saveSubCategory').prop("disabled", true);
+        }
+        else{
+            $('#saveSubCategory').prop("disabled", false);
+        }
+    });
     //SubCategoryModal
-    $('#addSubCategoryBtn').on('click', function () {
+    $('#addSubCategoryBtn').on('click', function (){
         $('#subCategoryValue').val('');
         $('#subCategoryModal').modal('show');
         $('#subCategory-error').text('');
@@ -128,11 +138,11 @@ $(document).ready(function () {
         const searchParams = new URLSearchParams(window.location.search);
         const categoryId = searchParams.get('categoryId');
         $('#categoryDropdown').val(categoryId);
-        $('#subCategoryValue').attr("defaultValue","");
+        $('#subCategoryValue').attr("defaultValue", "");
     });
 
     //saveSubCategory
-    $('#saveSubCategory').on('click', function () {
+    $('#saveSubCategory').on('click', function (){
         const subCategoryName = $('#subCategoryValue').val();
         const newCategoryId = $('#categoryDropdown').val();
         const searchParams = new URLSearchParams(window.location.search);
@@ -148,22 +158,22 @@ $(document).ready(function () {
         }
         let ajaxUrl = "../components/productManagement.cfc?method=addSubCategory";
         const ajaxData = { subCategoryName, categoryId: newCategoryId };
-        if (subCategoryId) {
+        if (subCategoryId){
             ajaxUrl = "../components/productManagement.cfc?method=editSubCategory";
             ajaxData.subCategoryId = subCategoryId;
             ajaxData.oldCategoryId = oldCategoryId;
             ajaxData.newCategoryId = newCategoryId;
         }
         $.ajax({
-            url: ajaxUrl,
-            method: "POST",
-            data: ajaxData,
-            success: function (response) {
+            url: ajaxUrl, 
+            method: "POST", 
+            data: ajaxData, 
+            success: function (response){
                 const data = JSON.parse(response);
                 if(data.error == false){
                     $('#subCategory-error').addClass('text-success').removeClass('text-danger');
                     $('#subCategory-error').text(data.message);
-                    setTimeout(function() {
+                    setTimeout(function(){
                         window.location.reload();
                     }, 900);
                 }
@@ -171,7 +181,7 @@ $(document).ready(function () {
                     $('#subCategory-error').addClass('text-danger').removeClass('text-success'); 
                     $('#subCategory-error').text(data.message);                       
                 }
-            },
+            }, 
             error: handleAjaxError
         });
     });
@@ -182,11 +192,11 @@ function editCategory(categoryId){
     $('#category-error').text('');
     $('#categoryValue').val('').change();
     $.ajax({
-        url: "../components/productManagement.cfc?method=getCategory",
-        method: "POST",
+        url: "../components/productManagement.cfc?method=getCategory", 
+        method: "POST", 
         data:{
             categoryId : categoryId
-        },
+        }, 
         success: function(getCategoryData){
             const data = JSON.parse(getCategoryData);
             if(data.error == true){
@@ -194,36 +204,36 @@ function editCategory(categoryId){
             }
             else{
                 $('#categoryValue').val(data.category[0].categoryName);
-                $('#categoryValue').attr("defaultValue",data.category[0].categoryName);
+                $('#categoryValue').attr("defaultValue", data.category[0].categoryName);
                 $('#categoryModal').modal('show'); 
                 $('#saveCategory').val(data.category[0].categoryId);
             }
-        },
+        }, 
         error: handleAjaxError
     });
 }
 
 //delete Category
-function deleteCategory(categoryId) {
+function deleteCategory(categoryId){
     Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
+        title: "Are you sure?", 
+        text: "This action cannot be undone!", 
+        icon: "warning", 
+        showCancelButton: true, 
+        confirmButtonColor: "#d33", 
+        cancelButtonColor: "#3085d6", 
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed){
             $.ajax({
-                type: "POST",
-                url: "../components/productManagement.cfc?method=deleteCategory",
-                data: { categoryId: categoryId },
-                success: function () {
+                type: "POST", 
+                url: "../components/productManagement.cfc?method=deleteCategory", 
+                data: { categoryId: categoryId }, 
+                success: function (){
                     const parentDiv = $('#categoryParentDiv');
                     Swal.fire({
-                        title: "Deleted!",
-                        text: "Category has been deleted.",
+                        title: "Deleted!", 
+                        text: "Category has been deleted.", 
                         icon: "success"
                     }).then((result)=>{
                         if(result.isConfirmed){
@@ -233,7 +243,7 @@ function deleteCategory(categoryId) {
                             }                    
                         }
                     });
-                },
+                }, 
                 error: handleAjaxError
             });
         }
@@ -241,51 +251,52 @@ function deleteCategory(categoryId) {
 }
 
 //view on edit subCategory
-function editSubCategory(subCategoryId,categoryId){
+function editSubCategory(subCategoryId, categoryId){
     $('#subCategory-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=getSubCategory",
-        method: "POST",
+        url: "../components/productManagement.cfc?method=getSubCategory", 
+        method: "POST", 
         data:{
-            subCategoryId : subCategoryId,
+            subCategoryId : subCategoryId, 
             categoryId : categoryId
-        },
+        }, 
         success: function(getSubCategoryData){
             const data = JSON.parse(getSubCategoryData);
             $('#categoryDropdown').val(data.subCategory[0].categoryId);
             $('#subCategoryValue').val(data.subCategory[0].subCategoryName);
             $('#saveSubCategory').val(data.subCategory[0].subCategoryId);
-            $('#subCategoryValue').attr("defaultValue",data.subCategory[0].subCategoryName);
+            $('#subCategoryValue').attr("defaultValue", data.subCategory[0].subCategoryName);
+            $('#categoryDropdown').attr("defaultValue", data.subCategory[0].subCategoryId);
             $('#subCategoryModal').modal('show');
-        },
+        }, 
         error: handleAjaxError
     });
 }
 
 //delete SubCategory
-function deleteSubCategory(subCategoryId,categoryId){
+function deleteSubCategory(subCategoryId, categoryId){
     Swal.fire({
-        title: "Are you sure?",
-        text: "This action cannot be undone!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
+        title: "Are you sure?", 
+        text: "This action cannot be undone!", 
+        icon: "warning", 
+        showCancelButton: true, 
+        confirmButtonColor: "#d33", 
+        cancelButtonColor: "#3085d6", 
         confirmButtonText: "Yes, delete it!"
     }).then((result) => {
-        if (result.isConfirmed) {
+        if (result.isConfirmed){
             $.ajax({
-                type: "POST",
-                url: "../components/productManagement.cfc?method=deleteSubCategory",
+                type: "POST", 
+                url: "../components/productManagement.cfc?method=deleteSubCategory", 
                 data: {
-                    subCategoryId : subCategoryId,
+                    subCategoryId : subCategoryId, 
                     categoryId : categoryId
-                },
-                success: function() {
+                }, 
+                success: function(){
                     const parentDiv = $('#subCategoryParentDiv');
                     Swal.fire({
-                        title: "Deleted!",
-                        text: "SubCategory has been deleted.",
+                        title: "Deleted!", 
+                        text: "SubCategory has been deleted.", 
                         icon: "success"
                     }).then((result)=>{
                         if(result.isConfirmed){
@@ -295,7 +306,7 @@ function deleteSubCategory(subCategoryId,categoryId){
                             }                    
                         }
                     });
-                },
+                }, 
                 error: handleAjaxError
             });
         }

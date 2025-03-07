@@ -7,7 +7,7 @@
                 <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
                 <span class="fs-4 nav-brand">ShoppingCart</span>
             </a> 
-            <form method="post" class="d-flex m-0" action="userSearch.cfm">                    
+            <form method="post" class="d-flex m-0" action="/views/userSearch.cfm">                    
                 <input class="form-control me-2" name="searchKey" type="search" placeholder="Search for products..." aria-label="Search">
                 <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
             </form>
@@ -16,9 +16,8 @@
                     <a class="nav-link" href="/views/userCart.cfm">
                         <i class="fa-solid fa-cart-shopping position-relative">
                             <cfif structKeyExists(session, "loginUserId")>
-                                <cfset cartArray = application.cartObj.getCartDetails()>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-quantity">
-                                    #arrayLen(cartArray.cart)#
+                                    #session.cartLen#
                                 </span>
                             </cfif>
                         </i>

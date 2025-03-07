@@ -112,7 +112,7 @@ $('#logoutBtn').click(function(){
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = "userHome.cfm";
+                        window.location.href = "/views/userHome.cfm";
                     });
                 }
             });
@@ -250,7 +250,6 @@ function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey
                         </div>
                     </a>`
                 ).hide().appendTo('#product-container').slideDown();
-            
             }
         }
     });

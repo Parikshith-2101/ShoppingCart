@@ -186,7 +186,7 @@
                                             <div class="card product-card shadow-sm">
                                                 <div onclick="editImage('#productItem.productId#','#decryptedProductId#')" class="cursor-pointer">
                                                     <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" 
-                                                        class="card-img-top" alt="#productItem.productName#">
+                                                        class="card-img-top" alt="#productItem.productName#" id="thumb-#productItem.productId#">
                                                 </div>
                                                 <div class="card-body">
                                                     <h5 class="card-title text-truncate">#productItem.productName#</h5>

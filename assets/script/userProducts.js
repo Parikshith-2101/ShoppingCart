@@ -5,18 +5,15 @@ function updateMainImage(imageElement) {
     $(imageElement).addClass('active'); 
     mainImage.attr('src', $(imageElement).attr('src'));
 }
-if($('.product-images').children().lenght > 5){
-    
-};
 function deleteCartItem(productId) {
     Swal.fire({
-        title: "Are you sure?",
+        title: "Remove Product from Cart?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Yes, remove it!"
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -65,7 +62,6 @@ function deleteCartItem(productId) {
 
 function modifyQuantity(productId,modifyStatus){ 
     const removebtn = document.getElementById(`removeBtn${productId}`);
-    removebtn.disabled = false;
     $.ajax({
         url: "../components/cart.cfc?method=manageCart",
         method: "POST",
@@ -75,8 +71,8 @@ function modifyQuantity(productId,modifyStatus){
         },
         success: function(response) {
             const Data = JSON.parse(response);
-            if (Data.error === true) {
-                removebtn.disabled = true;
+            if (Data.error === true) {         
+                removebtn.click();
             }
             $.ajax({
                 url: "../components/cart.cfc?method=getCartDetails",

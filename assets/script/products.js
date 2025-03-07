@@ -57,12 +57,6 @@ $(document).ready(function () {
         $('#productModal').modal('show');
     });
 
-    $('#productImage').on('change',function(){
-        const file = this.files;
-        const dataTransfer = new DataTransfer();
-        console.log(this.files);
-    })
-
     $('#categoryDropdown').on('change', function() {
         var thisCategoryId = this.value;
         $.ajax({
@@ -85,7 +79,7 @@ $(document).ready(function () {
 });
 
 //view productmodal
-function editProduct(productId,subCategoryId,categoryId){
+function editProduct(productId,subCategoryId,categoryId,decryptedProductId){
     $('#productName-error').text('');
     $('#productBrand-error').text('');
     $('#productDesc-error').text('');
@@ -109,13 +103,46 @@ function editProduct(productId,subCategoryId,categoryId){
             $('#productPrice').val(data.unitPrice);
             $('#productTax').val(data.unitTax);
             $('#productIdHolder').val(data.productId);
+            $('#productImage').val('');
+            const imageIdArray = data.productImageId.split(',');
+            const imagefileArray = data.imageFile.split(',');
+            const defaultArray = data.defaultImage.split(',');
+            $('#productImageDiv').empty();
+            for(let i = 0; i < imageIdArray.length; i++){
+                let active = "";
+                let checkbox = `
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px" onclick="setDefaultImage(this,'${imageIdArray[i]}','${data.productId}')">
+                                <label class="text-nowrap me-1">Set</label>
+                                <input type="radio" class="m-0 btn" name="productImageCheck">
+                            </div>
+                            <button type="button" class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage('${imageIdArray[i]}','${data.productId}')">Delete</button>
+                        </div>
+                    `;
+                if(defaultArray[i] === '1'){
+                    active = "active";
+                    checkbox = `
+                        <div class="d-flex align-items-center p-0 btn border fs-12px">
+                            <div class="text-nowrap ps-1">Current Thumbnail</div>
+                            <input type="radio" name="productImageCheck" class="m-0" checked>
+                        </div>
+                    `;
+                }
+                const carouselItem = `
+                    <div class="${active} carousel-imageDiv" id="${imageIdArray[i]}">
+                        <img src="../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                        ${checkbox}
+                    </div>
+                    `;
+                $('#productImageDiv').append(carouselItem);
+            }
             $('#productModal').modal('show');
         }
     });
 }
 
-$("#productImage").change(function () {
-    $('#productImageDiv').empty();
+$("#productImage").change(function (){
+    $('.tempImage').remove();
     const files = this.files;
     let dataTransfer = new DataTransfer();
     if (files.length > 0) {
@@ -123,9 +150,9 @@ $("#productImage").change(function () {
             dataTransfer.items.add(files[i]);
             let objectURL = URL.createObjectURL(files[i]);
             let imgContainer = $(`
-                <div class="img-preview${i} d-flex" data-filename="${files[i].name}">
-                    <img src="${objectURL}" width="60">
-                    <button class="mb-auto btn" onclick="removeFile('img-preview${i}','${files[i].name}')"><i class="fa-solid fa-xmark"></i></button>
+                <div class="img-preview${i} d-flex flex-column carousel-imageDiv tempImage" data-filename="${files[i].name}">
+                    <img src="${objectURL}" class="d-block w-100 carousel-image mb-2">                   
+                    <button type="button" class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="removeFile('img-preview${i}','${files[i].name}')">Delete</button>                  
                 </div>
             `);
             $("#productImageDiv").append(imgContainer);
@@ -286,13 +313,17 @@ function editImage(thisProductId,decryptedProductId){
 }
 
 function setDefaultImage(element,productImageId,productId){
-    element.querySelector('input[type=radio]').checked = true;
+    element.querySelector('input[type=radio]').checked = true
     $.ajax({
         url: "../components/productManagement.cfc?method=setDefaultProductImage",
         method: "POST",
         data: {
             productImageId : productImageId,
             productId : productId
+        },
+        success : ()=>{
+           const imageSrc = $(`#${productImageId}`).children()[0].src;
+           document.getElementById(`thumb-${productId}`).src = imageSrc;
         }
     });
 }

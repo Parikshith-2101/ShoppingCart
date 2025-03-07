@@ -13,15 +13,15 @@
 <body>
 <cfoutput>
     <cfparam name = "url.productId" default = "">
-    <cfset getCartLen = 0>
     <cfif structKeyExists(form, "addToCartBtn")>
         <cfif structKeyExists(session, "loginUserId")>
             <cfset addToCartResult = application.cartObj.manageCart(
                 productId = form.addToCartBtn,
                 modifyStatus = "add"
             )>
-            <cfset getCartData = application.cartObj.getCartDetails(productId = form.addToCartBtn)>
-            <cfset getCartLen =  arrayLen(getCartData.cart)> 
+            <cfif addToCartResult.message EQ "Added">
+                <cfset session.cartLen +=1> 
+            </cfif>
         <cfelse>
             <cflocation url="userLogin.cfm?productId=#urlEncodedFormat(url.productId)#">
         </cfif>
@@ -68,7 +68,7 @@
                                     <p>#productItem.description#</p>
                                 </div>
                                 <form method="post" class="action-buttons">
-                                    <cfif getCartLen GT 0>  
+                                    <cfif structKeyExists(form, "addToCartBtn")>  
                                         <a href="userCart.cfm" class="btn btn-outline-secondary">Go to Cart</a>
                                     <cfelse>
                                         <button type="submit" value="#productItem.productId#" name="addToCartBtn" class="btn btn-primary">Add to Cart</button>

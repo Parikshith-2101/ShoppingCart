@@ -17,7 +17,6 @@
         <cfset orderDetails = application.cartObj.getOrderDetails()>
         <form method="post"> 
             <main>
-<!---                 <cfdump  var="#orderDetails#"> --->
                 <div class="container products-container">
                     <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
                         <h4 id="search-for" class="m-0 text-secondary"></h4>
@@ -31,7 +30,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <p class="mb-1"><strong>Order ID:</strong> #orderItem.orderId#</p>
                                 <p class="mb-1"><strong>Date:</strong> #orderItem.orderDate#</p>
-                                <p class="mb-1"><strong>Ordered By:</strong> <span class="">#orderItem.firstName# #orderItem.lastName#</span></p>
+                                <p class="mb-1"><strong>Ordered By:</strong> <span class="">#orderItem.address.firstName# #orderItem.address.lastName#</span></p>
                             </div>
                             <ul class="list-group mb-3 border-0">
                                 <cfloop array="#orderItem.product#" item="productItem">
@@ -65,8 +64,8 @@
                             </div>
                             <div class="d-flex justify-content-between mt-2 align-items-center">
                                 <div>
-                                    <p class="mb-1"><strong>Address:</strong> #orderItem.addressLine1#, #orderItem.addressLine2#, #orderItem.city#, #orderItem.state# - #orderItem.pincode#</p>
-                                    <p class="mb-1"><strong>Phone:</strong> +91#orderItem.phone#</p>
+                                    <p class="mb-1"><strong>Address:</strong> #orderItem.address.addressLine1#, #orderItem.address.addressLine2#, #orderItem.address.city#, #orderItem.address.state# - #orderItem.address.pincode#</p>
+                                    <p class="mb-1"><strong>Phone:</strong> +91#orderItem.address.phone#</p>
                                 </div>
                                 <button type="submit" id="downloadInvoice" name="downloadInvoiceBtn" value="#orderItem.orderId#" class="btn btn-primary">Download Invoice</button>
                             </div>

@@ -52,11 +52,11 @@
                                 </div>                    
                                 <div class="quantity d-flex">
                                     <div class="btnDiv d-flex">
-                                        <div class="rounded"><button id="removeBtn#cartItem.productId#" onclick="modifyQuantity('#cartItem.productId#','remove')">-</button></div>
+                                        <div class="rounded"><button onclick="modifyQuantity('#cartItem.productId#','remove')">-</button></div>
                                         <div class="rectangle"><input type="text" id="quantity#cartItem.productId#" value="#cartItem.quantity#" align="center"></div>
                                         <div class="rounded"><button onclick="modifyQuantity('#cartItem.productId#','add')">+</button></div>
                                     </div>
-                                    <a href="##" class="tit" onclick="deleteCartItem('#cartItem.productId#')">REMOVE</a>
+                                    <button class="tit btn p-0" id="removeBtn#cartItem.productId#" onclick="deleteCartItem('#cartItem.productId#')">REMOVE</button>
                                 </div>
                             </div>
                             <cfset totalPrice += (cartItem.unitPrice * cartItem.quantity)>

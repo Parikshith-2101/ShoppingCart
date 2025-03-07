@@ -1,7 +1,7 @@
 <cfcomponent>
     <cfset this.name = "ShoppingCartApplication">
     <cfset this.sessionManagement = true>
-    <cfset this.sessionTimeout = createTimeSpan(0, 0, 30, 0)>
+    <cfset this.sessionTimeout = createTimeSpan(0, 1, 0, 0)>
     <cfset this.applicationTimeout = createTimeSpan(1, 0, 0, 0)>
  
     <cffunction name = "onApplicationStart">
@@ -18,6 +18,11 @@
             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfset onApplicationStart()>
             </cfif>
+        </cfif>
+        <cfif structKeyExists(session, "loginUserId")>
+            <cfset session.cartLen = arrayLen(application.cartObj.getCartDetails().cart)>
+        <cfelse>
+            <cfset session.cartLen = 0>
         </cfif>
         <cfreturn true>
     </cffunction>
