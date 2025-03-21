@@ -86,7 +86,7 @@ if ($('#signUpSuccess').length) {
         timer: 1500,
         showConfirmButton: false
     }).then(() => {
-        window.location.href = "userLogin.cfm";
+        window.location.href = "/user/userLogin.cfm";
     });
 }
 
@@ -102,7 +102,7 @@ $('#logoutBtn').click(function(){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../components/user.cfc?method=logout",
+                url: "../../components/user.cfc?method=logout",
                 method: "POST",
                 success: function () {
                     Swal.fire({
@@ -112,7 +112,7 @@ $('#logoutBtn').click(function(){
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = "/views/userHome.cfm";
+                        window.location.href = "/views/user/userHome.cfm";
                     });
                 }
             });
@@ -165,7 +165,7 @@ function deleteAddress(addressId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../components/productManagement.cfc?method=deleteAddress",
+                url: "../../components/productManagement.cfc?method=deleteAddress",
                 method: "POST",
                 data: { addressId: addressId},
                 success: function() {
@@ -213,7 +213,7 @@ let offset = 0;
 function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey) {
     offset += 4;
     $.ajax({
-        url : "../components/productManagement.cfc?method=getProduct",
+        url : "../../components/productManagement.cfc?method=getProduct",
         method : "POST",
         data : {
             subCategoryId : subCategoryId,
@@ -234,9 +234,9 @@ function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey
                     $('#viewMoreBtn').prop("disabled",true);
                 }
                
-                $(`<a href="userProducts.cfm?productId=${encodeURIComponent(productItem.productId)}" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                $(`<a href="/user/userProducts.cfm?productId=${encodeURIComponent(productItem.productId)}" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                         <div class="product-card pb-0 shadow-sm">
-                            <img src="../uploads/products/product${productItem.decryptedProductId}/${productItem.imageFile}" alt="${productItem.productName}">
+                            <img src="../../uploads/products/product${productItem.decryptedProductId}/${productItem.imageFile}" alt="${productItem.productName}">
                             <div class="card-body text-start">
                                 <h5 class="card-title text-truncate">${productItem.productName}</h5>
                                 <p class="card-text text-muted small mb-1">
@@ -323,3 +323,20 @@ if ($('#activateSweetAlert').length) {
         }
     });
 }
+
+$(document).ready(function(){
+    const searchParams = new URLSearchParams(window.location.search);
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    const minPriceCustom = searchParams.get('minPriceCustom');
+    const maxPriceCustom = searchParams.get('maxPriceCustom');
+    $('#minPrice').val(minPrice);
+    $('#maxPrice').val(maxPrice);
+    if(minPrice == "custom"){
+        $('#minPriceCustom').removeClass('d-none').val(minPriceCustom);
+
+    }
+    if(maxPrice == "custom"){
+        $('#maxPriceCustom').removeClass('d-none').val(maxPriceCustom);
+    }
+})

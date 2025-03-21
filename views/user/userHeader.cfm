@@ -3,17 +3,17 @@
     <cfset getSubCategoryArray = application.productManagementObj.getSubCategory()>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
-            <a href="/views/userHome.cfm" class="navbar-brand d-flex align-items-center">
-                <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
+            <a href="userHome.cfm" class="navbar-brand d-flex align-items-center">
+                <img src="../../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-2">
                 <span class="fs-4 nav-brand">ShoppingCart</span>
             </a> 
-            <form method="post" class="d-flex m-0" action="/views/userSearch.cfm">                    
+            <form method="post" class="d-flex m-0" action="/views/user/userSearch.cfm">                    
                 <input class="form-control me-2" name="searchKey" type="search" placeholder="Search for products..." aria-label="Search">
                 <button class="btn btn-primary" name="searchProductsBtn" type="submit">Search</button>
             </form>
             <ul class="navbar-nav">
                 <li class="nav-item me-3">
-                    <a class="nav-link" href="/views/userCart.cfm">
+                    <a class="nav-link" href="/views/user/userCart.cfm">
                         <i class="fa-solid fa-cart-shopping position-relative">
                             <cfif structKeyExists(session, "loginUserId")>
                                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-quantity">
@@ -33,7 +33,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li>
-                                    <a class="dropdown-item d-flex align-items-center text-primary" href="/views/userProfile.cfm">
+                                    <a class="dropdown-item d-flex align-items-center text-primary" href="/views/user/userProfile.cfm">
                                         <i class="fa-solid fa-user-circle me-2"></i>
                                         <span>Profile</span>
                                     </a>
@@ -46,7 +46,7 @@
                             </ul>
                         </li>
                     <cfelse>
-                        <a class="nav-link" href="/views/userLogin.cfm">
+                        <a class="nav-link" href="/views/user/userLogin.cfm">
                             <i class="fa-solid fa-user-plus"></i> Login
                         </a>
                     </cfif>
@@ -60,14 +60,14 @@
                 <cfloop array="#getCategoryArray.category#" item="categoryItem">
                     <cfset divId = createUUID()>
                     <li class="nav-item dropdown">
-                        <a class="nav-link" href="/views/userCategories.cfm?categoryId=#urlEncodedFormat(categoryItem.categoryId)#" id="#divId#" role="button">
+                        <a class="nav-link" href="/views/user/userCategories.cfm?categoryId=#urlEncodedFormat(categoryItem.categoryId)#" id="#divId#" role="button">
                             #categoryItem.categoryName# 
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="#divId#">
                             <cfloop array="#getSubCategoryArray.subCategory#" item="subCategoryItem">
                                 <cfif subCategoryItem.categoryId EQ categoryItem.categoryId>
                                     <li>
-                                        <a class="dropdown-item" href="/views/userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
+                                        <a class="dropdown-item" href="/views/user/userSubCategories.cfm?subCategoryId=#urlEncodedFormat(subCategoryItem.subCategoryId)#">
                                             #subCategoryItem.subCategoryName#
                                         </a>
                                     </li>

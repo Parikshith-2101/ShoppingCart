@@ -23,7 +23,7 @@ $(document).ready(function (){
         }).then((result) => {
             if (result.isConfirmed){
                 $.ajax({
-                    url: "../components/user.cfc?method=logout", 
+                    url: "../../components/user.cfc?method=logout", 
                     method: "POST", 
                     success: function (){
                         Swal.fire({
@@ -33,7 +33,7 @@ $(document).ready(function (){
                             timer: 1500, 
                             showConfirmButton: false
                         }).then(() => {
-                            window.location.href = "userLogin.cfm";
+                            window.location.href = "/views/user/userLogin.cfm";
                         });
                     }, 
                     error:handleAjaxError
@@ -79,10 +79,10 @@ $(document).ready(function (){
         }
         const ajaxData = {};  
         ajaxData.categoryName =  categoryName ;
-        let ajaxUrl = "../components/productManagement.cfc?method=addCategory";
+        let ajaxUrl = "../../components/productManagement.cfc?method=addCategory";
         if (categoryId.trim()){
             ajaxData.categoryId = categoryId;
-            ajaxUrl = "../components/productManagement.cfc?method=editCategory";
+            ajaxUrl = "../../components/productManagement.cfc?method=editCategory";
         }
         $.ajax({
             url: ajaxUrl, 
@@ -149,21 +149,22 @@ $(document).ready(function (){
         const oldCategoryId = searchParams.get('categoryId')
         const subCategoryId = $('#saveSubCategory').val();   
         if(!newCategoryId){
-            $('#subCategory-error').text('Select Category');
+            $('#subCategory-error').text('Select Category').addClass('text-danger');
             return;
         }
         if(!subCategoryName){
-            $('#subCategory-error').text('Enter SubCatergory Name');
+            $('#subCategory-error').text('Enter SubCatergory Name').addClass('text-danger');
             return;
         }
-        let ajaxUrl = "../components/productManagement.cfc?method=addSubCategory";
+        let ajaxUrl = "../../components/productManagement.cfc?method=addSubCategory";
         const ajaxData = { subCategoryName, categoryId: newCategoryId };
         if (subCategoryId){
-            ajaxUrl = "../components/productManagement.cfc?method=editSubCategory";
+            ajaxUrl = "../../components/productManagement.cfc?method=editSubCategory";
             ajaxData.subCategoryId = subCategoryId;
             ajaxData.oldCategoryId = oldCategoryId;
             ajaxData.newCategoryId = newCategoryId;
         }
+        console.log(ajaxData);
         $.ajax({
             url: ajaxUrl, 
             method: "POST", 
@@ -192,7 +193,7 @@ function editCategory(categoryId){
     $('#category-error').text('');
     $('#categoryValue').val('').change();
     $.ajax({
-        url: "../components/productManagement.cfc?method=getCategory", 
+        url: "../../components/productManagement.cfc?method=getCategory", 
         method: "POST", 
         data:{
             categoryId : categoryId
@@ -227,7 +228,7 @@ function deleteCategory(categoryId){
         if (result.isConfirmed){
             $.ajax({
                 type: "POST", 
-                url: "../components/productManagement.cfc?method=deleteCategory", 
+                url: "../../components/productManagement.cfc?method=deleteCategory", 
                 data: { categoryId: categoryId }, 
                 success: function (){
                     const parentDiv = $('#categoryParentDiv');
@@ -254,19 +255,19 @@ function deleteCategory(categoryId){
 function editSubCategory(subCategoryId, categoryId){
     $('#subCategory-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=getSubCategory", 
+        url: "../../components/productManagement.cfc?method=getSubCategory", 
         method: "POST", 
         data:{
             subCategoryId : subCategoryId, 
             categoryId : categoryId
         }, 
         success: function(getSubCategoryData){
-            const data = JSON.parse(getSubCategoryData);
+            const data = JSON.parse(getSubCategoryData);           
             $('#categoryDropdown').val(data.subCategory[0].categoryId);
             $('#subCategoryValue').val(data.subCategory[0].subCategoryName);
-            $('#saveSubCategory').val(data.subCategory[0].subCategoryId);
+            $('#saveSubCategory').val(subCategoryId);
             $('#subCategoryValue').attr("defaultValue", data.subCategory[0].subCategoryName);
-            $('#categoryDropdown').attr("defaultValue", data.subCategory[0].subCategoryId);
+            $('#categoryDropdown').attr("defaultValue", categoryId);
             $('#subCategoryModal').modal('show');
         }, 
         error: handleAjaxError
@@ -287,7 +288,7 @@ function deleteSubCategory(subCategoryId, categoryId){
         if (result.isConfirmed){
             $.ajax({
                 type: "POST", 
-                url: "../components/productManagement.cfc?method=deleteSubCategory", 
+                url: "../../components/productManagement.cfc?method=deleteSubCategory", 
                 data: {
                     subCategoryId : subCategoryId, 
                     categoryId : categoryId

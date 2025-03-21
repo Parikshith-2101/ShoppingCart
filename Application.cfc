@@ -36,12 +36,12 @@
             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfinclude template = "#arguments.requestPage#">
             <cfelse>
-                <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
+                <cfinclude template = "/ShoppingCart/views/user/userLogin.cfm">
             </cfif>
         <cfelseif arrayFindNoCase(local.allowedPages, ListLast(CGI.SCRIPT_NAME,'/')) OR structKeyExists(session, "email")>
             <cfinclude template = "#arguments.requestPage#">
         <cfelse>
-            <cfinclude template = "/ShoppingCart/views/userLogin.cfm">
+            <cfinclude template = "/ShoppingCart/views/user/userLogin.cfm">
         </cfif>
     </cffunction>
     
@@ -69,7 +69,7 @@
                 <h3>#arguments.targetPage# could not be found.</h3>
                 <p>You requested a non-existent ColdFusion page.<br>
                 Please check the URL.</p>
-                <a href="userHome.cfm">Click here to go to Home Page<a>
+                <a href="/views/user/userHome.cfm">Click here to go to Home Page<a>
             </cfoutput>
             <cfreturn true>
             <cfcatch>

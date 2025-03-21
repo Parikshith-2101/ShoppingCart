@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products</title>
-    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/style/products.css">
+    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../../assets/style/products.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -23,7 +23,7 @@
         <nav class="navbar fixed-top p-0">
             <a href="categories.cfm" class="nav-link">
                 <div class="d-flex nav-brand">
-                    <img src="../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
+                    <img src="../../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                     <span class="fs-4">ShoppingCart</span>
                 </div>
             </a>
@@ -171,7 +171,7 @@
                             </cfif>
                             <cfif addProductResult.error EQ false>
                                 <div class="text-success fw-bold">#addProductResult.message#</div>
-                                <cflocation url = "products.cfm?subCategoryId=#urlEncodedFormat(url.subCategoryId)#&categoryId=#urlEncodedFormat(url.categoryId)#" addToken="No">
+                                <cflocation url="products.cfm?subCategoryId=#urlEncodedFormat(url.subCategoryId)#&categoryId=#urlEncodedFormat(url.categoryId)#" addToken="No">
                             <cfelse>
                                 <div id="errorProductResult" data-errorMsg="#addProductResult.message#"></div>
                             </cfif>    
@@ -185,7 +185,7 @@
                                         <div class="col-sm-6 col-md-4 col-lg-3" id="#productItem.productId#">
                                             <div class="card product-card shadow-sm">
                                                 <div onclick="editImage('#productItem.productId#','#decryptedProductId#')" class="cursor-pointer">
-                                                    <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" 
+                                                    <img src="../../uploads/products/product#decryptedProductId#/#productItem.imageFile#" 
                                                         class="card-img-top" alt="#productItem.productName#" id="thumb-#productItem.productId#">
                                                 </div>
                                                 <div class="card-body">
@@ -216,7 +216,7 @@
                                     </cfloop>
                                 <cfelse>
                                     <div class="mt-5 w-100 text-center">
-                                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
+                                        <img src="../../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
                                         <h4 class="mt-3 text-muted">Your Product Page is Empty</h4>
                                         <p class="text-muted">ADD SOME PRODUCTS HERE!</p>
                                     </div>
@@ -229,10 +229,11 @@
         </div>
     </cfoutput>
 
-    <script src="../assets/script/bootstrap.min.js"></script>
+    <script src="../../assets/script/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../assets/script/jquery-3.7.1.min.js"></script>
-    <script src="../assets/script/products.js"></script>
+    <script src="../../assets/script/jquery-3.7.1.min.js"></script>
+    <script src="../../assets/script/products.js"></script>
+    <script src="../../assets/script/script.js"></script>
 
 </body>
 

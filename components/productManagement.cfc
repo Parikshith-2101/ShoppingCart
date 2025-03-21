@@ -177,14 +177,14 @@
         <cfreturn local.result>
     </cffunction>
 
-    <cffunction name = "deleteCategory" access = "remote" returnType = "void">
+    <cffunction name = "deleteCategory" access = "remote" returnType = "any">
         <cfargument name = "categoryId" required = true type = "string">
         <cftry>
             <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
             <cfquery datasource = "#application.dataSource#">
                 UPDATE 
                     tblcategory C
-                        JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id AND SC.fldActive = 1
+                    LEFT JOIN tblsubcategory SC ON SC.fldCategoryId = C.fldCategory_Id AND SC.fldActive = 1
                     LEFT JOIN tblproduct P ON P.fldSubcategoryId = SC.fldSubcategory_Id AND P.fldActive = 1
                     LEFT JOIN tblproductimages PI ON PI.fldProductId = P.fldProduct_Id AND PI.fldActive = 1
                 SET 
@@ -526,12 +526,14 @@
     <cffunction name = "getProduct" access = "remote" returnType = "struct" returnFormat = "JSON">
         <cfargument name = "productName" required = false type = "string">
         <cfargument name = "subCategoryId" required = false type = "string" default = "">     
+        <cfargument name = "categoryId" required = false type = "string" default = "">     
         <cfargument name = "limit" required = false type = "integer"> 
         <cfargument name = "offset" required = false type = "integer" default = 0> 
         <cfargument name = "sortType" required = false type = "string">
         <cfargument name = "minPrice" required = false type = "string"> 
         <cfargument name = "maxPrice" required = false type = "string"> 
         <cfargument name = "searchKey" required = false type = "string"> 
+        <cfargument name = "maxRowNumber" required = false type = "integer"> 
         <cfset local.result = {
             'error' : false,
             'product' : []
@@ -539,65 +541,82 @@
         <cfset local.decryptedSubCategoryId = "">
         <cfset local.sort = "RAND()">
         <cfif structKeyExists(arguments, "sortType")>
-            <cfset local.sort = "P.fldUnitPrice #arguments.sortType#,P.fldProductName">
+            <cfif arguments.sortType EQ "DESC">
+                <cfset local.sort = "P.fldUnitPrice DESC,P.fldProductName">
+            <cfelse>
+                <cfset local.sort = "P.fldUnitPrice ASC,P.fldProductName">
+            </cfif>
         </cfif>
         <cftry>
             <cfif arguments.subCategoryId NEQ "">
                 <cfset local.decryptedSubCategoryId = decryptData(data = arguments.subCategoryId)>
             </cfif>
+            <cfif arguments.categoryId NEQ "">
+                <cfset local.decryptedCategoryId = decryptData(data = arguments.categoryId)>
+            </cfif>
             <cfquery name = "local.qryProduct" datasource = "#application.dataSource#">
-                SELECT 
-                    P.fldProduct_Id,
-                    P.fldProductName,
-                    P.fldSubCategoryId,
-                    P.fldBrandId,
-                    B.fldBrandName,
-                    P.fldDescription,
-                    P.fldUnitPrice,
-                    P.fldUnitTax,
-                    PI.fldImageFilePath,
-                    PI.fldDefaultImage,
-                    SC.fldSubCategoryName,
-                    C.fldCategoryName,
-                    C.fldCategory_Id
-                FROM
-                    tblproduct P
-                    INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
-                    INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
-                    INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
-                    LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
-                WHERE
-                    P.fldActive = 1
-                    AND SC.fldActive = 1
-                    AND C.fldActive = 1
-                    <cfif arguments.subCategoryId NEQ "">
-                        AND P.fldSubCategoryId = <cfqueryparam value = "#val(local.decryptedSubCategoryId)#" cfsqltype = "integer">
+                WITH products AS (
+                    SELECT 
+                        P.fldProduct_Id,
+                        P.fldProductName,
+                        P.fldSubCategoryId,
+                        P.fldBrandId,
+                        B.fldBrandName,
+                        P.fldDescription,
+                        P.fldUnitPrice,
+                        P.fldUnitTax,
+                        PI.fldImageFilePath,
+                        PI.fldDefaultImage,
+                        SC.fldSubCategoryName,
+                        C.fldCategoryName,
+                        C.fldCategory_Id,
+                        ROW_NUMBER() OVER (PARTITION BY P.fldSubCategoryId) AS rowNumber
+                    FROM
+                        tblproduct P
+                        INNER JOIN tblbrand B ON B.fldBrand_Id = P.fldBrandId
+                        INNER JOIN tblsubcategory SC ON SC.fldSubCategory_Id = P.fldSubCategoryId
+                        INNER JOIN tblcategory C ON C.fldCategory_Id = SC.fldCategoryId
+                        LEFT JOIN tblproductimages PI ON P.fldProduct_Id = PI.fldProductId AND PI.fldDefaultImage = 1
+                    WHERE
+                        P.fldActive = 1
+                        AND SC.fldActive = 1
+                        AND C.fldActive = 1
+                        <cfif arguments.subCategoryId NEQ "">
+                            AND P.fldSubCategoryId = <cfqueryparam value = "#val(local.decryptedSubCategoryId)#" cfsqltype = "integer">
+                        </cfif>
+                        <cfif arguments.categoryId NEQ "">
+                            AND C.fldCategory_Id = <cfqueryparam value = "#val(local.decryptedCategoryId)#" cfsqltype = "integer">
+                        </cfif>
+                        <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
+                            AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
+                        </cfif>
+                        <cfif structKeyExists(arguments, "searchKey") AND len(trim(arguments.searchKey))>
+                            AND 
+                            (
+                                P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                                OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                                OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                                OR SC.fldSubCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                                OR C.fldCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
+                            )
+                        </cfif>
+                        <cfif (structKeyExists(arguments, "minPrice") AND len(trim(arguments.minPrice))) 
+                            AND (structKeyExists(arguments, "maxPrice") AND len(trim(arguments.maxPrice)))>
+                                AND (P.fldUnitPrice BETWEEN <cfqueryparam value = "#arguments.minPrice#"> 
+                                    AND <cfqueryparam value = "#arguments.maxPrice#">)
+                        </cfif>
+                    <cfif arguments.subCategoryId EQ "" OR structKeyExists(arguments, "sortType") AND len(trim(arguments.sortType))>
+                        ORDER BY #local.sort# 
                     </cfif>
-                    <cfif structKeyExists(arguments, "productName") AND len(trim(arguments.productName))>
-                        AND P.fldProductName = <cfqueryparam value = "#arguments.productName#" cfsqltype = "varchar">
+                    <cfif structKeyExists(arguments, "limit")>
+                        LIMIT <cfqueryparam value = "#val(arguments.offset)#" cfsqltype = "integer">,
+                        <cfqueryparam value = "#val(arguments.limit)#" cfsqltype = "integer">   
                     </cfif>
-                    <cfif structKeyExists(arguments, "searchKey") AND len(trim(arguments.searchKey))>
-                        AND 
-                        (
-                            P.fldProductName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
-                            OR P.fldDescription LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
-                            OR B.fldBrandName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
-                            OR SC.fldSubCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
-                            OR C.fldCategoryName LIKE <cfqueryparam value = "%#arguments.searchKey#%" cfsqltype = "varchar">
-                        )
-                    </cfif>
-                    <cfif (structKeyExists(arguments, "minPrice") AND len(trim(arguments.minPrice))) 
-                        AND (structKeyExists(arguments, "maxPrice") AND len(trim(arguments.maxPrice)))>
-                            AND (P.fldUnitPrice BETWEEN <cfqueryparam value = "#arguments.minPrice#"> 
-                                AND <cfqueryparam value = "#arguments.maxPrice#">)
-                    </cfif>
-                <cfif arguments.subCategoryId EQ "" OR structKeyExists(arguments, "sortType") AND len(trim(arguments.sortType))>
-                    ORDER BY #local.sort# 
-                </cfif>
-                <cfif structKeyExists(arguments, "limit")>
-                    LIMIT <cfqueryparam value = "#val(arguments.offset)#" cfsqltype = "integer">,
-                    <cfqueryparam value = "#val(arguments.limit)#" cfsqltype = "integer">   
-                </cfif>
+                )
+                SELECT * FROM products
+                <cfif structKeyExists(arguments, "maxRowNumber")>
+                    WHERE rowNumber <= <cfqueryparam value = "#arguments.maxRowNumber#" cfsqltype = "integer">
+                </cfif>;
             </cfquery>
             <cfloop query = "local.qryProduct">
                 <cfset arrayAppend(local.result['product'],{

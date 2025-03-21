@@ -1,34 +1,4 @@
 $(document).ready(function () {
-    // Logout
-    $('#logoutCategory').on('click', function () {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You will be logged out.",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, logout!"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: "../components/user.cfc?method=logout",
-                    method: "POST",
-                    success: function () {
-                        Swal.fire({
-                            title: "Logged Out!",
-                            text: "You have been logged out successfully.",
-                            icon: "success",
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(() => {
-                            window.location.href = "userLogin.cfm";
-                        });
-                    }
-                });
-            }
-        });
-    });
 
     //productModal
     $('#addProductBtn').on('click', function(){
@@ -60,7 +30,7 @@ $(document).ready(function () {
     $('#categoryDropdown').on('change', function() {
         var thisCategoryId = this.value;
         $.ajax({
-            url: "../components/productManagement.cfc?method=getSubCategory",
+            url: "../../components/productManagement.cfc?method=getSubCategory",
             method: "POST",
             data:{
                 categoryId : thisCategoryId
@@ -87,7 +57,7 @@ function editProduct(productId,subCategoryId,categoryId,decryptedProductId){
     $('#productTax-error').text('');
     $('#productImage-error').text('');
     $.ajax({
-        url: "../components/productManagement.cfc?method=getSingleProduct",
+        url: "../../components/productManagement.cfc?method=getSingleProduct",
         method: "POST",
         data:{
             productId : productId
@@ -113,7 +83,7 @@ function editProduct(productId,subCategoryId,categoryId,decryptedProductId){
                 let checkbox = `
                         <div class="d-flex align-items-center justify-content-between">
                             <div class="d-flex btn btn-outline-secondary p-0 px-1 fs-12px" onclick="setDefaultImage(this,'${imageIdArray[i]}','${data.productId}')">
-                                <label class="text-nowrap me-1">Set</label>
+                                <label class="text-nowrap me-1 cursor-pointer">Set</label>
                                 <input type="radio" class="m-0 btn" name="productImageCheck">
                             </div>
                             <button type="button" class="btn btn-outline-danger py-0 px-1 fs-12px" onclick="deleteImage('${imageIdArray[i]}','${data.productId}')">Delete</button>
@@ -130,7 +100,7 @@ function editProduct(productId,subCategoryId,categoryId,decryptedProductId){
                 }
                 const carouselItem = `
                     <div class="${active} carousel-imageDiv" id="${imageIdArray[i]}">
-                        <img src="../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                        <img src="../../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
                     `;
@@ -185,7 +155,7 @@ function deleteProduct(productId, subCategoryId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../components/productManagement.cfc?method=deleteProduct",
+                url: "../../components/productManagement.cfc?method=deleteProduct",
                 method: "POST",
                 data: {
                     subCategoryId: subCategoryId,
@@ -235,31 +205,29 @@ function productValidation(event){
         $('#subCategory-error').text('Select Subcategory Name');
         isValid = false;
     }
-    if(!productName){
-        $('#productName-error').text('Enter Product Name');
+    if (productName.length < 2 || !/^[a-zA-Z0-9\s]+$/.test(productName)) {
+        $('#productName-error').text('Product Name must be at least 2 characters long');
         isValid = false;
     }
     if(!productBrand){
         $('#productBrand-error').text('Enter Product Brand');
         isValid = false;
     }     
-    if(!productDesc){
-        $('#productDesc-error').text('Enter Product Desc');
+    if (productDesc.length < 5 || !/^[a-zA-Z0-9\s,.]+$/.test(productDesc)) {
+        $('#productDesc-error').text('Product Description must be at least 5 characters long');
         isValid = false;
     }     
-    if(!productPrice){
-        $('#productPrice-error').text('Enter Product Price');
-        isValid = false;
-    }     
-    if(!productTax){
-        $('#productTax-error').text('Enter Product Tax');
+    if (isNaN(productPrice) || productPrice <= 0) {
+        $('#productPrice-error').text('Product Price must be greater than 0');
         isValid = false;
     }
-    if(!productId){
-        if(!productImage){
-            $('#productImage-error').text('Choose Image File');
-            isValid = false;
-        }
+    if (isNaN(productTax) || productTax < 0) {
+        $('#productTax-error').text('Product Tax cannot be negative');
+        isValid = false;
+    }
+    if (!productId && !productImage) {
+        $('#productImage-error').text('Choose Image File');
+        isValid = false;
     }      
     return isValid;
 }
@@ -267,7 +235,7 @@ function productValidation(event){
 //productImageModal
 function editImage(thisProductId,decryptedProductId){
     $.ajax({
-        url: "../components/productManagement.cfc?method=getSingleProduct",
+        url: "../../components/productManagement.cfc?method=getSingleProduct",
         method: "POST",
         data: {
             productId : thisProductId
@@ -301,7 +269,7 @@ function editImage(thisProductId,decryptedProductId){
                 }
                 const carouselItem = `
                     <div class="${active} carousel-imageDiv" id="${imageIdArray[i]}">
-                        <img src="../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
+                        <img src="../../uploads/products/product${decryptedProductId}/${imagefileArray[i]}" class="d-block w-100 carousel-image rounded mb-2" alt="carsl-img">
                         ${checkbox}
                     </div>
                 `;
@@ -315,7 +283,7 @@ function editImage(thisProductId,decryptedProductId){
 function setDefaultImage(element,productImageId,productId){
     element.querySelector('input[type=radio]').checked = true
     $.ajax({
-        url: "../components/productManagement.cfc?method=setDefaultProductImage",
+        url: "../../components/productManagement.cfc?method=setDefaultProductImage",
         method: "POST",
         data: {
             productImageId : productImageId,
@@ -340,7 +308,7 @@ function deleteImage(productImageId, productId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../components/productManagement.cfc?method=deleteProductImage",
+                url: "../../components/productManagement.cfc?method=deleteProductImage",
                 method: "POST",
                 data: {
                     productImageId: productImageId,

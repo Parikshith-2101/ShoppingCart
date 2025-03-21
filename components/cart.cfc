@@ -205,7 +205,7 @@
                     <cfset local.productId = "productId = #arguments.productId#">
                     <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = arguments.productId)>
                 </cfif>
-                <cfset local.getCart = getCartDetails(local.productId)>
+                <cfset local.getCart = getCartDetails(productId = local.productId)>
                 <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
                 <cfset local.totalPrice = 0>
                 <cfset local.totalTax = 0>

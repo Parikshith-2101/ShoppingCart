@@ -57,7 +57,7 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-<script src="../assets/script/bootstrap.min.js"></script>
-<script src="../assets/script/jquery-3.7.1.min.js"></script>
+<script src="../../assets/script/bootstrap.min.js"></script>
+<script src="../../assets/script/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../assets/script/user.js"></script>
+<script src="../../assets/script/user.js"></script>
