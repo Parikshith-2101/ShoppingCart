@@ -12,7 +12,7 @@
 </head>
 <body>
     <nav class="navbar fixed-top p-0">
-        <a href="userHome.cfm" class="nav-link">
+        <a href="/view/userHome.cfm" class="nav-link">
             <div class="d-flex nav-brand">
                 <img src="../../assets/images/designImages/cartIcon.png" alt="cartIcon" width="40" class="me-1">
                 <span class="fs-4">Shopping Cart</span>
@@ -31,7 +31,7 @@
         <div class = "d-flex justify-content-center">
             <div class="right-content border rounded shadow-heavy w-100">
                 <div class="p-4 align-items-center d-flex flex-column">
-                    <div class="text-uppercase text-center login-title fs-2 mb-3">Login</div>
+                    <div class="text-uppercase text-center login-title fs-2 mb-3">Admin Login</div>
                     <form method="post" class="align-items-center d-flex flex-column w-100" enctype="multipart/form-data">
                         <div class="w-100 py-2">
                             <input type="text" id="userName" name="userName" class="border-0 border-bottom w-100" placeholder="Username/PhoneNo.">
@@ -56,24 +56,10 @@
                             )>
                             <cfif loginResult.error EQ false>
                                 <div id="resultMsg" class="fw-bold text-success">#loginResult.message#</div>
-                                <cfif (ListLast(CGI.SCRIPT_NAME,'/') EQ "userCart.cfm") OR structKeyExists(url, "productId")>
-                                    <cfif structKeyExists(url, "productId")>
-                                        <cfset addToCartResult = application.cartObj.manageCart(
-                                            productId = url.productId,
-                                            modifyStatus = "add"
-                                        )>
-                                    </cfif>
-                                    <cfif (ListLast(CGI.SCRIPT_NAME,'/') EQ "userOrder.cfm") AND structKeyExists(url, "productId")>
-                                        <cflocation url = "userOrder.cfm?productId=#urlEncodedFormat(url.productId)#" addToken = "no">
-                                    <cfelse>
-                                        <cflocation url = "userCart.cfm" addToken = "no">
-                                    </cfif>
+                                <cfif session.roleId EQ 1>
+                                    <cflocation url = "/admin/view/categories.cfm" addToken = "no">
                                 <cfelse>
-                                    <cfif session.roleId EQ 1>
-                                        <cflocation url = "/views/admin/categories.cfm" addToken = "no">
-                                    <cfelse>
-                                        <cflocation url = "/views/user/userHome.cfm" addToken = "no">
-                                    </cfif>
+                                    <cflocation url = "/view/userHome.cfm" addToken = "no">
                                 </cfif>
                             <cfelse>
                                 <div id="resultMsg" class="text-danger">

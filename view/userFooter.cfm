@@ -44,8 +44,14 @@
         </div>
         <hr class="border-light my-2">
         <div class="row">
-            <div class="col-md-6 text-center text-md-start">
+            <div class="col-md-2 text-center text-md-start">
                 <p class="mb-0">All Rights Reserved.</p>
+            </div>
+            <div class="col-md-2 text-center text-md-start">
+                <a href="/admin/view/adminLogin.cfm" class="mb-0 text-decoration-none text-white p-2 btn-outline-primary">Admin Login</a>
+            </div>
+            <div class="col-md-2 text-center text-md-start">
+                <a href="/admin/view/categories.cfm" class="mb-0 text-decoration-none text-white p-2 btn-outline-primary">Admin Dashboard</a>
             </div>
             <div class="col-md-6 text-center text-md-end">
                 <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
@@ -57,7 +63,7 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-<script src="../../assets/script/bootstrap.min.js"></script>
-<script src="../../assets/script/jquery-3.7.1.min.js"></script>
+<script src="../assets/script/bootstrap.min.js"></script>
+<script src="../assets/script/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../../assets/script/user.js"></script>
+<script src="../assets/script/user.js"></script>

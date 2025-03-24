@@ -23,7 +23,7 @@ $(document).ready(function (){
         }).then((result) => {
             if (result.isConfirmed){
                 $.ajax({
-                    url: "../../components/user.cfc?method=logout", 
+                    url: "/admin/model/adminLogin.cfc?method=logout", 
                     method: "POST", 
                     success: function (){
                         Swal.fire({
@@ -33,7 +33,7 @@ $(document).ready(function (){
                             timer: 1500, 
                             showConfirmButton: false
                         }).then(() => {
-                            window.location.href = "/views/user/userLogin.cfm";
+                            window.location.reload();
                         });
                     }, 
                     error:handleAjaxError
@@ -79,10 +79,10 @@ $(document).ready(function (){
         }
         const ajaxData = {};  
         ajaxData.categoryName =  categoryName ;
-        let ajaxUrl = "../../components/productManagement.cfc?method=addCategory";
+        let ajaxUrl = "/admin/model/adminSpecific.cfc?method=addCategory";
         if (categoryId.trim()){
             ajaxData.categoryId = categoryId;
-            ajaxUrl = "../../components/productManagement.cfc?method=editCategory";
+            ajaxUrl = "/admin/model/adminSpecific.cfc?method=editCategory";
         }
         $.ajax({
             url: ajaxUrl, 
@@ -156,10 +156,10 @@ $(document).ready(function (){
             $('#subCategory-error').text('Enter SubCatergory Name').addClass('text-danger');
             return;
         }
-        let ajaxUrl = "../../components/productManagement.cfc?method=addSubCategory";
+        let ajaxUrl = "/admin/model/adminSpecific.cfc?method=addSubCategory";
         const ajaxData = { subCategoryName, categoryId: newCategoryId };
         if (subCategoryId){
-            ajaxUrl = "../../components/productManagement.cfc?method=editSubCategory";
+            ajaxUrl = "/admin/model/adminSpecific.cfc?method=editSubCategory";
             ajaxData.subCategoryId = subCategoryId;
             ajaxData.oldCategoryId = oldCategoryId;
             ajaxData.newCategoryId = newCategoryId;
@@ -193,7 +193,7 @@ function editCategory(categoryId){
     $('#category-error').text('');
     $('#categoryValue').val('').change();
     $.ajax({
-        url: "../../components/productManagement.cfc?method=getCategory", 
+        url: "/admin/model/adminSpecific.cfc?method=getCategory", 
         method: "POST", 
         data:{
             categoryId : categoryId
@@ -228,7 +228,7 @@ function deleteCategory(categoryId){
         if (result.isConfirmed){
             $.ajax({
                 type: "POST", 
-                url: "../../components/productManagement.cfc?method=deleteCategory", 
+                url: "/admin/model/adminSpecific.cfc?method=deleteCategory", 
                 data: { categoryId: categoryId }, 
                 success: function (){
                     const parentDiv = $('#categoryParentDiv');
@@ -255,7 +255,7 @@ function deleteCategory(categoryId){
 function editSubCategory(subCategoryId, categoryId){
     $('#subCategory-error').text('');
     $.ajax({
-        url: "../../components/productManagement.cfc?method=getSubCategory", 
+        url: "/admin/model/adminSpecific.cfc?method=getSubCategory", 
         method: "POST", 
         data:{
             subCategoryId : subCategoryId, 
@@ -288,7 +288,7 @@ function deleteSubCategory(subCategoryId, categoryId){
         if (result.isConfirmed){
             $.ajax({
                 type: "POST", 
-                url: "../../components/productManagement.cfc?method=deleteSubCategory", 
+                url: "/admin/model/adminSpecific.cfc?method=deleteSubCategory", 
                 data: {
                     subCategoryId : subCategoryId, 
                     categoryId : categoryId

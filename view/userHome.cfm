@@ -3,19 +3,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>userHome</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">    
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <header>
-        <cfinclude template="/views/user/userHeader.cfm">
+        <cfinclude template="/view/userHeader.cfm">
     </header>
     <main>
         <cfoutput>
-            <cfset getProductArray = application.productManagementObj.getProduct(limit = 8)>
+            <cfset getProductArray = application.getDataControllerObj.productController(limit = 8)>
             <div class="container products-container">
                 <div id="carouselExampleIndicators" class="carousel slide mt-5" data-bs-ride="carousel">
                     <ol class="carousel-indicators">
@@ -27,19 +27,19 @@
                     </ol>
                     <div class="carousel-inner">
                         <div class="carousel-item active" data-bs-interval="2000">
-                            <img class="d-block w-100 carousel-image" src="../../assets/images/designImages/banner1.jpg" alt="First slide">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner1.jpg" alt="First slide">
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
-                            <img class="d-block w-100 carousel-image" src="../../assets/images/designImages/banner3.webp" alt="Second slide">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner3.webp" alt="Second slide">
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
-                            <img class="d-block w-100 carousel-image" src="../../assets/images/designImages/banner2.jpg" alt="Third slide">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner2.jpg" alt="Third slide">
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
-                            <img class="d-block w-100 carousel-image" src="../../assets/images/designImages/banner4.webp" alt="fourth slide">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner4.webp" alt="fourth slide">
                         </div>
                         <div class="carousel-item" data-bs-interval="2000">
-                            <img class="d-block w-100 carousel-image" src="../../assets/images/designImages/banner5.jpg" alt="fifth slide">
+                            <img class="d-block w-100 carousel-image" src="../assets/images/designImages/banner5.jpg" alt="fifth slide">
                         </div>
                     </div>
                     <a class="carousel-control-prev" href="##carouselExampleIndicators" role="button" data-bs-slide="prev">
@@ -55,9 +55,9 @@
                     <h3>Random Products</h3>
                     <cfloop array="#getProductArray.product#" item="productItem">
                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
-                        <a href="/views/user/userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
+                        <a href="/view/userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                             <div class="product-card pb-0 shadow-sm">      
-                                <img src="../../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">                         
+                                <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="Electronics">                         
                                 <div class="card-body text-start">
                                     <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                     <p class="card-text text-muted small mb-1">
@@ -75,6 +75,6 @@
             </div>
         </cfoutput>
     </main>
-    <cfinclude template="/views/user/userFooter.cfm">
+    <cfinclude template="/view/userFooter.cfm">
 </body>
 </html>

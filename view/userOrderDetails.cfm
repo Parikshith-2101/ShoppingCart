@@ -3,8 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>userHome</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">    
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -36,7 +36,7 @@
                                 <cfloop array="#orderItem.product#" item="productItem">
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <div class="d-flex align-items-center">
-                                            <img src="../../uploads/products/product#productItem.productId#/#productItem.productImage#" alt="Product" class="rounded me-3" width="50" height="50">
+                                            <img src="../uploads/products/product#productItem.productId#/#productItem.productImage#" alt="Product" class="rounded me-3" width="50" height="50">
                                             <div>
                                                 <h6 class="mb-1">#productItem.productName#</h6>
                                                 <p class="mb-0 text-muted">Qty: #productItem.quantity# | Price: ₹#numberFormat(productItem.unitPrice, "9,999.00")# | Tax: ₹#numberFormat(productItem.unitTax, "9,999.00")#</p>

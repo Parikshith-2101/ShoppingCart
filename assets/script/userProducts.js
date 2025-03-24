@@ -17,13 +17,13 @@ function deleteCartItem(productId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../components/cart.cfc?method=deleteCart",
+                url: "../model/cart.cfc?method=deleteCart",
                 method: "POST",
                 data: { productId: productId },
                 success: function () {
                     document.getElementById(productId).remove();
                     $.ajax({
-                        url: "../../components/cart.cfc?method=getCartDetails",
+                        url: "../model/cart.cfc?method=getCartDetails",
                         method: "POST",
                         success: function (response) {
                             const getCart = JSON.parse(response);
@@ -63,7 +63,7 @@ function deleteCartItem(productId) {
 function modifyQuantity(productId,modifyStatus){ 
     const removebtn = document.getElementById(`removeBtn${productId}`);
     $.ajax({
-        url: "../../components/cart.cfc?method=manageCart",
+        url: "../model/cart.cfc?method=manageCart",
         method: "POST",
         data: {
             productId : productId,
@@ -75,7 +75,7 @@ function modifyQuantity(productId,modifyStatus){
                 removebtn.click();
             }
             $.ajax({
-                url: "../../components/cart.cfc?method=getCartDetails",
+                url: "../model/cart.cfc?method=getCartDetails",
                 method: "POST",
                 success: function(response) {
                     const getCart = JSON.parse(response);
@@ -113,7 +113,7 @@ $(document).ready(function () {
             text: "You order placed successfully!",
             icon: "success",
             showConfirmButton: false,
-            footer: '<a href="/views/user/userOrderDetails.cfm" class="btn btn-outline-primary">See Your Order History</a>'
+            footer: '<a href="/view/userOrderDetails.cfm" class="btn btn-outline-primary">See Your Order History</a>'
         });
     }
     if($("#orderErrorMessage").length){

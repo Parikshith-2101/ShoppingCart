@@ -3,9 +3,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Checkout</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">    
-    <link rel="stylesheet" href="../../assets/style/Cart.css">    
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">    
+    <link rel="stylesheet" href="../assets/style/Cart.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -82,7 +82,7 @@
                                                     <div class="d-flex align-items-center">
                                                         <input type="hidden" name="productId" value="#cartItem.productId#">
                                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
-                                                        <img src="../../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" alt="Product" class="rounded me-3" width="50" height="50">
+                                                        <img src="../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" alt="Product" class="rounded me-3" width="50" height="50">
                                                         <div>
                                                             <h6 class="mb-2">#cartItem.ProductName#</h6>
                                                             <div class="d-flex align-items-center w-50">
@@ -193,7 +193,7 @@
                                     </div>
                                 </div>
                                 <div class="bottom-text d-flex">
-                                    <img src="../../assets/images/designImages/shield.svg" alt="shield" width="31" height="38">
+                                    <img src="../assets/images/designImages/shield.svg" alt="shield" width="31" height="38">
                                     <p>Safe and Secure Payments.Easy returns.100% Authentic products.</p>
                                 </div>
                             </div>
@@ -221,6 +221,6 @@
         </cfif>
     </cfoutput>
     <cfinclude template="userFooter.cfm">
-    <script src="../../assets/script/userProducts.js"></script>
+    <script src="../assets/script/userProducts.js"></script>
 </body>
 </html>

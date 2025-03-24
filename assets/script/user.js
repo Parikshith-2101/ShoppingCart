@@ -102,7 +102,7 @@ $('#logoutBtn').click(function(){
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../components/user.cfc?method=logout",
+                url: "../model/user.cfc?method=logout",
                 method: "POST",
                 success: function () {
                     Swal.fire({
@@ -112,7 +112,7 @@ $('#logoutBtn').click(function(){
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        window.location.href = "/views/user/userHome.cfm";
+                        window.location.href = "/view/userHome.cfm";
                     });
                 }
             });
@@ -165,7 +165,7 @@ function deleteAddress(addressId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../components/productManagement.cfc?method=deleteAddress",
+                url: "../model/productManagement.cfc?method=deleteAddress",
                 method: "POST",
                 data: { addressId: addressId},
                 success: function() {
@@ -213,7 +213,7 @@ let offset = 0;
 function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey) {
     offset += 4;
     $.ajax({
-        url : "../../components/productManagement.cfc?method=getProduct",
+        url : "../controller/getDataController.cfc?method=productController",
         method : "POST",
         data : {
             subCategoryId : subCategoryId,
@@ -227,16 +227,14 @@ function viewMoreProducts(subCategoryId, sortType, minPrice, maxPrice, searchKey
         success: function(response){
             const data = JSON.parse(response);
             const productData = data.product;
-            let productLength = data.product.length;
-            console.log(data)    
+            console.log(data,offset)
+            if((data.totalRows - 4 - offset) <= 0){
+                $('#viewMoreBtn').prop("disabled",true);
+            }            
             for(let productItem of productData){
-                if(productLength < 4){
-                    $('#viewMoreBtn').prop("disabled",true);
-                }
-               
                 $(`<a href="/user/userProducts.cfm?productId=${encodeURIComponent(productItem.productId)}" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                         <div class="product-card pb-0 shadow-sm">
-                            <img src="../../uploads/products/product${productItem.decryptedProductId}/${productItem.imageFile}" alt="${productItem.productName}">
+                            <img src="../uploads/products/product${productItem.decryptedProductId}/${productItem.imageFile}" alt="${productItem.productName}">
                             <div class="card-body text-start">
                                 <h5 class="card-title text-truncate">${productItem.productName}</h5>
                                 <p class="card-text text-muted small mb-1">
@@ -330,11 +328,20 @@ $(document).ready(function(){
     const maxPrice = searchParams.get('maxPrice');
     const minPriceCustom = searchParams.get('minPriceCustom');
     const maxPriceCustom = searchParams.get('maxPriceCustom');
-    $('#minPrice').val(minPrice);
-    $('#maxPrice').val(maxPrice);
+    if(minPrice){
+        $('#minPrice').val(minPrice);
+    }
+    else{
+        $('#minPrice').val(0);
+    }
+    if(maxPrice){
+        $('#maxPrice').val(maxPrice);
+    }
+    else{
+        $('#maxPrice').val(1000000);
+    }
     if(minPrice == "custom"){
         $('#minPriceCustom').removeClass('d-none').val(minPriceCustom);
-
     }
     if(maxPrice == "custom"){
         $('#maxPriceCustom').removeClass('d-none').val(maxPriceCustom);

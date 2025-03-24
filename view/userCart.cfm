@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">   
-    <link rel="stylesheet" href="../../assets/style/Cart.css">
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">   
+    <link rel="stylesheet" href="../assets/style/Cart.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -32,7 +32,7 @@
                                 <div class="product d-flex">
                                     <div class="product-image d-flex">
                                         <cfset decryptedProductId = application.productManagementObj.decryptData(data = cartItem.productId)>
-                                        <img src="../../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
+                                        <img src="../uploads/products/product#decryptedProductId#/#cartItem.imageFile#" class="w-100 object-fit-contain" alt="product" height="112">
                                     </div>
                                     <div class="product-details d-flex flex-column">
                                         <p class="product-name">#cartItem.productName#</p>
@@ -97,14 +97,14 @@
                                 </div>
                             </div>
                             <div class="bottom-text d-flex">
-                                <img src="../../assets/images/designImages/shield.svg" alt="shield" width="31" height="38">
+                                <img src="../assets/images/designImages/shield.svg" alt="shield" width="31" height="38">
                                 <p>Safe and Secure Payments.Easy returns.100% Authentic products.</p>
                             </div>
                         </div>
                     </div>   
                 <cfelse>
                     <div class="mt-5 w-100 text-center">
-                        <img src="../../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
+                        <img src="../assets/images/designImages/cart is empty.png" alt="Empty Cart" class="w-25 h-50">
                         <h4 class="mt-3 text-muted">Oops! Your Cart is Empty</h4>
                         <p class="text-muted">Looks like you haven't added anything yet. Let's find something amazing for you!</p>
                         <a href="userHome.cfm" class="btn btn-primary mt-3"><i class="fas fa-shopping-bag me-2"></i>Browse Products</a>
@@ -114,7 +114,7 @@
         </cfoutput>
     </main>
     <cfinclude template="userFooter.cfm">
-    <script src="../../assets/script/userProducts.js"></script>
+    <script src="../assets/script/userProducts.js"></script>
 </body>
 
 </html>

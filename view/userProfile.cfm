@@ -3,8 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">    
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -39,7 +39,7 @@
                                     </cfif>
                                 </div>
                             </cfif>
-                            <img src="../../assets/images/designImages/default profile.jpg" class="rounded-circle mb-3 mx-auto" width="120" alt="Profile Picture">
+                            <img src="../assets/images/designImages/default profile.jpg" class="rounded-circle mb-3 mx-auto" width="120" alt="Profile Picture">
                             <h5 class="card-title">#session.firstName# #session.lastName#</h5>
                             <p class="text-muted">#session.email#</p>
                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="##editProfileModal">

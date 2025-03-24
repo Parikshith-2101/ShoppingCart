@@ -3,8 +3,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subcategories</title>
-    <link rel="stylesheet" href="../../assets/style/bootstrap.min.css">
-    <link rel="stylesheet" href="../../assets/style/home.css">    
+    <link rel="stylesheet" href="../assets/style/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/style/home.css">    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -16,6 +16,11 @@
     </header>
     <main>
         <cfparam name = "url.subCategory" default = ""> 
+        <cfparam name = "url.sortBtn" default = ""> 
+        <cfparam name = "url.minPrice" default = 0> 
+        <cfparam name = "url.maxPrice" default = 0> 
+        <cfparam name = "url.minPriceCustom" default = 0> 
+        <cfparam name = "url.maxPriceCustom" default = 0> 
         <cfset sortType = "">
         <cfset minPrice = "">
         <cfset maxPrice = "">
@@ -25,11 +30,10 @@
         }> 
         <cfif structKeyExists(url, "sortBtn")>
             <cfset params["sortType"] = url.sortBtn>
-            <cfset sortType = url.sortBtn>
         </cfif>
         <cfset params["minPrice"] = (url.minPrice EQ "custom") ? url.minPriceCustom : url.minPrice>
         <cfset params["maxPrice"] = (url.maxPrice EQ "custom") ? url.maxPriceCustom : url.maxPrice>
-        <cfset getProductArray = application.productManagementObj.getProduct(argumentCollection=params)>
+        <cfset getProductArray = application.getDataControllerObj.productController(argumentCollection=params)>
         <form method="get">
             <input type="hidden" value="#url.subCategoryId#" name="subCategoryId">
             <div class="container products-container">
@@ -81,6 +85,7 @@
                                             <li>
                                                 <div class="mx-2">
                                                     <button type="submit" name="priceFilterBtn" id="filterBtn" class="form-control btn btn-success">Filter</button>
+                                                    <input type="reset" class="form-control btn btn-outline-warning mt-2">
                                                 </div>
                                             </li>
                                         </ul>
@@ -93,7 +98,7 @@
                                 <cfset decryptedProductId = application.productManagementObj.decryptData(data = productItem.productId)>
                                 <a href="userProducts.cfm?productId=#urlEncodedFormat(productItem.productId)#" class="col-12 col-sm-6 col-md-4 col-lg-3 text-decoration-none text-dark">
                                     <div class="product-card pb-0 shadow-sm">
-                                        <img src="../../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
+                                        <img src="../uploads/products/product#decryptedProductId#/#productItem.imageFile#" alt="#productItem.productName#">
                                         <div class="card-body text-start">
                                             <h5 class="card-title text-truncate">#productItem.productName#</h5>
                                             <p class="card-text text-muted small mb-1">
@@ -108,12 +113,12 @@
                                 </a>
                             </cfloop>    
                         </div>
-                        <cfif arraylen(getProductArray.product) EQ 4>
-                            <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="viewMoreProducts('#url.subCategoryId#','#sortType#','#minPrice#','#maxPrice#','')">View More</button>
+                        <cfif getProductArray.totalRows GT 4>
+                            <button id="viewMoreBtn" class="btn btn-outline-primary w-25 ms-auto" type="button" onclick="viewMoreProducts('#url.subCategoryId#','#params.sortType#','#params.minPrice#','#params.maxPrice#','')">View More</button>
                         </cfif>
                     <cfelse>
                         <div class="d-flex flex-column">
-                            <img src="../../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75">
+                            <img src="../assets/images/designImages/no_result.gif" alt="No Products Found" class="w-75">
                             <a href="userHome.cfm" class="btn btn-primary mx-auto w-25"><i class="fas fa-shopping-bag me-2"></i>Back To Home</a>
                         </div> 
                     </cfif>

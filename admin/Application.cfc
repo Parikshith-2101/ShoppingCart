@@ -1,14 +1,13 @@
-<cfcomponent>
-    <cfset this.name = "ShoppingCartApplication">
+<cfset this.name = "ShoppingCartAdmin">
     <cfset this.sessionManagement = true>
     <cfset this.sessionTimeout = createTimeSpan(0, 1, 0, 0)>
     <cfset this.applicationTimeout = createTimeSpan(1, 0, 0, 0)>
  
     <cffunction name = "onApplicationStart">
-        <cfset application.productManagementObj = createObject("component", "model.productManagement")>
+        <cfset application.productManagementObj = createObject("component", "model.adminSpecific")>
         <cfset application.userObj = createObject("component", "model.user")>     
-        <cfset application.cartObj = createObject("component", "model.cart")>     
         <cfset application.getDataControllerObj = createObject("component", "controller.getDataController")>     
+        <cfset application.adminLoginObj = createObject("component", "model.adminLogin")>     
         <cfset application.key = "BUQBxvUmpT5zrGJ1tHLThA==">
         <cfset application.dataSource = "shoppingCart">
     </cffunction>   
@@ -20,29 +19,21 @@
                 <cfset onApplicationStart()>
             </cfif>
         </cfif>
-        <cfif structKeyExists(session, "loginUserId")>
-            <cfset session.cartLen = arrayLen(application.cartObj.getCartDetails().cart)>
-        <cfelse>
-            <cfset session.cartLen = 0>
-        </cfif>
         <cfreturn true>
     </cffunction>
 
     <cffunction name = "onRequest" returnType = "void">
         <cfargument name = "requestPage">
         <cfset local.adminPages = ["categories.cfm","products.cfm","subCategories.cfm"]>
-        <cfset local.allowedPages = ["userLogin.cfm","userSignup.cfm","userHome.cfm","userCategories.cfm","userSubCategories.cfm","userProducts.cfm","userSearch.cfm"]>
         
         <cfif arrayFindNoCase(local.adminPages, ListLast(CGI.SCRIPT_NAME,'/'))>
             <cfif structKeyExists(session, "roleId") AND session.roleId EQ 1>
                 <cfinclude template = "#arguments.requestPage#">
             <cfelse>
-                <cfinclude template = "/ShoppingCart/view/userLogin.cfm">
+                <cfinclude template = "/ShoppingCart/admin/view/adminLogin.cfm">
             </cfif>
-        <cfelseif arrayFindNoCase(local.allowedPages, ListLast(CGI.SCRIPT_NAME,'/')) OR structKeyExists(session, "email")>
-            <cfinclude template = "#arguments.requestPage#">
         <cfelse>
-            <cfinclude template = "/ShoppingCart/view/userLogin.cfm">
+            <cfinclude template = "/ShoppingCart/admin/view/adminLogin.cfm">
         </cfif>
     </cffunction>
     
@@ -78,4 +69,3 @@
             </cfcatch>
         </cftry>
     </cffunction>
-</cfcomponent>
