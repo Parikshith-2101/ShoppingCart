@@ -194,7 +194,6 @@
             'error' : false,
             'message' : ""
         }>
-        <cfset local.orderId = createUUID()>
         <cfset local.cardNumber = replace(arguments.cardNumber, " ", "", "all")>
         <cftry>
             <cfif local.cardNumber EQ 111111111111 AND arguments.cvv EQ 111>
@@ -205,25 +204,18 @@
                     <cfset local.productId = "productId = #arguments.productId#">
                     <cfset local.decryptedProductId = application.productManagementObj.decryptData(data = arguments.productId)>
                 </cfif>
-                <cfset local.getCart = getCartDetails(productId = local.productId)>
                 <cfset local.decryptedAddressId = application.productManagementObj.decryptData(data = arguments.addressId)>
-                <cfset local.totalPrice = 0>
-                <cfset local.totalTax = 0>
-                <cfloop array = "#local.getCart.cart#" item = "cartItem">
-                    <cfset local.totalPrice += (cartItem.unitPrice * cartItem.quantity)>
-                    <cfset local.totalTax += (cartItem.unitTax * cartItem.quantity)>
-                </cfloop>
-                <cfquery datasource = "#application.dataSource#">
-                    CALL sp_placeOrder(
-                        <cfqueryparam value = "#val(session.loginUserId)#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#val(local.decryptedAddressId)#" cfsqltype = "integer">,
-                        <cfqueryparam value = "#right(arguments.cardNumber, 4)#" cfsqltype = "varchar">, 
-                        <cfqueryparam value = "#local.totalPrice#" cfsqltype = "decimal">,   
-                        <cfqueryparam value = "#local.totalTax#" cfsqltype = "decimal">,
-                        <cfqueryparam value = "#local.orderId#" cfsqltype = "varchar">,  
-                        <cfqueryparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer"> 
-                    );
-                </cfquery>
+
+                <cfstoredproc procedure = "sp_placeOrder" datasource = "#application.dataSource#">
+                    <cfprocparam value = "#val(session.loginUserId)#" cfsqltype = "integer">
+                    <cfprocparam value = "#val(local.decryptedAddressId)#" cfsqltype = "integer">
+                    <cfprocparam value = "#right(arguments.cardNumber, 4)#" cfsqltype = "varchar">
+                    <cfprocparam value = "#val(local.decryptedProductId)#" cfsqltype = "integer">
+                    <cfprocparam type = "OUT" variable = "local.totalPrice" cfsqltype = "decimal">
+                    <cfprocparam type = "OUT" variable = "local.totalTax" cfsqltype = "decimal">
+                    <cfprocparam type = "OUT" variable = "local.orderId" cfsqltype = "varchar">
+                </cfstoredproc>
+
                 <cfset local.result['error'] = false>
                 <cfset local.result['message'] = "Order Placed Successfully">
                 <cfset sendOrderPlacedMail(
@@ -231,7 +223,7 @@
                     orderID = local.orderId,
                     totalPrice = local.totalPrice,
                     totalTax = local.totalTax
-                )>       
+                )>
             <cfelse>
                 <cfset local.result['error'] = true>
                 <cfset local.result['message'] = "Card Details Doesn't Match">
